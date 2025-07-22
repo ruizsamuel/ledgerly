@@ -4,6 +4,10 @@ services:
       context: ./server
     environment:
       - CORS_ORIGIN=${DOMAIN}
+      - MONGO_HOST=${MONGO_HOST}
+      - MONGO_USERNAME=${MONGO_USERNAME}
+      - MONGO_PASSWORD=${MONGO_PASSWORD}
+      - MONGO_PORT=${MONGO_PORT}
     expose:
       - 5000
   client:

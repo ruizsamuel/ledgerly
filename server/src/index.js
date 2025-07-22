@@ -1,13 +1,18 @@
-const express = require("express");
+import express, { json } from "express";
+import { connectDB } from "./config/database.config.js";
+import { authRouter } from "./routes/auth.routes.js";
+import { settingsRouter } from "./routes/settings.routes.js";
+
 const app = express();
+app.use(json());
 
-app.use(express.json());
+connectDB();
 
-app.get("/api", (_req, res) => {
-  res.send("Ledgerly backend is running.");
+const PORT = 5000;
+
+app.listen(PORT, () => {
+  console.log("Server running on port ", PORT);
 });
 
-app.listen(5000, () => {
-  console.log(`Server listening on port 5000`);
-});
-
+app.use("/api/auth", authRouter);
+app.use("/api/settings", settingsRouter);
