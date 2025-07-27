@@ -8,22 +8,16 @@ services:
       - MONGO_USERNAME=${MONGO_USERNAME}
       - MONGO_PASSWORD=${MONGO_PASSWORD}
       - MONGO_PORT=27017
-    volumes:
-      - ./server:/app
-      - /app/node_modules
-    command: npm run dev
+    expose:
+      - 5000
 
   client:
     build:
       context: ./client
       args:
         - API_URL=${DOMAIN}/api
-    volumes:
-      - ./client:/app
-      - /app/dist
-      - /app/src/environments
-      - /app/node_modules
-    command: npm run start
+    expose:
+      - 4000
 
   mongo:
     image: mongo:5.0.2

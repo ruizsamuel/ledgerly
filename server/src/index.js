@@ -2,16 +2,20 @@ import express, { json } from "express";
 import { connectDB } from "./config/database.config.js";
 import { authRouter } from "./routes/auth.routes.js";
 import { settingsRouter } from "./routes/settings.routes.js";
+import cors  from "cors";
 
 const app = express();
 app.use(json());
+app.use(cors({
+  origin: process.env['DOMAIN'] ?? 'http://localhost:4200'
+}));
 
 connectDB();
 
 const PORT = 5000;
 
 app.listen(PORT, () => {
-  console.log("Server running on port ", PORT);
+  console.log("Server running on port: ", PORT);
 });
 
 app.use("/api/auth", authRouter);

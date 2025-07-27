@@ -5,14 +5,14 @@
   "main": "index.js",
   "scripts": {
     "start": "node src/index.js",
-    "dev": "nodemon src/index.js",
-    "lint": "eslint ."
+    "dev": "nodemon src/index.js"
   },
   "author": "Samuel Ruiz",
   "license": "MIT",
   "type": "module",
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.16.3"

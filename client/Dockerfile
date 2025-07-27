@@ -1,18 +1,17 @@
-FROM node:latest AS builder
+FROM node:24 AS builder
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN npm install
+RUN npm ci && npm cache clean --force
+
 COPY . .
 
-# Reemplazar variable en environment.js en tiempo de compilación
 ARG API_URL
 RUN sed -i "s|API_URL_PLACEHOLDER|${API_URL}|g" src/environments/environment.ts
 
 RUN npm install -g http-server
 
 RUN npm run build
-
 
 EXPOSE 4000
 CMD ["http-server", "dist/client/browser", "-p", "4000"]

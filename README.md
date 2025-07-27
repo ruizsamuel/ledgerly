@@ -1,3 +1,5 @@
+# Ledgerly
+
 Ledgerly is a personal accounting application designed to help users efficiently manage their finances. It enables you to track expenses and income, organize them by month, calculate savings or losses, and manage multiple bank accounts or cash holdings. The application supports user authentication (login and registration) to ensure your data is secure and private.
 
 ## Features
@@ -11,81 +13,22 @@ Ledgerly is a personal accounting application designed to help users efficiently
 - **Account Balances:** Instantly see the balance of each account and your total net worth.
 - **User Authentication:** Secure login and registration system for multiple users.
 
-## Installation (Development)
+## Running the Project
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/ruizsamuel/ledgerly.git
-   cd ledgerly
+1. First, configure the environment variables in the `.env` file.
+2. Build the Docker images with:
    ```
-
-2. **Install Dependencies:**
-  - Make sure you have [Node.js](https://nodejs.org/) and [npm](https://www.npmjs.com/) installed.
-
-3. **Start MongoDB:**
-
-  - You can start a MongoDB instance using Docker with:
-
-  ```bash
-  docker-compose up -d mongo
-  ```
-
-4. **Set Up Environment Variables:**
-
-  - Make sure to define the following environment variables:
-
-    - `MONGO_USERNAME`: MongoDB admin username
-    - `MONGO_PASSWORD`: MongoDB admin password
-    - `MONGO_PORT`: Port for MongoDB (default: 27017)
-    - `MONGO_HOST`: Hostname for MongoDB service (default: mongo)
-    - `JWT_SECRET`: Secret key for JWT authentication
-
-5. **Start the Server:**
-   - Navigate to the `server` directory:
-     ```bash
-     cd server
-     ```
-   - Install dependencies:
-     ```bash
-     npm install
-     ```
-   - Start the server:
-     ```bash
-     npm run start
-     ```
-   - The server will be running at [http://localhost:5000](http://localhost:5000).
-
-6. **Start the Client:**
-   - Open a new terminal and navigate to the `client` directory:
-     ```bash
-     cd client
-     ```
-   - Install dependencies:
-     ```bash
-     npm install
-     ```
-   - Start the client:
-     ```bash
-     npm run start
-     ```
-   - The client will be running at [http://localhost:4200](http://localhost:4200).
-
-7. **Access the Application:**
-   - Open [http://localhost:4200](http://localhost:4200) in your browser to use Ledgerly.
-
-## Deployment
-
-Deployment is designed to be simple and reproducible:
-
-*Make sure you have [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/) installed.*
-
-1. **Edit the `.env` file** with your production settings.
-2. **Run:**
-   ```bash
-   docker-compose up --build -d
+   docker compose build
    ```
-   This will start Ledgerly in detached mode.
-
+3. To run the project in development mode (with automatic reload on changes), use:
+   ```
+   docker compose up
+   ```
+4. To run the project in production mode, use the production compose file:
+   ```
+   docker compose -f docker-compose.prod.yml up
+   ```
+5. Access the application at `http://localhost`.
 ## Contributing
 
 Feel free to open issues or submit pull requests for new features or bug fixes.
