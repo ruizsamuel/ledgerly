@@ -1,5 +1,5 @@
-import { User } from "../models/auth.models.js"
-import { verifyToken } from "../utils/jwt.utils.js";
+import { User } from "../models/users.models.js"
+import { verifyToken } from "../utils/auth.utils.js";
 
 export const auth = async (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
@@ -10,7 +10,7 @@ export const auth = async (req, res, next) => {
 
   try {
     const decoded = verifyToken(token);
-    const user = await User.findById(decoded.id).select("-password");
+    const user = await User.findById(decoded.id);
 
     if (!user) {
       return res.status(401).json({ message: "User not found." });

@@ -1,17 +1,20 @@
-import { FormArray, FormGroup, ValidationErrors } from '@angular/forms';
+import { AbstractControl, FormArray, FormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 export class FormUtils {
   static getTextError(errors: ValidationErrors) {
     for (const key of Object.keys(errors)) {
       switch (key) {
         case 'required':
-          return 'Este campo es requerido';
+          return $localize`:{@@requiredField}:This field is required`;
 
         case 'minlength':
-          return `Mínimo de ${errors['minlength'].requiredLength} caracteres.`;
+          return $localize`:{@@minlengthRequired}:Minimum of required charactes: ${errors['minlength'].requiredLength}`;
 
-        case 'min':
-          return `Valor mínimo de ${errors['min'].min}`;
+        case 'email':
+          return $localize`:{@@incorrectEmailFormat}:Incorrect email format`;
+
+        case 'valuesMismatch':
+          return $localize`:{@@valuesMismatch}:Values do not match`;
       }
     }
 
@@ -47,5 +50,21 @@ export class FormUtils {
     const errors = formArray.controls[index].errors ?? {};
 
     return FormUtils.getTextError(errors);
+  }
+
+  static fieldMatchValidator(otherFieldName: string): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+
+      const parent = control.parent;
+
+      if (!parent || !(parent instanceof FormGroup)) {
+        return null;
+      }
+
+      const otherValue = parent.get(otherFieldName)?.value;
+      const thisValue = control.value;
+
+      return otherValue === thisValue ? null : { valuesMismatch: true };
+    };
   }
 }

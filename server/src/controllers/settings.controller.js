@@ -6,15 +6,19 @@ export const getSettings = async (_req, res) => {
 }
 
 export const updateSettings = async (req, res) => {
-  const { allowUserRegistration } = req.body;
-  const settings = await Settings.findOne();
+  try {
+    const { allowUserRegistration } = req.body;
+    const settings = await Settings.findOne();
 
-  if (settings) {
-    settings.allowUserRegistration = allowUserRegistration;
-    await settings.save();
-  } else {
-    await Settings.create({ allowUserRegistration });
+    if (settings) {
+      settings.allowUserRegistration = allowUserRegistration;
+      await settings.save();
+    } else {
+      await Settings.create({ allowUserRegistration });
+    }
+
+    res.status(200).json({ message: "Settings updated successfully", content: { allowUserRegistration } });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
   }
-
-  res.json({ success: true });
 }

@@ -20,15 +20,28 @@ Ledgerly is a personal accounting application designed to help users efficiently
    ```
    docker compose build
    ```
-3. To run the project in development mode (with automatic reload on changes), use:
-   ```
+3. To run the project in **development mode** (with automatic reload on changes), use:
+   ```bash
    docker compose up
    ```
-4. To run the project in production mode, use the production compose file:
-   ```
+
+   Access the application at `http://localhost:4200`.
+
+   *Note: The development mode uses a volume mount for the source code, allowing you to see changes without rebuilding the Docker image.*
+
+   For LSP support, you should install node modules locally:
+   ```bash
+    cd client && npm install
+    cd ../server && npm install
+    ```
+
+4. To run the project in **production mode**, use the production compose file:
+   ```bash
    docker compose -f docker-compose.prod.yml up
    ```
-5. Access the application at `http://localhost`.
+
+   Access the application at `http://localhost`.
+
 ## Contributing
 
 Feel free to open issues or submit pull requests for new features or bug fixes.

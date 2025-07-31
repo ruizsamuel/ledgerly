@@ -1,14 +1,10 @@
 import { Routes } from '@angular/router';
-import { CreateAdminPageComponent } from './pages/admin/create-admin/create-admin.component';
+import { authGuard } from './core/providers/auth.guard';
 
 export const routes: Routes = [
   {
-    path: 'admin',
-    children: [
-      {
-        path: 'create-admin',
-        component: CreateAdminPageComponent
-      }
-    ]
+    path: '',
+    canActivate: [authGuard],
+    children: []
   }
 ];

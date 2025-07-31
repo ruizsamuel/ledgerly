@@ -1,5 +1,5 @@
-<div class="w-screen h-screen flex justify-center items-center">
-  <h1 class="mb-3.5">Ledger</h1>
+<div class="w-screen h-screen flex flex-col justify-center items-center">
+  <app-logo class="mb-10" size="extralarge"/>
   <form [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
     <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
       <legend class="fieldset-legend" i18n="@@createAdminUser">
@@ -21,18 +21,18 @@
         </div>
       }
 
-      <label for="fullName" class="label" i18n="@@fullName">Full Name</label>
+      <label for="name" class="label" i18n="@@fullName">Full Name</label>
       <input
-        id="fullName"
+        id="name"
         type="text"
-        formControlName="fullName"
+        formControlName="name"
         placeholder="Full Name"
         i18n-placeholder="@@fullName"
         class="input"
       />
-       @if ( formUtils.isValidField( form, 'fullName') ) {
+       @if ( formUtils.isValidField( form, 'name') ) {
         <div class="text-error">
-          <span>{{ formUtils.getFieldError(form, "fullName") }}</span>
+          <span>{{ formUtils.getFieldError(form, "name") }}</span>
         </div>
       }
 

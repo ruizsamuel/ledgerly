@@ -1,0 +1,123 @@
+<div class="w-screen h-screen flex flex-col justify-center items-center">
+  <app-logo size="extralarge" class="mb-10" />
+  <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border py-2 px-6">
+    <div class="tabs tabs-border w-full flex justify-center mb-3" i18n="@@createAdminUser">
+      <input type="radio" name="tabs" class="tab text-xl flex-1" i18n-aria-label="{@@login}" aria-label="Login" checked (click)="selectedTab.set('login')"/>
+      <input type="radio" name="tabs" class="tab text-xl flex-1" i18n-aria-label="{@@reregister}" aria-label="Register" (click)="selectedTab.set('register')"/>
+    </div>
+
+    @if ( selectedTab() === 'login' ) {
+    <form class="fieldset" [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()" autocomplete="off">
+      <label for="email" class="label" i18n="@@email">Email</label>
+      <input
+        id="email"
+        type="email"
+        formControlName="email"
+        placeholder="Email"
+        i18n-placeholder="@@email"
+        class="input"
+      />
+      @if ( formUtils.isValidField( loginForm, 'email') ) {
+      <div class="text-error">
+        <span>{{ formUtils.getFieldError(loginForm, "email") }}</span>
+      </div>
+      }
+
+      <label for="password" class="label" i18n="@@password">Password</label>
+      <input
+        id="password"
+        type="password"
+        formControlName="password"
+        placeholder="Password"
+        i18n-placeholder="@@password"
+        class="input"
+      />
+      @if ( formUtils.isValidField( loginForm, 'password') ) {
+      <div class="text-error">
+        <span>{{ formUtils.getFieldError(loginForm, "password") }}</span>
+      </div>
+      }
+
+      <button
+        type="submit"
+        [disabled]="loginForm.invalid"
+        class="btn btn-primary mt-4"
+        i18n="@@login"
+      >
+        Login
+      </button>
+
+    </form>
+    } @else if (selectedTab() === 'register') {
+    <form class="fieldset" [formGroup]="registerForm" (ngSubmit)="onRegisterSubmit()" autocomplete="off">
+      <label for="email" class="label" i18n="@@email">Email</label>
+      <input
+        id="email"
+        type="email"
+        formControlName="email"
+        placeholder="Email"
+        i18n-placeholder="@@email"
+        class="input"
+      />
+      @if ( formUtils.isValidField( registerForm, 'email') ) {
+      <div class="text-error">
+        <span>{{ formUtils.getFieldError(registerForm, "email") }}</span>
+      </div>
+      }
+      <label for="name" class="label" i18n="@@fullName">Name</label>
+      <input
+        id="name"
+        type="text"
+        formControlName="name"
+        placeholder="Name"
+        i18n-placeholder="@@name"
+        class="input"
+      />
+      @if ( formUtils.isValidField( registerForm, 'name') ) {
+      <div class="text-error">
+        <span>{{ formUtils.getFieldError(registerForm, "name") }}</span>
+      </div>
+      }
+
+      <label for="password" class="label" i18n="@@password">Password</label>
+      <input
+        id="password"
+        type="password"
+        formControlName="password"
+        placeholder="Password"
+        i18n-placeholder="@@password"
+        class="input"
+      />
+      @if ( formUtils.isValidField( registerForm, 'password') ) {
+      <div class="text-error">
+        <span>{{ formUtils.getFieldError(registerForm, "password") }}</span>
+      </div>
+      }
+
+      <label for="confirmPassword" class="label" i18n="@@confirmPassword">Comfirm Password</label>
+      <input
+        id="confirmPassword"
+        type="password"
+        formControlName="confirmPassword"
+        placeholder="Confirm Password"
+        i18n-placeholder="@@confirmPassword"
+        class="input"
+      />
+      @if ( formUtils.isValidField( registerForm, 'confirmPassword') ) {
+      <div class="text-error">
+        <span>{{ formUtils.getFieldError(registerForm, "confirmPassword") }}</span>
+      </div>
+      }
+      <button
+        type="submit"
+        [disabled]="registerForm.invalid"
+        class="btn btn-primary mt-4"
+        i18n="@@register"
+      >
+        Register
+      </button>
+
+    </form>
+    }
+  </fieldset>
+</div>
