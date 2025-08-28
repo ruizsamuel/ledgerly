@@ -10,6 +10,9 @@ export class FormUtils {
         case 'minlength':
           return $localize`:{@@minlengthRequired}:Minimum of required charactes: ${errors['minlength'].requiredLength}`;
 
+        case 'maxlength':
+          return $localize`:{@@maxlengthAllowed}:Maximum of allowed characters: ${errors['maxlength'].requiredLength}`;
+
         case 'email':
           return $localize`:{@@incorrectEmailFormat}:Incorrect email format`;
 

@@ -1,0 +1,134 @@
+<div class="overflow-x-auto">
+  @if (selection().length > 0) {
+  <div>
+    <div class="bg-base-200 p-4 rounded-lg mb-4">
+      <div>
+        <span>{{ selection().length }} <span i18n="@@itemsSelected">item(s) selected.</span></span>
+        <button class="btn btn-sm btn-soft btn-error ml-4" i18n="@@deleteSelected" (click)="onDeleteSelection.emit(selection()); selection.set([])">
+          Delete Selected
+        </button>
+      </div>
+    </div>
+  </div>
+  }
+  @if (data().length === 0) {
+  <div class="p-4 text-center">
+    <span i18n="@@noData">Add some items to start seeing data here</span>
+  </div>
+  }
+  @else {
+  <table class="table">
+    <thead>
+      <tr>
+        @if (selectable()) {
+        <th>
+          <input
+            type="checkbox"
+            [checked]="selection().length === data().length"
+            (change)="toggleSelectAll()"
+            class="checkbox checkbox-primary" />
+        </th>
+        }
+        @for (field of config().fields; track field) {
+        <th>{{ config().labels?.[field] ?? [field] }}</th>
+        }
+
+        <th></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      @for (item of data(); track item) {
+      <tr>
+        @if (selectable()) {
+        <th>
+          <input
+            type="checkbox"
+            [checked]="selection().includes(item)"
+            (change)="onCheckboxChange(item)"
+            class="checkbox checkbox-primary" />
+        </th>
+        }
+        @for (field of config().fields; track field) {
+        <td>
+          @if (config().avatars?.includes(field)) {
+          <div class="flex items-center gap-3">
+            <div class="avatar">
+              <div class="mask mask-squircle h-12 w-12">
+                @if (config().fields.includes('image')) {
+                <img [src]="item['image']" />
+                } @else {
+                <img [src]="item[field] | avatar" />
+                }
+              </div>
+            </div>
+            <span
+              [class.text-success]="config().colorFns?.[field]?.(item[field], item) === 'success'"
+              [class.text-error]="config().colorFns?.[field]?.(item[field], item) === 'error'"
+              class="text-lg"
+            >
+              {{ config().formatFns?.[field]?.(item[field], item) ?? item[field] }}
+            </span>
+          </div>
+          } @else {
+          <span
+            [class.text-success]="config().colorFns?.[field]?.(item[field], item) === 'success'"
+            [class.text-error]="config().colorFns?.[field]?.(item[field], item) === 'error'"
+            class="text-lg"
+          >
+            {{ config().formatFns?.[field]?.(item[field], item) ?? item[field] }}
+          </span>
+          }
+        </td>
+        }
+
+        <td class="flex justify-end gap-2 relative">
+          <div class="hidden md:flex gap-2">
+            <button class="btn btn-soft" (click)="onEdit.emit(item)">
+              <span class="material-symbols-outlined">edit</span>
+            </button>
+            <button class="btn btn-soft btn-error" (click)="onDelete.emit(item)">
+              <span class="material-symbols-outlined">delete</span>
+            </button>
+          </div>
+
+          <div class="md:hidden relative">
+            <button class="btn btn-soft"
+              (click)="openId.set(openId() === item['id'] ? null : item['id'])">
+              <span class="material-symbols-outlined">more_vert</span>
+            </button>
+
+            @if (openId() === item['id']) {
+            <div class="fixed flex flex-col mt-2 p-2 bg-base-300 rounded-lg shadow-lg">
+              <button
+                class="btn mb-2 btn-soft"
+                (click)="onEdit.emit(item); openId.set(null)"
+              >
+                <span class="material-symbols-outlined text-base mr-2">edit</span>
+              </button>
+              <button
+                class="btn btn-soft btn-error"
+                (click)="onDelete.emit(item); openId.set(null)"
+              >
+                <span class="material-symbols-outlined text-base mr-2">delete</span>
+              </button>
+            </div>
+            }
+          </div>
+        </td>
+        }
+    </tbody>
+    <!--
+    <tfoot>
+      <tr>
+        <th></th>
+        @for (field of config().fields; track field) {
+        <th>{{ config().labels?.[field] ?? [field] }}</th>
+        }
+      </tr>
+    </tfoot>
+    -->
+  </table>
+  }
+</div>
+

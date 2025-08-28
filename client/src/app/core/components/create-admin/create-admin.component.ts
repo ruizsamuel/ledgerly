@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormUtils } from '../../../core/utils/form.utils';
 import { AuthService } from '../../../shared/service/auth.service';
-import { LogoComponent } from "../../../shared/ui/logo/logo.component";
+import { LogoComponent } from "../../../shared/ui/components/logo/logo.component";
 import { firstValueFrom } from 'rxjs';
 import { UserService } from '../../../shared/service/user.service';
 
@@ -28,8 +28,9 @@ export class CreateAdminPageComponent {
   async onSubmit() {
     if (this.form.valid) {
       await firstValueFrom(this.authService.register(this.form.value))
-        .then(() => this.userService.checkHasUsers()) // TODO: TOAST
-        .catch(console.error)
+      .then(_response => {
+        this.userService.checkHasUsers()
+      })
     }
   }
 }

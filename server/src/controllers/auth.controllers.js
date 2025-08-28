@@ -16,7 +16,7 @@ export const login = async (req, res) => {
 
     const token = createToken({ id: user._id });
 
-    res.json({ message: "Logged In", content: { ...user.toJSON(), token } });
+    res.status(201).json({ message: "Logged In", content: { ...user.toJSON(), token } });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
@@ -24,6 +24,7 @@ export const login = async (req, res) => {
 }
 
 export const register = async (req, res) => {
+  // TODO: Email Verification with Nodemailer
   const { name, email, password } = req.body;
 
   try {

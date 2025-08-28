@@ -11,7 +11,7 @@
         tabindex="0"
         class="menu menu-sm m-0 absolute left-0 h-screen dropdown-content bg-base-100 rounded-box z-1 w-70 shadow">
         <li class="mb-2">
-          <a routerLink="/" routerLinkActive="text-primary">
+          <a routerLink="/" routerLinkActive="text-primary" [routerLinkActiveOptions]="{exact: true}">
             <span class="material-symbols-outlined">
               space_dashboard
             </span>
@@ -65,8 +65,7 @@
       <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
         <div class="w-10 rounded-full">
           <img
-            alt="Tailwind CSS Navbar component"
-            [src]="['https://api.dicebear.com/9.x/initials/svg?seed=', authService.user()?.name]" />
+            [src]="authService.user()?.name ?? '' | avatar" />
         </div>
       </div>
       <ul
@@ -80,7 +79,7 @@
   </div>
 </div>
 <div class="dock dock-xl flex lg:hidden">
-  <a routerLink="/" routerLinkActive="dock-active">
+  <a routerLink="/" routerLinkActive="dock-active" [routerLinkActiveOptions]="{exact: true}">
     <span class="material-symbols-outlined">
       space_dashboard
     </span>

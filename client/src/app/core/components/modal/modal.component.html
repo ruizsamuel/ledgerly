@@ -1,0 +1,8 @@
+<div [class.hidden]="!modalService.modal()" class="absolute w-screen h-screen z-10 flex items-center justify-center bg-black/50">
+  <div class="relative">
+    <button class="absolute cursor-pointer top-4 right-4" (click)="modalService.close()"><span class="material-symbols-outlined">
+close
+</span></button>
+    <ng-template #vc></ng-template>
+  </div>
+</div>

@@ -1,11 +1,12 @@
 import { computed, inject, Injectable, signal } from "@angular/core";
 import { environment } from "../../../environments/environment";
 import { User } from "../domain/models/user.model";
-import { Response } from "../domain/models/response.model";
+import { Response } from "../../core/types/response.model";
 import { catchError, map, Observable, of } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { LoginDTO } from "../domain/dto/login.dto";
-import { NewUserDTO } from "../domain/dto/new-user.dto";
+import { NewUserDTO } from "../domain/dto/user.dto";
+import { ToastService } from "./toast.service";
 
 type AuthStatus = 'authenticated' | 'unauthenticated' | 'checking';
 
@@ -16,6 +17,7 @@ const AUTH_URL = environment.apiBaseUrl + '/auth';
 })
 export class AuthService {
   private http = inject(HttpClient);
+  private toastService = inject(ToastService);
 
   private _authStatus = signal<AuthStatus>('checking');
   private _user = signal<User | null>(localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null);
@@ -32,16 +34,14 @@ export class AuthService {
 
   user = computed(() => this._user());
 
-  login(loginData: LoginDTO): Observable<Response<boolean>> {
+  login(loginData: LoginDTO): Observable<boolean> {
     return this.http.post<Response<User>>(`${AUTH_URL}/login`, loginData)
       .pipe(
         map(res => {
           if (res.content) {
             this.handleAuthSuccess(res.content);
-            return { content: true, status: res.status, message: res.message ?? $localize`:{@@authenticated}:Authenticated` };
-          } else {
-            return { content: false, status: res.status ?? 401, message: res.message ?? $localize`:{@@notAuthenticated}:Not authenticated` };
           }
+          return !!res.content;
         }),
         catchError(_err => {
           return this.handleAuthError();
@@ -49,16 +49,14 @@ export class AuthService {
       );
   }
 
-  register(newUser: NewUserDTO): Observable<Response<boolean>> {
+  register(newUser: NewUserDTO): Observable<boolean> {
     return this.http.post<Response<User>>(`${AUTH_URL}/register`, newUser)
       .pipe(
         map(res => {
           if (res.content) {
             this.handleAuthSuccess(res.content);
-            return { content: true, status: res.status, message: res.message ?? $localize`:{@@registered}:Registered successfully` };
-          } else {
-            return { content: false, status: res.status ?? 400, message: res.message ?? $localize`:{@@registrationFailed}:Registration failed` };
           }
+          return !!res.content;
         }),
         catchError(_err => {
           return this.handleAuthError();
@@ -66,11 +64,11 @@ export class AuthService {
       );
   }
 
-  checkStatus(): Observable<Response<boolean>> {
+  checkStatus(): Observable<boolean> {
     const user = localStorage.getItem('user');
     if (!user) {
       this.logout();
-      return of({ content: false, status: 401, message: $localize`:{@@notAuthenticated}:Not authenticated` });
+      return of(false);
     }
     const parsedUser: User = JSON.parse(user);
     this._user.set(parsedUser);
@@ -81,10 +79,11 @@ export class AuthService {
           if (res.content) {
             res.content.token = parsedUser.token
             this.handleAuthSuccess(res.content);
-            return { content: true, status: res.status, message: res.message ?? $localize`:{@@authenticated}:Authenticated` };
+            return true;
           } else {
+            this.toastService.show($localize`:{@@sessionExpired}:Session expired, please log in again.`, 'error');
             this.logout();
-            return { content: false, status: res.status ?? 401, message: res.message ?? $localize`:{@@notAuthenticated}:Not authenticated` };
+            return false;
           }
         }),
         catchError(_err => {
@@ -102,7 +101,7 @@ export class AuthService {
 
   private handleAuthError() {
     this.logout();
-    return of({ content: false, status: 401, message: $localize`:{@@notAuthenticated}:Not authenticated` });
+    return of(false);
   }
 
   logout() {

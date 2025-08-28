@@ -1,0 +1,32 @@
+<app-page-title
+  [title]="pageTitle"
+  [description]="pageDescription"
+/>
+
+<div class="container mx-auto py-10 px-5">
+  <div class="mb-5">
+    <button class="btn btn-primary" (click)="showForm(null)">
+      <span class="material-symbols-outlined">add</span>
+      <span i18n="@@addAccount">Add Account</span>
+    </button>
+  </div>
+  @if(allResource.isLoading()) {
+  <div class="flex justify-center items-center h-64">
+    <app-loading />
+  </div>
+  }
+  <app-table
+    [data]="allResource.value()?.content ?? []"
+    [class.hidden]="allResource.isLoading()"
+    [config]="tableConfig"
+    (onEdit)="showForm($event)"
+    (onDelete)="handleDelete($event)"
+    (onDeleteSelection)="handleDeleteSelection($event)"
+  />
+</div>
+
+<div>
+  <app-pagination
+    [pages]="allResource.value()?.totalPages ?? 0"
+  />
+</div>

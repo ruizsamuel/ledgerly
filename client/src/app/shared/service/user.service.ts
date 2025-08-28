@@ -2,9 +2,9 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom, Observable } from 'rxjs';
-import { NewUserDTO } from '../domain/dto/new-user.dto';
+import { NewUserDTO } from '../domain/dto/user.dto';
 import { User } from '../domain/models/user.model';
-import { Response } from '../domain/models/response.model';
+import { Response } from '../../core/types/response.model';
 
 const USERS_URL = environment.apiBaseUrl + '/users';
 
@@ -22,7 +22,6 @@ export class UserService {
     return this.http.post<Response<User>>(USERS_URL, newUser);
   }
 
-  // TODO: Que devuelva un observable de tipo Response<User>, para que sea consistente con el resto de métodos de servicio
   async checkHasUsers() {
     try {
       const res = await firstValueFrom(this.http.get<Response<{ content: boolean }>>(`${USERS_URL}/has-users`));
@@ -31,5 +30,4 @@ export class UserService {
       throw new Error($localize`:{@@hasUsersError}:Error checking for users: ${err.message}`);
     }
   }
-
 }

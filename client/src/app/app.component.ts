@@ -3,14 +3,19 @@ import { RouterOutlet } from '@angular/router';
 import { UserService } from './shared/service/user.service';
 import { AuthService } from './shared/service/auth.service';
 import { CreateAdminPageComponent } from './core/components/create-admin/create-admin.component';
-import { LoadingComponent } from './shared/ui/loading/loading.component';
+import { LoadingComponent } from './shared/ui/components/loading/loading.component';
 import { LoginComponent } from "./core/components/login/login.component";
 import { NavbarComponent } from "./core/components/navbar/navbar.component";
+import { ToastComponent } from "./core/components/toast/toast.component";
+import { ModalComponent } from './core/components/modal/modal.component';
+
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, CreateAdminPageComponent, LoadingComponent, LoginComponent, NavbarComponent],
+  imports: [RouterOutlet, CreateAdminPageComponent, LoadingComponent, LoginComponent, NavbarComponent, ToastComponent, ModalComponent],
   template: `
+    <app-toast />
+    <app-modal />
     @if (loading()) {
     <app-loading class="flex justify-center align-middle w-screen h-screen"/>
     }
@@ -41,7 +46,7 @@ export class AppComponent implements OnInit{
   hasUsers = this.userService.hasUsers;
 
   async ngOnInit() {
-    await this.userService.checkHasUsers().catch(console.log); //TODO: TOAST
+    await this.userService.checkHasUsers();
     this.loading.set(false);
   }
 }

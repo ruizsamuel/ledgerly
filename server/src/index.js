@@ -4,7 +4,8 @@ import { connectDB } from "./config/database.config.js";
 import { authRouter } from "./routes/auth.routes.js";
 import { settingsRouter } from "./routes/settings.routes.js";
 import { usersRouter } from "./routes/users.routes.js";
-import { enrichResponse } from "./middlewares/response.middleware.js";
+import { enrichResponse } from "./middlewares/response.middlewares.js";
+import { accountsRouter } from "./routes/accounts.routes.js";
 
 const app = express();
 app.use(json());
@@ -25,3 +26,4 @@ app.use(enrichResponse);
 app.use("/api/auth", authRouter);
 app.use("/api/settings", settingsRouter);
 app.use("/api/users", usersRouter);
+app.use("/api/accounts", accountsRouter);

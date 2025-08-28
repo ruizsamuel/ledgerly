@@ -20,12 +20,10 @@ export const createUser = async (req, res) => {
     if (existing) return res.status(400).json({ message: "User already exists" });
 
     const salt = await genSalt(10);
-    const hashedPassword = await hash(password, salt);
+    req.body.password = await hash(password, salt);
 
     const user = await User.create({
-      name,
-      email,
-      password: hashedPassword,
+      ...req.body,
       isAdmin: false
     });
 
@@ -38,5 +36,5 @@ export const createUser = async (req, res) => {
 
 export const hasUsers = async (_req, res) => {
   const userCount = await User.countDocuments();
-  res.json({ content: userCount > 0 });
+  res.status(200).json({ content: userCount > 0 });
 }
