@@ -1,7 +1,7 @@
 export interface Response<T> {
   status: number;
   message?: string;
-  content?: T;
+  content: T;
   page?: number;
   totalPages?: number;
 }

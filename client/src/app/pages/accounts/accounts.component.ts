@@ -3,10 +3,9 @@ import { PageTitleComponent } from "../../shared/ui/components/page-title/page-t
 import { TableComponent } from "../../shared/ui/components/table/table.component";
 import { TableConfig } from "../../shared/ui/types/table-config.model";
 import { CurrencyPipe } from "@angular/common";
-import { GenericFormComponent } from "../../shared/ui/components/generic-form/generic-form.component";
+import { FormComponent } from "../../shared/ui/components/form/form.component";
 import { FormField } from "../../shared/ui/types/form-field.model";
-import { FormBuilder, Validators } from "@angular/forms";
-import { Account, AccountBasic } from "../../shared/domain/models/accounts.model";
+import { Account, AccountBasic } from "../../shared/domain/models/account.model";
 import { firstValueFrom } from "rxjs";
 import { AccountService } from "../../shared/service/account.service";
 import { rxResource } from "@angular/core/rxjs-interop";
@@ -16,11 +15,13 @@ import { PaginationService } from "../../shared/service/pagination.service";
 import { PaginationComponent } from "../../shared/ui/components/pagination/pagination.component";
 import { ModalService } from "../../shared/service/modal.service";
 import { ConfirmationComponent } from "../../shared/ui/components/confirmation/confirmation.component";
+import { Validators } from "@angular/forms";
+import { Router } from "@angular/router";
 
 @Component({
   selector: 'app-accounts',
   templateUrl: './accounts.component.html',
-  imports: [PageTitleComponent, TableComponent, GenericFormComponent, LoadingComponent, PaginationComponent],
+  imports: [PageTitleComponent, TableComponent, LoadingComponent, PaginationComponent],
   providers: [CurrencyPipe],
 })
 export class AccountsComponent {
@@ -28,16 +29,16 @@ export class AccountsComponent {
   toastService = inject(ToastService);
   paginationService = inject(PaginationService);
   modalService = inject(ModalService);
+  router = inject(Router);
 
   currencyPipe = inject(CurrencyPipe);
-  fb = inject(FormBuilder);
 
   formTitle = computed(() => this.selected() ? $localize`:{@@editAccountTitle}:Edit Account` : $localize`:{@@createAccountTitle}:Create Account`);
 
   selected = signal<Account | null>(null);
 
   pageTitle = $localize`:{@@accountsPageTitle}:Accounts`;
-  pageDescription = $localize`:{@@accountsPageDescription}:Manage your accounts, view balances, and perform actions like edit or delete.`;
+  pageDescription = $localize`:{@@accountsPageDescription}:Manage your accounts, view balances, and perform actions like edit or delete. Click on an account to see detailed transactions linked to it.`;
 
   allResource = rxResource({
     params: () => ({ page: this.paginationService.currentPage() }),
@@ -58,45 +59,50 @@ export class AccountsComponent {
     },
     formatFns: {
       balance: (value) => this.currencyPipe.transform(value) ?? '',
+    },
+    onClick: {
+      name: (row) => this.router.navigate(['/accounts', row.id]),
     }
   };
 
-  formFields: FormField[] = [
-    {
-      key: 'name',
-      label: $localize`:{@@accountNameFieldLabel}:Account Name`,
-      type: 'text',
-    },
-    {
-      key: 'balance',
-      label: $localize`:{@@initialBalance}:Initial Balance`,
-      type: 'number',
-    },
-    {
-      key: 'description',
-      label: $localize`:{@@accountDescriptionFieldLabel}:Description`,
-      type: 'text',
-    }
-  ];
-
-  form = this.fb.group({
-    name: ['', Validators.required],
-    balance: [0, [Validators.required]],
-    description: ['', Validators.maxLength(128)],
-  })
+  formFields(): FormField[] {
+    return [
+      {
+        key: 'name',
+        label: $localize`:{@@accountNameFieldLabel}:Account Name`,
+        type: 'text',
+        value: this.selected()?.name ?? '',
+        validators: [Validators.required, Validators.maxLength(64)],
+      },
+      {
+        key: 'balance',
+        label: $localize`:{@@initialBalance}:Initial Balance`,
+        type: 'number',
+        value: this.selected()?.balance ?? 0,
+        validators: [Validators.required],
+        disabled: this.selected() !== null
+      },
+      {
+        key: 'description',
+        label: $localize`:{@@accountDescriptionFieldLabel}:Description`,
+        type: 'text',
+        optional: true,
+        value: this.selected()?.description ?? '',
+        validators: [Validators.maxLength(128)],
+      }
+    ];
+  }
 
   async showForm(entity: AccountBasic | null) {
     if (entity) {
-      entity = (await firstValueFrom(this.service.getEntityById(entity.id))).content!;
+      entity = (await firstValueFrom(this.service.getEntityById(entity.id))).content;
     }
     this.selected.set(entity);
     this.modalService.open({
-      component: GenericFormComponent,
+      component: FormComponent<Account>,
       inputs: {
         title: this.formTitle(),
-        fields: this.formFields,
-        formGroup: this.form,
-        initialData: this.selected()
+        fields: this.formFields(),
       },
       outputs: {
         formSubmit: (data: Account) => this.handleSubmit(data),
@@ -108,25 +114,39 @@ export class AccountsComponent {
     });
   };
 
-  async handleDelete(entity: Account) {
+  async handleDelete(entity: AccountBasic) {
     this.modalService.open({
-      component: ConfirmationComponent,
+      component: FormComponent<Account>,
       inputs: {
-        message: $localize`:{@@deleteAccountConfirmation}:Are you sure you want to delete the account?`,
+        title: $localize`:{@@deleteAccountTitle}:Backup and Delete Account`,
+        description: $localize`:{@@deleteAccountDescription}:Please select a backup account to transfer all transactions linked to this account before deletion. If no backup account is selected, all linked transactions will be deleted along with the account.`,
+        fields: [
+          {
+            key: 'backupAccount',
+            label: $localize`:{@@backupAccountFieldLabel}:Backup Account`,
+            type: 'text',
+            select: {
+              options: [{ viewValue: $localize`:{@@noBackupAccountOption}:No Backup Account`, value: '' }].concat
+              (this.allResource.value()?.content
+                .filter(acc => acc.id !== entity.id)
+                .map(account => ({ viewValue: account.name, value: account.id })) || []),
+              config: { avatars: true }
+            },
+            value: '',
+          }
+        ],
       },
       outputs: {
-        onResult: async (result: boolean) => {
-          this.modalService.close();
-          if (result) {
-            await firstValueFrom(this.service.deleteEntity(entity.id!))
+        formSubmit: async (data: { backupAccount: string }) => {
+          await firstValueFrom(this.service.deleteEntity(entity.id!, data.backupAccount))
             .then(response => {
               this.toastService.show(response.message!, 'success');
               this.allResource.reload();
             })
-            .catch(() => {})
-          }
+            .catch(() => {});
           this.modalService.close();
-        }
+        },
+        formCancel: () => this.modalService.close()
       }
     });
   };
@@ -135,7 +155,7 @@ export class AccountsComponent {
     this.modalService.open({
       component: ConfirmationComponent,
       inputs: {
-        message: $localize`:{@@deleteSelectedAccountsConfirmation}:Are you sure you want to delete the selected accounts?`,
+        message: $localize`:{@@deleteSelectedAccountsConfirmation}:Are you sure you want to delete the selected accounts? All transactions linked to these accounts will also be deleted.`,
       },
       outputs: {
         onResult: async (result: boolean) => {
@@ -155,9 +175,8 @@ export class AccountsComponent {
   }
 
   async handleSubmit(entity: Account) {
-    if (this.selected()) {
-      entity.id = this.selected()!.id;
-      await firstValueFrom(this.service.updateEntity(entity))
+    if (this.selected()?.id) {
+      await firstValueFrom(this.service.updateEntity(this.selected()!.id, entity))
       .then(response => {
         this.toastService.show(response.message!, 'success');
         this.allResource.reload();

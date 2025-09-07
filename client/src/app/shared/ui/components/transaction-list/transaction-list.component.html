@@ -1,0 +1,79 @@
+<div class="mb-5 flex flex-wrap gap-3">
+  <app-search class="w-60" (onSearch)="searchTerm.set($event)" />
+  <label class="input w-60">
+    <span i18n="@@fromDateLabel">From: </span>
+    <input #fromInput type="date" [value]="fromDate()" (input)="fromDate.set(fromInput.value)"/>
+    <span
+      [class.hidden]="!fromDate()"
+      [class.material-symbols-outlined]="fromDate()"
+      class="cursor-pointer"
+      (click)="fromDate.set(null)"
+    >
+      close
+    </span>
+  </label>
+  <label class="input w-60">
+    <span i18n="@@toDateLabel">To: </span>
+    <input #toInput type="date" [value]="toDate()" (input)="toDate.set(toInput.value)" />
+    <span
+      [class.hidden]="!toDate()"
+      [class.material-symbols-outlined]="toDate()"
+      class="cursor-pointer"
+      (click)="toDate.set(null)"
+    >
+      close
+    </span>
+  </label>
+  <div class="flex-1 hidden lg:block"></div>
+  <div class="flex gap-2">
+    <button (click)="toggleSortDirection()" class="btn btn-soft btn-secondary">
+      @if (sortDirection() === 'desc') {
+      <span class="material-symbols-outlined">sync_arrow_up</span>
+      } @else {
+      <span class="material-symbols-outlined">sync_arrow_down</span>
+      }
+    </button>
+    <button
+      type="button"
+      class="btn"
+      [class.btn-primary]="sortBy() === 'date'"
+      [class.btn-soft]="sortBy() !== 'date'"
+      (click)="sortBy.set('date')"
+      i18n="@@byDate">
+      By Date
+    </button>
+    <button
+      type="button"
+      class="btn"
+      [class.btn-primary]="sortBy() === 'amount'"
+      [class.btn-soft]="sortBy() !== 'amount'"
+      (click)="sortBy.set('amount')"
+      i18n="@@byAmount">
+      By Amount
+    </button>
+  </div>
+</div>
+@if(allResource.isLoading()) {
+<div class="flex justify-center items-center h-64">
+  <app-loading />
+</div>
+}
+<app-table
+  [data]="(allResource.value()?.content ?? [])"
+  [class.hidden]="allResource.isLoading() || accountsResource.value()?.content?.length === 0"
+  [config]="tableConfig"
+  (onEdit)="showForm($event)"
+  (onDelete)="handleDelete($event)"
+  (onDeleteSelection)="handleDeleteSelection($event)"
+/>
+@if (!accountsResource.isLoading() && accountsResource.value()?.content?.length === 0) {
+<div class="alert alert-info">
+  <span i18n="@@noAccountsMessage">No accounts found. Please add an account first.</span>
+</div>
+}
+
+<div>
+  <app-pagination
+    [pages]="allResource.value()?.totalPages ?? 0"
+  />
+</div>

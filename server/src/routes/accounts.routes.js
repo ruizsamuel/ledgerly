@@ -16,5 +16,3 @@ accountsRouter.get("/:id", auth, getAccountById);
 accountsRouter.post("/", auth, createAccount);
 accountsRouter.patch("/:id", auth, updateAccount);
 accountsRouter.delete("/:id", auth, deleteAccount);
-// TODO: Add getAll endpoint for admins, in patch and delete endpoints, allow admin to modify or delete any account
-// Or manage from same endpoints but checking if user is admin

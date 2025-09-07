@@ -30,7 +30,7 @@
         </th>
         }
         @for (field of config().fields; track field) {
-        <th>{{ config().labels?.[field] ?? [field] }}</th>
+        <th><span class="text-xs md:text-base">{{ config().labels?.[field] ?? [field] }}</span></th>
         }
 
         <th></th>
@@ -51,10 +51,10 @@
         }
         @for (field of config().fields; track field) {
         <td>
-          @if (config().avatars?.includes(field)) {
-          <div class="flex items-center gap-3">
+          <div class="flex items-center gap-2">
+            @if (config().avatars?.includes(field)) {
             <div class="avatar">
-              <div class="mask mask-squircle h-12 w-12">
+              <div class="mask mask-squircle h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12">
                 @if (config().fields.includes('image')) {
                 <img [src]="item['image']" />
                 } @else {
@@ -62,23 +62,21 @@
                 }
               </div>
             </div>
+            }
             <span
               [class.text-success]="config().colorFns?.[field]?.(item[field], item) === 'success'"
               [class.text-error]="config().colorFns?.[field]?.(item[field], item) === 'error'"
-              class="text-lg"
+              class="text-sm md:text-lg"
             >
+              @if(config().onClick?.[field]) {
+              <a (click)="config().onClick?.[field](item)" class="link link-hover">
+                {{ config().formatFns?.[field]?.(item[field], item) ?? item[field] }}
+              </a>
+              } @else {
               {{ config().formatFns?.[field]?.(item[field], item) ?? item[field] }}
+              }
             </span>
           </div>
-          } @else {
-          <span
-            [class.text-success]="config().colorFns?.[field]?.(item[field], item) === 'success'"
-            [class.text-error]="config().colorFns?.[field]?.(item[field], item) === 'error'"
-            class="text-lg"
-          >
-            {{ config().formatFns?.[field]?.(item[field], item) ?? item[field] }}
-          </span>
-          }
         </td>
         }
 
@@ -87,21 +85,21 @@
             <button class="btn btn-soft" (click)="onEdit.emit(item)">
               <span class="material-symbols-outlined">edit</span>
             </button>
-            <button class="btn btn-soft btn-error" (click)="onDelete.emit(item)">
+            <button class="btn btn-soft btn-error" (click)="onDelete.emit(item); this.selection.set([])">
               <span class="material-symbols-outlined">delete</span>
             </button>
           </div>
 
           <div class="md:hidden relative">
-            <button class="btn btn-soft"
+            <button class="btn btn-soft p-0 md:p-2"
               (click)="openId.set(openId() === item['id'] ? null : item['id'])">
               <span class="material-symbols-outlined">more_vert</span>
             </button>
 
             @if (openId() === item['id']) {
-            <div class="fixed flex flex-col mt-2 p-2 bg-base-300 rounded-lg shadow-lg">
+            <div class="absolute flex right-10 bottom-0 z-50 gap-2 mt-2 p-2 bg-base-300 rounded-lg shadow-lg">
               <button
-                class="btn mb-2 btn-soft"
+                class="btn btn-soft"
                 (click)="onEdit.emit(item); openId.set(null)"
               >
                 <span class="material-symbols-outlined text-base mr-2">edit</span>

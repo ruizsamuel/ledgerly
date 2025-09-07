@@ -1,64 +1,10 @@
 <div class="w-screen h-screen flex flex-col justify-center items-center">
   <app-logo class="mb-10" size="extralarge"/>
-  <form [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
-    <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
-      <legend class="fieldset-legend" i18n="@@createAdminUser">
-        Create Admin User
-      </legend>
-
-      <label for="email" class="label" i18n="@@email">Email</label>
-      <input
-        id="email"
-        type="email"
-        formControlName="email"
-        placeholder="Email"
-        i18n-placeholder="@@email"
-        class="input"
-      />
-       @if ( formUtils.isValidField( form, 'email') ) {
-        <div class="text-error">
-          <span>{{ formUtils.getFieldError(form, "email") }}</span>
-        </div>
-      }
-
-      <label for="name" class="label" i18n="@@fullName">Full Name</label>
-      <input
-        id="name"
-        type="text"
-        formControlName="name"
-        placeholder="Full Name"
-        i18n-placeholder="@@fullName"
-        class="input"
-      />
-       @if ( formUtils.isValidField( form, 'name') ) {
-        <div class="text-error">
-          <span>{{ formUtils.getFieldError(form, "name") }}</span>
-        </div>
-      }
-
-      <label for="password" class="label" i18n="@@password">Password</label>
-      <input
-        id="password"
-        type="password"
-        formControlName="password"
-        placeholder="Password"
-        i18n-placeholder="@@password"
-        class="input"
-      />
-      @if ( formUtils.isValidField( form, 'password') ) {
-        <div class="text-error">
-          <span>{{ formUtils.getFieldError(form, "password") }}</span>
-        </div>
-      }
-
-      <button
-        type="submit"
-        [disabled]="form.invalid"
-        class="btn btn-primary mt-4"
-        i18n="@@create"
-      >
-        Create
-      </button>
-    </fieldset>
-  </form>
+  <app-form
+    i18n-title="@@createAdminTitle"
+    [fields]="formFields"
+    title="Create Admin User"
+    (formSubmit)="onSubmit($event)"
+    [cancellable]="false"
+  ></app-form>
 </div>

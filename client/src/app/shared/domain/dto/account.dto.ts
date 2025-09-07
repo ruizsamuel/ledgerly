@@ -6,6 +6,5 @@ export interface NewAccountDTO {
 
 export interface UpdateAccountDTO {
   name?: string;
-  balance?: number;
   description?: string;
 }

@@ -1,4 +1,5 @@
 import { Account } from "../models/accounts.models.js";
+import { Transaction } from "../models/transactions.models.js";
 
 export const getUserAccounts = async (req, res) => {
   const userId = req.user.id;
@@ -64,6 +65,10 @@ export const createAccount = async (req, res) => {
       return res.status(400).json({ message: "Description must be less than 128 characters" });
     }
 
+    if (name.length > 64) {
+      return res.status(400).json({ message: "Name must be less than 64 characters" });
+    }
+
     const account = await Account.create({
       ...req.body,
       owner: userId
@@ -79,25 +84,18 @@ export const createAccount = async (req, res) => {
 export const updateAccount = async (req, res) => {
   const accountId = req.params.id;
   const userId = req.user.id;
-  const { balance, description } = req.body;
+  const { description, name } = req.body;
   try {
 
-    if (balance && isNaN(balance)) {
-      return res.status(400).json({ message: "Balance must be a number" });
-    }
+    req.body.balance = (await Account.findById(accountId)).balance;
+    req.body.owner = userId;
 
     if (description && description.length > 128) {
       return res.status(400).json({ message: "Description must be less than 128 characters" });
     }
 
-    if (req.user.isAdmin) {
-      const account = await Account.findByIdAndUpdate(
-        accountId,
-        req.body,
-        { new: true, runValidators: true }
-      );
-      if (!account) return res.status(404).json({ message: "Account not found" });
-      return res.status(200).json({ message: "Account updated", content: account });
+    if (name && name.length > 64) {
+      return res.status(400).json({ message: "Name must be less than 64 characters" });
     }
 
     const account = await Account.findOneAndUpdate(
@@ -118,17 +116,24 @@ export const updateAccount = async (req, res) => {
 export const deleteAccount = async (req, res) => {
   const accountId = req.params.id;
   const userId = req.user.id;
+  const { backupAccount } = req.query;
 
   try {
-    if (req.user.isAdmin) {
-      const account = await Account.findByIdAndDelete(accountId);
-      if (!account) return res.status(404).json({ message: "Account not found" });
-      return res.status(200).json({ message: "Account deleted" });
-    }
-
     const account = await Account.findOneAndDelete({ _id: accountId, owner: userId });
     if (!account) return res.status(404).json({ message: "Account not found" });
 
+    if (backupAccount && backupAccount !== '') {
+      await Transaction.updateMany(
+        { account: accountId },
+        { $set: { account: backupAccount } }
+      );
+      await Account.findByIdAndUpdate(
+        backupAccount,
+        { $inc: { balance: account.balance } }
+      );
+    } else {
+      await Transaction.deleteMany({ account: accountId });
+    }
     res.status(200).json({ message: "Account deleted" });
   } catch (err) {
     console.error(err);

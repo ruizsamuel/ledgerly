@@ -1,0 +1,65 @@
+<form [formGroup]="formGroup()" (ngSubmit)="onSubmit()" autocomplete="off">
+  <fieldset class="fieldset m-auto bg-base-200 border-base-300 rounded-box w-xs border p-5">
+    <span class="text-lg font-bold mb-4 block">
+      {{ title() }}
+    </span>
+    @if (description()) {
+    <span class="text-sm text-base-content/70 mb-4 block">
+      {{ description() }}
+    </span>
+    }
+    @for (field of fields(); track field.key) {
+    <label [for]="field.key" class="label">
+      {{ field.label }}
+      @if(field.optional) {
+      <span class="badge badge-neutral badge-xs" i18n="@@optionalLabel">Optional</span>
+      }
+    </label>
+      @if (field.select) {
+      <!-- TODO: CUSTOM SELECT COMPONENT WITH IMAGES -->
+      <select
+        [id]="field.key"
+        [formControlName]="field.key"
+        class="select"
+      >
+        @for(item of field.select.options; track $index){
+        <option [value]="item.value" >
+          {{ item.viewValue }}
+        </option>
+        }
+      </select>
+      } @else {
+      <input
+        [id]="field.key"
+        [type]="field.type"
+        [formControlName]="field.key"
+        [placeholder]="field.placeholder || field.label"
+        class="input"
+      />
+      }
+      @if (formUtils.isValidField(formGroup(), field.key)) {
+      <div class="text-error">
+        <span>{{ formUtils.getFieldError(formGroup(), field.key) }}</span>
+      </div>
+      }
+    }
+    <div class="form-actions flex justify-end mt-4">
+      @if (cancellable()) {
+      <button class="btn btn-error btn-soft me-1 flex-1/2" i18n="@@cancel" type="reset" (click)="onCancel()">
+        Cancel
+      </button>
+      }
+      <button
+        type="submit"
+        (click)="isLoading.set(true)"
+        [disabled]="formGroup().invalid || isLoading()"
+        class="btn btn-primary flex-1/2"
+      >
+        @if (isLoading()) {
+        <span class="loading loading-spinner loading-md me-2"></span>
+        }
+        {{ submitButtonText() }}
+      </button>
+    </div>
+  </fieldset>
+</form>

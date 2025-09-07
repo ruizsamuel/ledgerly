@@ -1,0 +1,57 @@
+@if(accountResource.isLoading()) {
+<div class="flex justify-center items-center h-64">
+  <app-loading />
+</div>
+}
+@else if(accountResource.error()) {
+<div role="alert" class="alert alert-error m-20">
+  <span class="text-danger" i18n="@@notFound">Not Found</span>
+</div>
+}
+@else {
+<div class="bg-base-200">
+  <div class="container justify-center items-center flex flex-col gap-5 mx-auto px-5 py-10">
+    <div class="flex flex-col gap-2">
+      <span class="text-5xl">{{accountResource.value()!.content.name}}</span>
+      <span class="text-center">{{accountResource.value()!.content.description}}</span>
+    </div>
+
+    <div class="stats bg-base-100 border-base-300 border">
+      <div class="stat">
+        <div class="stat-title">Account balance</div>
+        <div
+          class="stat-value">{{accountResource.value()!.content.balance | currency}}</div>
+        <div class="stat-actions">
+          <button class="btn btn-xs btn-primary p-3 me-2"><span class="material-symbols-outlined">add</span></button>
+          <button class="btn btn-xs btn-secondary p-3"><span class="material-symbols-outlined">compare_arrows</span></button>
+        </div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-title">This month</div>
+        <div class="stat-value">{{thisMonth() | currency}}</div>
+        <div class="stat-desc" [class.text-success]="overLastMonthRelative() >= 0" [class.text-error]="overLastMonthRelative() < 0">
+          @if (overLastMonthRelative() >= 0) {
+          ↗︎
+          } @else {
+          ↘︎
+          }
+          {{ overLastMonthTotal() }} ({{overLastMonthRelative() | percent }})</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="container mx-auto py-10 px-5">
+  <h2 class="text-4xl mb-5" i18n="@@transactions">Transactions</h2>
+
+  <a class="btn btn-soft btn-primary mb-5" [routerLink]="['/accounts']">
+    <span class="material-symbols-outlined">arrow_back</span>
+    <span i18n="@@backToAccounts">Back to Accounts</span>
+  </a>
+  <app-transaction-list
+    [accountId]="accountResource.value()!.content.id"
+    (change)="handleListChange()" />
+</div>
+}

@@ -17,20 +17,23 @@ import { ModalComponent } from './core/components/modal/modal.component';
     <app-toast />
     <app-modal />
     @if (loading()) {
-    <app-loading class="flex justify-center align-middle w-screen h-screen"/>
+      <app-loading class="flex justify-center align-middle w-screen h-screen"/>
     }
-    @if (!hasUsers()) {
-    <app-create-admin-page></app-create-admin-page>
-    }
-    @else if (authStatus() === 'checking') {
-    <app-loading class="flex justify-center align-middle w-screen h-screen"/>
-    }
-    @else if (authStatus() === 'unauthenticated') {
-    <app-login></app-login>
-    }
-    @else if (authStatus() === 'authenticated') {
-    <app-navbar/>
-    <router-outlet/>
+    @else {
+      @if (!hasUsers()) {
+        <app-create-admin-page></app-create-admin-page>
+      }
+      @else if (authStatus() === 'checking') {
+        <app-loading class="flex justify-center align-middle w-screen h-screen"/>
+      }
+      @else if (authStatus() === 'unauthenticated') {
+        <app-login></app-login>
+      }
+      @else if (authStatus() === 'authenticated') {
+        <app-navbar/>
+        <router-outlet />
+        <div class="lg:hidden mt-30"></div>
+      }
     }
   `
 })

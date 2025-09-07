@@ -1,10 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { Observable, of, tap } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { Response } from '../../core/types/response.model';
-import { Account, AccountBasic } from '../domain/models/accounts.model';
-import { NewAccountDTO } from '../domain/dto/account.dto';
+import { Account, AccountBasic } from '../domain/models/account.model';
+import { NewAccountDTO, UpdateAccountDTO } from '../domain/dto/account.dto';
 import { CacheService } from './cache.service';
 
 const ACCOUNTS_URL = environment.apiBaseUrl + '/accounts';
@@ -22,7 +22,7 @@ export class AccountService {
   private cacheService = inject(CacheService);
 
   getUserEntities(options: Options): Observable<Response<AccountBasic[]>> {
-    const { limit = 10, page = 1 } = options;
+    const { limit = 8, page = 1 } = options;
 
     const key = `${limit}-${page}`;
     return this.cacheService.getAccountsCache(key) ?? this.http.get<Response<Account[]>>(
@@ -43,21 +43,21 @@ export class AccountService {
   createEntity(account: NewAccountDTO): Observable<Response<Account>> {
     return this.http.post<Response<Account>>(ACCOUNTS_URL, account)
     .pipe(
-      tap(response => this.cacheService.setAccountCache(response.content!.id, response)),
+      tap(response => this.cacheService.setAccountCache(response.content.id, response)),
       tap(() => this.cacheService.clearAccountsCache())
     );
   }
 
-  updateEntity(account: Partial<Account>): Observable<Response<Account>> {
-    return this.http.patch<Response<Account>>(`${ACCOUNTS_URL}/${account.id}`, account)
+  updateEntity(id: string, account: UpdateAccountDTO): Observable<Response<Account>> {
+    return this.http.patch<Response<Account>>(`${ACCOUNTS_URL}/${id}`, account)
     .pipe(
-      tap(response => this.cacheService.setAccountCache(account.id!, response)),
+      tap(response => this.cacheService.setAccountCache(id, response)),
       tap(() => this.cacheService.clearAccountsCache())
     );
   }
 
-  deleteEntity(id: string): Observable<Response<null>> {
-    return this.http.delete<Response<null>>(`${ACCOUNTS_URL}/${id}`)
+  deleteEntity(id: string, backupAccount?: string): Observable<Response<null>> {
+    return this.http.delete<Response<null>>(`${ACCOUNTS_URL}/${id}`, { params: { backupAccount: backupAccount ?? '' } })
     .pipe(
       tap(() => this.cacheService.deleteAccountCache(id)),
       tap(() => this.cacheService.clearAccountsCache())

@@ -3,7 +3,7 @@ services:
     build:
       context: ./server
     environment:
-      - CORS_ORIGIN=${DOMAIN}
+      - CORS_ORIGIN=${DOMAIN}:4200
       - MONGO_HOST=mongo
       - MONGO_USERNAME=${MONGO_USERNAME}
       - MONGO_PASSWORD=${MONGO_PASSWORD}
