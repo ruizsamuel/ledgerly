@@ -6,22 +6,21 @@ import { Transaction, TransactionBasic } from "../../../domain/models/transactio
 import { rxResource } from "@angular/core/rxjs-interop";
 import { TransactionService } from "../../../service/transaction.service";
 import { PaginationService } from "../../../service/pagination.service";
-import { TableConfig } from "../../types/table-config.model";
 import { AccountService } from "../../../service/account.service";
 import { CurrencyPipe, DatePipe } from "@angular/common";
 import { ModalService } from "../../../service/modal.service";
 import { FormComponent } from "../form/form.component";
-import { FormField } from "../../types/form-field.model";
-import { Validators } from "@angular/forms";
 import { firstValueFrom } from "rxjs";
 import { PaginationComponent } from "../pagination/pagination.component";
 import { ConfirmationComponent } from "../confirmation/confirmation.component";
 import { ToastService } from "../../../service/toast.service";
+import { TransactionHelper } from "../../helpers/transaction.helper";
+import { RouterLink } from "@angular/router";
 
 @Component({
   selector: 'app-transaction-list',
   templateUrl: './transaction-list.component.html',
-  imports: [SearchComponent, LoadingComponent, TableComponent, PaginationComponent],
+  imports: [SearchComponent, LoadingComponent, TableComponent, PaginationComponent, RouterLink],
   providers: [CurrencyPipe, DatePipe],
 })
 export class TransactionListComponent {
@@ -34,6 +33,8 @@ export class TransactionListComponent {
 
   currencyPipe = inject(CurrencyPipe);
   datePipe = inject(DatePipe);
+
+  transactionHelper = TransactionHelper;
 
   accountId = input<string | null>(null);
 
@@ -72,67 +73,13 @@ export class TransactionListComponent {
     stream: () => this.accountService.getUserEntities({ limit: 0 })
   });
 
-  tableConfig: TableConfig<TransactionBasic> = {
-    fields: ['description', 'amount', 'date'],
-    labels: {
-      description: $localize`:{@@descriptionTableHeader}:Description`,
-      amount: $localize`:{@@amountTableHeader}:Amount`,
-      date: $localize`:{@@dateTableHeader}:Date`,
-    },
-    colorFns: {
-      amount: (value) => (value >= 0 ? 'success' : 'error'),
-    },
-    formatFns: {
-      amount: (value) => this.currencyPipe.transform(value) ?? '',
-      date: (value) => this.datePipe.transform(value, 'shortDate') ?? '',
-    }
-  };
-
-  formFields(entity: Transaction): FormField[] {
-    return [
-      {
-        key: 'description',
-        label: $localize`:{@@transactionDescriptionFieldLabel}:Transaction Description`,
-        placeholder: $localize`:{@@transactionDescriptionFieldPlaceholder}:Description`,
-        type: 'text',
-        value: entity.description,
-        validators: [Validators.required, Validators.maxLength(64)],
-      },
-      {
-        key: 'amount',
-        label: $localize`:{@@transactionAmountFieldLabel}:Transaction Amount`,
-        type: 'number',
-        value: entity.amount,
-        validators: [Validators.required],
-      },
-      {
-        key: 'account',
-        label: $localize`:{@@transactionAccountFieldLabel}:Account`,
-        type: 'text',
-        select: {
-          options: (this.accountsResource.value()?.content.map(account => ({ viewValue: account.name, value: account.id })) || []),
-          config: { avatars: true }
-        },
-        value: entity.account,
-        validators: [Validators.required],
-      },
-      {
-        key: 'date',
-        label: $localize`:{@@transactionDateFieldLabel}:Transaction Date`,
-        type: 'date',
-        value: entity.date.split('T')[0],
-        validators: [Validators.required],
-      },
-    ];
-  }
-
   async showForm(entity: TransactionBasic) {
     const t: Transaction = (await firstValueFrom(this.service.getEntityById(entity.id))).content;
     this.modalService.open({
       component: FormComponent,
       inputs: {
         title: this.formTitle,
-        fields: this.formFields(t),
+        fields: this.transactionHelper.createEditForm(t, this.accountsResource.value()?.content || []),
       },
       outputs: {
         formSubmit: (data: Transaction) => { data.id = t.id; this.handleSubmit(data) },
@@ -155,7 +102,7 @@ export class TransactionListComponent {
           if (result) {
             await firstValueFrom(this.service.deleteEntity(entity.id!))
             .then(response => {
-              this.toastService.show(response.message!, 'success');
+              this.toastService.show(response.message, 'success');
               this.change.emit();
               this.allResource.reload();
             })
@@ -194,7 +141,7 @@ export class TransactionListComponent {
   async handleSubmit(entity: Transaction) {
     await firstValueFrom(this.service.updateEntity(entity.id, entity))
     .then(response => {
-      this.toastService.show(response.message!, 'success');
+      this.toastService.show(response.message, 'success');
       this.change.emit();
       this.allResource.reload();
     })

@@ -1,7 +1,7 @@
 import { Component, effect, inject, input, output, signal } from "@angular/core";
 import { FormUtils } from "../../../../core/utils/form.utils";
 import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
-import { FormField } from "../../types/form-field.model";
+import { FormConfig } from "../../types/form-config.model";
 
 @Component({
   selector: 'app-form',
@@ -14,7 +14,7 @@ export class FormComponent<T> {
 
   formUtils = FormUtils;
 
-  fields = input.required<FormField[]>();
+  fields = input.required<FormConfig>();
   title = input.required<string>();
   submitButtonText = input<string>('Submit');
   description = input<string | null>(null);

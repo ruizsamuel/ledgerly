@@ -61,7 +61,7 @@
 <app-table
   [data]="(allResource.value()?.content ?? [])"
   [class.hidden]="allResource.isLoading() || accountsResource.value()?.content?.length === 0"
-  [config]="tableConfig"
+  [config]="transactionHelper.table(this.currencyPipe, this.datePipe)"
   (onEdit)="showForm($event)"
   (onDelete)="handleDelete($event)"
   (onDeleteSelection)="handleDeleteSelection($event)"
@@ -69,6 +69,9 @@
 @if (!accountsResource.isLoading() && accountsResource.value()?.content?.length === 0) {
 <div class="alert alert-info">
   <span i18n="@@noAccountsMessage">No accounts found. Please add an account first.</span>
+</div>
+<div class="mt-5 w-full flex justify-center">
+  <a routerLink="/accounts" i18n="@@accountPage" class="btn btn-primary">Go to Accounts</a>
 </div>
 }
 

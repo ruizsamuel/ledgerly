@@ -8,3 +8,11 @@ export interface TransactionBasic {
   description: string;
   date: string;
 }
+
+export interface Transfer {
+  fromAccount: string;
+  toAccount: string;
+  amount: number;
+  description: string;
+  date: string;
+}

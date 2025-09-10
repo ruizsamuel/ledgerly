@@ -1,4 +1,4 @@
-export interface FormField {
+interface FormField {
   key: string;
   label: string;
   type: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'date' | 'datetime-local';
@@ -9,3 +9,4 @@ export interface FormField {
   select?: {options: { value: string; viewValue: string }[], config?: { avatars: boolean }};
   optional?: boolean
 }
+export type FormConfig = FormField[]

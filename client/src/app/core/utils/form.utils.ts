@@ -18,6 +18,9 @@ export class FormUtils {
 
         case 'valuesMismatch':
           return $localize`:{@@valuesMismatch}:Values do not match`;
+
+        case 'valuesEqual':
+          return $localize`:{@@valuesEqual}:Values must be different`;
       }
     }
 
@@ -68,6 +71,22 @@ export class FormUtils {
       const thisValue = control.value;
 
       return otherValue === thisValue ? null : { valuesMismatch: true };
+    };
+  }
+
+  static fieldNotEqualValidator(otherFieldName: string): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+
+      const parent = control.parent;
+
+      if (!parent || !(parent instanceof FormGroup)) {
+        return null;
+      }
+
+      const otherValue = parent.get(otherFieldName)?.value;
+      const thisValue = control.value;
+
+      return otherValue !== thisValue ? null : { valuesEqual: true };
     };
   }
 }

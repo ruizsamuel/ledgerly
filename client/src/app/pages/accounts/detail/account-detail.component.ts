@@ -6,6 +6,13 @@ import { TransactionListComponent } from "../../../shared/ui/components/transact
 import { LoadingComponent } from "../../../shared/ui/components/loading/loading.component";
 import { CurrencyPipe, PercentPipe } from "@angular/common";
 import { TransactionService } from "../../../shared/service/transaction.service";
+import { ModalService } from "../../../shared/service/modal.service";
+import { FormComponent } from "../../../shared/ui/components/form/form.component";
+import { TransactionHelper } from "../../../shared/ui/helpers/transaction.helper";
+import { firstValueFrom } from "rxjs";
+import { Transaction, Transfer } from "../../../shared/domain/models/transaction.model";
+import { ToastService } from "../../../shared/service/toast.service";
+import { TransactionUtils } from "../../../shared/domain/utils/transaction.utils";
 
 @Component({
   selector: 'app-account-detail',
@@ -16,6 +23,12 @@ export class AccountDetailComponent {
   private activatedRoute = inject(ActivatedRoute);
   private accountService = inject(AccountService);
   private transactionService = inject(TransactionService);
+  private modalService = inject(ModalService);
+  private toastService = inject(ToastService);
+
+  private transactionUtils = TransactionUtils;
+
+  private transactionHelper = TransactionHelper;
 
   private accountId = this.activatedRoute.snapshot.params['id'];
 
@@ -76,5 +89,53 @@ export class AccountDetailComponent {
     this.accountResource.reload();
     this.thisMontResource.reload();
     this.lastMontResource.reload();
+  }
+
+  async handleAddTransaction() {
+    const accounts = (await (firstValueFrom(this.accountService.getUserEntities({ limit: 0 })))).content;
+    this.modalService.open({
+      component: FormComponent<Transaction>,
+      inputs: {
+        title: $localize`:{@@createTransactionTitle}:Create Transaction`,
+        fields: this.transactionHelper.createEditForm({account: this.accountId} as Transaction, accounts)
+      },
+      outputs: {
+        formSubmit: (data: Transaction) => {
+          firstValueFrom(this.transactionService.createEntity(data))
+            .then((res) => {
+              this.toastService.show(res.message, 'success');
+              this.modalService.close();
+              this.handleListChange();
+            });
+        },
+        formCancel: () => {
+          this.modalService.close();
+        }
+      }
+    });
+  }
+
+  async handleTransfer() {
+    const accounts = (await (firstValueFrom(this.accountService.getUserEntities({ limit: 0 })))).content;
+    this.modalService.open({
+      component: FormComponent<Transfer>,
+      inputs: {
+        title: $localize`:{@@createTransactionTitle}:Create Transaction`,
+        fields:this.transactionHelper.transferForm(accounts, this.accountId)
+      },
+      outputs: {
+        formSubmit: (data: Transfer) => {
+          const transactions = this.transactionUtils.transactionsFromTransfer(data);
+          Promise.all(transactions.map(transaction => firstValueFrom(this.transactionService.createEntity(transaction))))
+            .then(() => {
+              this.toastService.show($localize`:{@@transferCreatedToast}:Transfer created`, 'success');
+              this.modalService.close();
+              this.handleListChange();
+            });
+        },
+        formCancel: () => {
+        }
+      }
+    });
   }
 }

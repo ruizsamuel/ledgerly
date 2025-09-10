@@ -4,8 +4,7 @@ import { User } from "../domain/models/user.model";
 import { Response } from "../../core/types/response.model";
 import { catchError, map, Observable, of } from "rxjs";
 import { HttpClient } from "@angular/common/http";
-import { LoginDTO } from "../domain/dto/login.dto";
-import { NewUserDTO } from "../domain/dto/user.dto";
+import { LoginDTO, RegisterDTO } from "../domain/dto/auth.dto";
 import { ToastService } from "./toast.service";
 
 type AuthStatus = 'authenticated' | 'unauthenticated' | 'checking';
@@ -49,7 +48,7 @@ export class AuthService {
       );
   }
 
-  register(newUser: NewUserDTO): Observable<boolean> {
+  register(newUser: RegisterDTO): Observable<boolean> {
     return this.http.post<Response<User>>(`${AUTH_URL}/register`, newUser)
       .pipe(
         map(res => {

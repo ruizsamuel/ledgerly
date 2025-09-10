@@ -5,9 +5,13 @@
 
 <div class="container mx-auto py-10 px-5">
   <div class="mb-5">
-    <button class="btn btn-primary" [disabled]="accountsResource.value()?.content?.length === 0" (click)="showForm()">
+    <button class="btn btn-primary" [disabled]="(accountsResource.value()?.content ?? []).length === 0" (click)="showForm()">
+      @if (formLoading()) {
+      <span class="loading loading-spinner"></span>
+      } @else {
       <span class="material-symbols-outlined">add</span>
-      <span i18n="@@addTransaction">Add Transaction</span>
+      }
+      <span i18n="@@addTransaction"> Add Transaction </span>
     </button>
   </div>
 

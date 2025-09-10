@@ -19,6 +19,7 @@ export class TableComponent<T extends Record<string, any>> {
   onEdit = output<T>();
   onDelete = output<T>();
   onDeleteSelection = output<T[]>();
+  onElementClick = output<T>();
 
   onCheckboxChange(item: T) {
     const current = this.selection();
