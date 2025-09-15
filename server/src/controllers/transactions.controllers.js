@@ -18,7 +18,7 @@ export const getUserTransactions = async (req, res) => {
     if (isNaN(page) || isNaN(limit) || page < 1) {
       return res
         .status(400)
-        .json({ message: "Page and limit must be positive numbers" });
+        .json({ message: req.__("common.paginationPositiveInteger") });
     }
 
     const filters = { owner: userId };
@@ -56,7 +56,7 @@ export const getUserTransactions = async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Server error or invalid data" });
+    res.status(500).json({ message: req.__("common.serverError") });
   }
 }
 
@@ -66,12 +66,12 @@ export const getTransactionById = async (req, res) => {
 
   try {
     const transaction = await Transaction.findOne({ _id: transactionId, owner: userId });
-    if (!transaction) return res.status(404).json({ message: "Transaction not found" });
+    if (!transaction) return res.status(404).json({ message: req.__("controller.transaction.notFound") });
 
     res.status(200).json({ content: transaction });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Server error or invalid data" });
+    res.status(500).json({ message: req.__("common.serverError") });
   }
 }
 
@@ -81,15 +81,15 @@ export const createTransaction = async (req, res) => {
 
   try {
     if (!description || !account) {
-      return res.status(400).json({ message: "Description, amount and account are required" });
+      return res.status(400).json({ message: req.__("controller.transaction.requiredFields") });
     }
 
     if (isNaN(amount)) {
-      return res.status(400).json({ message: "Amount must be a number" });
+      return res.status(400).json({ message: req.__("controller.transaction.amountNumberError") });
     }
 
     if (date && isNaN(Date.parse(date))) {
-      return res.status(400).json({ message: "Date must be a valid date" });
+      return res.status(400).json({ message: req.__("controller.transaction.dateFormatError") });
     }
 
     if(!date) {
@@ -97,7 +97,7 @@ export const createTransaction = async (req, res) => {
     }
 
     if (description.length > 64) {
-      return res.status(400).json({ message: "Description must be less than 64 characters" });
+      return res.status(400).json({ message: req.__("controller.transaction.descriptionLengthError") });
     }
 
     const transaction = await Transaction.create({
@@ -107,10 +107,10 @@ export const createTransaction = async (req, res) => {
 
     await Account.findByIdAndUpdate(account, { $inc: { balance: amount } }).exec();
 
-    res.status(201).json({ message: "Transaction registered", content: transaction });
+    res.status(201).json({ message: req.__("controller.transaction.createdSuccess"), content: transaction });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Server error or invalid data" });
+    res.status(500).json({ message: req.__("common.serverError") } );
   }
 }
 
@@ -123,15 +123,15 @@ export const updateTransaction = async (req, res) => {
     req.body.owner = userId;
 
     if (amount && isNaN(amount)) {
-      return res.status(400).json({ message: "Amount must be a number" });
+      return res.status(400).json({ message: req.__("controller.transaction.amountNumberError") });
     }
 
     if (date && isNaN(Date.parse(date))) {
-      return res.status(400).json({ message: "Date must be a valid date" });
+      return res.status(400).json({ message: req.__("controller.transaction.dateFormatError") });
     }
 
     if (description && description.length > 64) {
-      return res.status(400).json({ message: "Description must be less than 64 characters" });
+      return res.status(400).json({ message: req.__("controller.transaction.descriptionLengthError") });
     }
 
     let previousAccountId = null;
@@ -139,7 +139,7 @@ export const updateTransaction = async (req, res) => {
       const accountExists = await Account.findOne({ _id: account, owner: userId });
       previousAccountId = (await Transaction.findOne({ _id: transactionId, owner: userId })).account.toString();
       if (!accountExists) {
-        return res.status(400).json({ message: "Account does not exist" });
+        return res.status(400).json({ message: req.__("controller.transaction.accountNotFound") } );
       }
     }
 
@@ -147,7 +147,7 @@ export const updateTransaction = async (req, res) => {
 
     if (amount) {
       const oldTransaction = await Transaction.findOne({ _id: transactionId, owner: userId });
-      if (!oldTransaction) return res.status(404).json({ message: "Transaction not found" });
+      if (!oldTransaction) return res.status(404).json({ message: req.__("controller.transaction.notFound") });
 
       difference = amount - oldTransaction.amount;
     }
@@ -158,7 +158,7 @@ export const updateTransaction = async (req, res) => {
       { new: true, runValidators: true }
     );
 
-    if (!transaction) return res.status(404).json({ message: "Transaction not found" });
+    if (!transaction) return res.status(404).json({ message: req.__("controller.transaction.notFound") });
 
     if (account && account !== previousAccountId) {
       await Account.findByIdAndUpdate(previousAccountId, { $inc: { balance: -transaction.amount } }).exec();
@@ -169,10 +169,10 @@ export const updateTransaction = async (req, res) => {
       await Account.findByIdAndUpdate(transaction.account, { $inc: { balance: difference } }).exec();
     }
 
-    res.status(200).json({ message: "Transaction updated", content: transaction });
+    res.status(200).json({ message: req.__("controller.transaction.updatedSuccess"), content: transaction });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Server error or invalid data" });
+    res.status(500).json({ message: req.__("common.serverError") } );
   }
 }
 
@@ -182,13 +182,13 @@ export const deleteTransaction = async (req, res) => {
 
   try {
     const transaction = await Transaction.findOneAndDelete({ _id: transactionId, owner: userId });
-    if (!transaction) return res.status(404).json({ message: "Transaction not found" });
+    if (!transaction) return res.status(404).json({ message: req.__("controller.transaction.notFound") });
 
     await Account.findByIdAndUpdate(transaction.account, { $inc: { balance: -transaction.amount } }).exec();
 
-    res.status(200).json({ message: "Transaction deleted" });
+    res.status(200).json({ message: req.__("controller.transaction.deletedSuccess") });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Server error or invalid data" });
+    res.status(500).json({ message: req.__("common.serverError") } );
   }
 }

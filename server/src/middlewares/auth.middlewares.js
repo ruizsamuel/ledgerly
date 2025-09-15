@@ -5,7 +5,7 @@ export const auth = async (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
 
   if (!token) {
-    return res.status(401).json({ message: "No token provided." });
+    return res.status(401).json({ message: req.__("middleware.auth.noTokenProvided") });
   }
 
   try {
@@ -13,19 +13,19 @@ export const auth = async (req, res, next) => {
     const user = await User.findById(decoded.id);
 
     if (!user) {
-      return res.status(401).json({ message: "User not found." });
+      return res.status(401).json({ message: req.__("middleware.auth.userNotFound") });
     }
 
     req.user = user;
     next();
   } catch (err) {
-    return res.status(401).json({ message: "Invalid token." });
+    return res.status(401).json({ message: req.__("middleware.auth.invalidToken") } );
   }
 };
 
 export const admin = (req, res, next) => {
   if (!req.user?.isAdmin) {
-    return res.status(403).json({ message: "Admin access required." });
+    return res.status(403).json({ message: req.__("middleware.auth.adminOnly") });
   }
   next();
 };

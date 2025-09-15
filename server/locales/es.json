@@ -1,0 +1,15 @@
+{
+  "middleware": {
+    "auth": {
+      "noTokenProvided": "No se proporcionó token"
+    }
+  },
+  "controller": {
+    "auth": {
+      "invalidCredentials": "Credenciales inválidas"
+    },
+    "account": {
+      "initialBalance": "Balance inicial"
+    }
+  }
+}

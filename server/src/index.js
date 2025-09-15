@@ -1,6 +1,7 @@
 import express, { json } from "express";
 import cors  from "cors";
 import { connectDB } from "./config/database.config.js";
+import { initTranslate } from "./config/translate.config.js";
 import { authRouter } from "./routes/auth.routes.js";
 import { settingsRouter } from "./routes/settings.routes.js";
 import { usersRouter } from "./routes/users.routes.js";
@@ -15,6 +16,7 @@ app.use(cors({
 }));
 
 connectDB();
+initTranslate(app);
 
 const PORT = 5000;
 

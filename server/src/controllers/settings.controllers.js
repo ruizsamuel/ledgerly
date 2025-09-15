@@ -18,8 +18,8 @@ export const updateSettings = async (req, res) => {
       await Settings.create({ allowUserRegistration });
     }
 
-    res.status(200).json({ message: "Settings updated successfully", content: { allowUserRegistration } });
+    res.status(200).json({ message: req.__("common.updatedSuccess"), content: { allowUserRegistration } });
   } catch (err) {
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: req.__("common.serverError") });
   }
 }

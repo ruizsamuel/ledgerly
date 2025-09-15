@@ -17,7 +17,7 @@ import { TransactionUtils } from "../../../shared/domain/utils/transaction.utils
 @Component({
   selector: 'app-account-detail',
   templateUrl: './account-detail.component.html',
-  imports: [TransactionListComponent, LoadingComponent, RouterLink, CurrencyPipe, PercentPipe],
+  imports: [TransactionListComponent, LoadingComponent, RouterLink, CurrencyPipe, PercentPipe ],
 })
 export class AccountDetailComponent {
   private activatedRoute = inject(ActivatedRoute);
@@ -134,6 +134,7 @@ export class AccountDetailComponent {
             });
         },
         formCancel: () => {
+          this.modalService.close();
         }
       }
     });

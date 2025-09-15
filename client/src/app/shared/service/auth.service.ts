@@ -34,6 +34,7 @@ export class AuthService {
   user = computed(() => this._user());
 
   login(loginData: LoginDTO): Observable<boolean> {
+    this._authStatus.set('checking');
     return this.http.post<Response<User>>(`${AUTH_URL}/login`, loginData)
       .pipe(
         map(res => {
@@ -49,6 +50,7 @@ export class AuthService {
   }
 
   register(newUser: RegisterDTO): Observable<boolean> {
+    this._authStatus.set('checking');
     return this.http.post<Response<User>>(`${AUTH_URL}/register`, newUser)
       .pipe(
         map(res => {

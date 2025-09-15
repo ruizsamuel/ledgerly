@@ -9,15 +9,15 @@ export const createUser = async (req, res) => {
   try {
 
     if (!name || !email || !password) {
-      return res.status(400).json({ message: "Name, email, and password are required" });
+      return res.status(400).json({ message: req.__( "controller.user.requiredFields" ) });
     }
 
     if (password.length < PASSWORD_MIN_LENGTH) {
-      return res.status(400).json({ message: `Password must be at least ${PASSWORD_MIN_LENGTH} characters long`});
+      return res.status(400).json({ message: `${req.__("controller.auth.passwordLengthError")}: ${PASSWORD_MIN_LENGTH}` });
     }
 
     const existing = await User.findOne({ email });
-    if (existing) return res.status(400).json({ message: "User already exists" });
+    if (existing) return res.status(400).json({ message: req.__("controller.auth.emailInUse") });
 
     const salt = await genSalt(10);
     req.body.password = await hash(password, salt);
@@ -27,10 +27,10 @@ export const createUser = async (req, res) => {
       isAdmin: false
     });
 
-    res.status(201).json({ message: "User created", content: {user}});
+    res.status(201).json({ message: req.__("controller.user.createdSuccess"), content: {user}});
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Server error or invalid data" });
+    res.status(500).json({ message: req.__("common.serverError") });
   }
 }
 

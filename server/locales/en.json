@@ -1,0 +1,58 @@
+{
+  "middleware": {
+    "auth": {
+      "noTokenProvided": "No token provided",
+      "userNotFound": "User not found",
+      "invalidToken": "Invalid token",
+      "adminOnly": "Admin access required"
+    }
+  },
+  "controller": {
+    "account": {
+      "requiredFields": "Name and balance are required",
+      "balanceNumberError": "Balance must be a number",
+      "descriptionLengthError": "Description must be less than 128 characters",
+      "nameLengthError": "Name must be less than 64 characters",
+      "createdSuccess": "Account created",
+      "updatedSuccess": "Account updated",
+      "deletedSuccess": "Account deleted",
+      "notFound": "Account not found",
+      "initilBalance": "Initial balance"
+    },
+    "transaction": {
+      "requiredFields": "Description, amount and account are required",
+      "amountNumberError": "Amount be a number",
+      "dateFormatError": "Date must be a valid date",
+      "descriptionLengthError": "Description must be less than 64 characters",
+      "createdSuccess": "Transaction registered",
+      "updatedSuccess": "Transaction updated",
+      "deletedSuccess": "Transaction deleted",
+      "accountNotFound": "Account does not exist",
+      "notFound": "Transaction not found"
+    },
+    "user": {
+      "requiredFields": "Name, email and password are required",
+      "createdSuccess": "User created"
+    },
+    "auth": {
+      "missingCredentials": "Email, name and password are required",
+      "invalidCredentials": "Invalid email or password",
+      "registrationDisabled": "User registration is disabled",
+      "emailInUse": "Email is already in use",
+      "passwordLengthError": "Password length must be at least",
+      "registeredSuccess": "User registered successfully",
+      "loginSuccess": "Login successful",
+      "authenticated": "User is authenticated",
+      "missingChangePassword": "Current and new password are required",
+      "userNotFound": "User not found",
+      "incorrectPassword": "Current password is incorrect",
+      "passwordChanged": "Password changed successfully"
+    }
+  },
+  "common": {
+    "paginationPositiveInteger": "Pagination parameters must be positive integers",
+    "serverError": "Internal server error or invalid data",
+    "updatedSuccess": "Updated successfully"
+  }
+}
+

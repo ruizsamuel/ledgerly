@@ -7,7 +7,7 @@ export const getUserAccounts = async (req, res) => {
 
   try {
     if (isNaN(page) || isNaN(limit) || page < 1) {
-      return res.status(400).json({ message: "Page and limit must be positive numbers" });
+      return res.status(400).json({ message: req.__("common.paginationPositiveInteger") });
     }
 
     let query = Account.find({ owner: userId }).select("-description");
@@ -29,7 +29,7 @@ export const getUserAccounts = async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Server error or invalid data" });
+    res.status(500).json({ message: req.__("common.serverError") });
   }
 }
 
@@ -44,7 +44,7 @@ export const getAccountById = async (req, res) => {
     res.status(200).json({ content: account });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Server error or invalid data" });
+    res.status(500).json({ message: req.__("common.serverError") });
   }
 }
 
@@ -54,19 +54,19 @@ export const createAccount = async (req, res) => {
 
   try {
     if (!name || balance === undefined || isNaN(balance)) {
-      return res.status(400).json({ message: "Name and balance are required" });
+      return res.status(400).json({ message: req.__("controller.account.requiredFields") });
     }
 
     if (isNaN(balance)) {
-      return res.status(400).json({ message: "Balance must be a number" });
+      return res.status(400).json({ message: req.__("controller.account.balanceNumber") });
     }
 
     if (description && description.length > 128) {
-      return res.status(400).json({ message: "Description must be less than 128 characters" });
+      return res.status(400).json({ message: req.__("controller.account.descriptionLengthError") });
     }
 
     if (name.length > 64) {
-      return res.status(400).json({ message: "Name must be less than 64 characters" });
+      return res.status(400).json({ message: req.__("controller.account.nameLengthError") });
     }
 
     const account = await Account.create({
@@ -74,10 +74,20 @@ export const createAccount = async (req, res) => {
       owner: userId
     });
 
-    res.status(201).json({ message: "Account created", content: account });
+    if (balance && balance != 0) {
+      await Transaction.create({
+        account: account._id,
+        amount: balance,
+        owner: userId,
+        date: new Date(),
+        description: req.__("controller.account.initialBalance")
+      });
+    }
+
+    res.status(201).json({ message: req.__("controller.account.createdSuccess"), content: account });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Server error or invalid data" });
+    res.status(500).json({ message: req.__("common.serverError") });
   }
 }
 
@@ -91,11 +101,11 @@ export const updateAccount = async (req, res) => {
     req.body.owner = userId;
 
     if (description && description.length > 128) {
-      return res.status(400).json({ message: "Description must be less than 128 characters" });
+      return res.status(400).json({ message: req.__("controller.account.descriptionLengthError") });
     }
 
     if (name && name.length > 64) {
-      return res.status(400).json({ message: "Name must be less than 64 characters" });
+      return res.status(400).json({ message: req.__("controller.account.nameLengthError") });
     }
 
     const account = await Account.findOneAndUpdate(
@@ -104,12 +114,12 @@ export const updateAccount = async (req, res) => {
       { new: true, runValidators: true }
     );
 
-    if (!account) return res.status(404).json({ message: "Account not found" });
+    if (!account) return res.status(404).json({ message: req.__("controller.account.notFound") });
 
-    res.status(200).json({ message: "Account updated", content: account });
+    res.status(200).json({ message: req.__("controller.account.updatedSuccess"), content: account });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Server error or invalid data" });
+    res.status(500).json({ message: req.__("common.serverError") });
   }
 }
 
@@ -120,7 +130,7 @@ export const deleteAccount = async (req, res) => {
 
   try {
     const account = await Account.findOneAndDelete({ _id: accountId, owner: userId });
-    if (!account) return res.status(404).json({ message: "Account not found" });
+    if (!account) return res.status(404).json({ message: req.__("controller.account.notFound") });
 
     if (backupAccount && backupAccount !== '') {
       await Transaction.updateMany(
@@ -134,9 +144,9 @@ export const deleteAccount = async (req, res) => {
     } else {
       await Transaction.deleteMany({ account: accountId });
     }
-    res.status(200).json({ message: "Account deleted" });
+    res.status(200).json({ message: req.__("controller.account.deletedSuccess") });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Server error or invalid data" });
+    res.status(500).json({ message: req.__("common.serverError") });
   }
 }

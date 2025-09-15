@@ -2,7 +2,7 @@ import {
   HttpInterceptorFn,
   HttpErrorResponse
 } from '@angular/common/http';
-import { catchError, of } from 'rxjs';
+import { catchError } from 'rxjs';
 import { inject } from '@angular/core';
 import { ToastService } from '../../shared/service/toast.service';
 
@@ -12,7 +12,7 @@ export const responseInterceptor: HttpInterceptorFn = (req, next) => {
 
     catchError((error: HttpErrorResponse) => {
       if (error.error?.message) {
-        toastService.show(error.error?.message, 'error');
+        toastService.show(`Error ${error.error?.status ?? '(Unknown)'}: ${error.error?.message}`, 'error');
       }
       throw error;
     })

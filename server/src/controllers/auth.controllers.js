@@ -1,25 +1,25 @@
-import { createToken, PASSWORD_MIN_LENGTH } from "../utils/auth.utils.js";
 import { compare, genSalt, hash } from "bcrypt";
 
 import { User } from "../models/users.models.js"
 import { Settings } from "../models/settings.models.js"
+import { createToken, PASSWORD_MIN_LENGTH } from "../utils/auth.utils.js";
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
     const user = await  User.findOne({ email }).select("+password");
-    if (!user) return res.status(400).json({ message: "Invalid credentials" });
+    if (!user) return res.status(400).json({ message: req.__("controller.auth.invalidCredentials") });
 
     const match = await compare(password, user.password);
-    if (!match) return res.status(400).json({ message: "Invalid credentials" });
+    if (!match) return res.status(400).json({ message: req.__("controller.auth.invalidCredentials") });
 
     const token = createToken({ id: user._id });
 
-    res.status(201).json({ message: "Logged In", content: { ...user.toJSON(), token } });
+    res.status(201).json({ message: req.__("controller.auth.loginSuccess") , content: { ...user.toJSON(), token } });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: req.__("common.serverError") });
   }
 }
 
@@ -33,20 +33,20 @@ export const register = async (req, res) => {
       if (userCount > 0) {
         const settings = await Settings.findOne();
         if (!settings?.allowUserRegistration) {
-          return res.status(403).json({ message: "User registration is currently disabled." });
+          return res.status(403).json({ message: req.__("controller.auth.registrationDisabled") });
         }
       }
 
     if (!name || !email || !password) {
-      return res.status(400).json({ message: "Name, email, and password are required" });
+      return res.status(400).json({ message: req.__("controller.auth.missingCredentials") });
     }
 
     if (password.length < PASSWORD_MIN_LENGTH) {
-      return res.status(400).json({ message: `Password must be at least ${PASSWORD_MIN_LENGTH} characters long`});
+      return res.status(400).json({ message: `${req.__("controller.auth.passwordMinLength")}: ${PASSWORD_MIN_LENGTH}`});
     }
 
     const existing = await User.findOne({ email });
-    if (existing) return res.status(400).json({ message: "User already exists" });
+    if (existing) return res.status(400).json({ message: req.__("controller.auth.emailInUse") });
 
     const salt = await genSalt(10);
     const hashedPassword = await hash(password, salt);
@@ -64,16 +64,16 @@ export const register = async (req, res) => {
       await Settings.create({ allowUserRegistration: false });
     }
 
-    res.status(201).json({ message: "User created", content: {...user.toJSON(), token} });
+    res.status(201).json({ message: req.__("controller.auth.registeredSuccess"), content: {...user.toJSON(), token} });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Server error or invalid data" });
+    res.status(500).json({ message: req.__("common.serverError") });
   }
 }
 
 export const getUser = async (req, res) => {
   const user = req.user;
-  res.status(200).json({message:"User is authenticated", content: user});
+  res.status(200).json({ message: req.__("controller.auth.authenticated"), content: user });
 }
 
 export const changePassword = async (req, res) => {
@@ -81,21 +81,21 @@ export const changePassword = async (req, res) => {
     const { currentPassword, newPassword } = req.body;
 
     if (!currentPassword || !newPassword) {
-      return res.status(400).json({ message: "Current and new password are required." });
+      return res.status(400).json({ message: req.__("controller.auth.missingChangePassword") });
     }
 
     const user = await User.findById(req.user._id);
     if (!user) {
-      return res.status(404).json({ message: "User not found." });
+      return res.status(404).json({ message: req.__("controller.auth.userNotFound") });
     }
 
     const isMatch = await compare(currentPassword, user.password);
     if (!isMatch) {
-      return res.status(401).json({ message: "Incorrect current password." });
+      return res.status(401).json({ message: req.__("controller.auth.incorrectPassword") });
     }
 
     if (newPassword.length < PASSWORD_MIN_LENGTH) {
-      return res.status(400).json({ message: `New password must be at least ${PASSWORD_MIN_LENGTH} characters length.` })
+      return res.status(400).json({ message: `${req.__("controller.auth.passwordMinLength")}: ${PASSWORD_MIN_LENGTH}` })
     }
 
     const salt = await genSalt(10);
@@ -103,9 +103,9 @@ export const changePassword = async (req, res) => {
 
     await user.save();
 
-    res.status(204).json({ message: "Password updated successfully." });
+    res.status(204).json({ message: req.__("controller.auth.passwordChanged") });
   } catch (err) {
-    console.error("Password change error:", err);
-    res.status(500).json({ message: "Server error." });
+    console.error(err);
+    res.status(500).json({ message: req.__("common.serverError") });
   }
 }
