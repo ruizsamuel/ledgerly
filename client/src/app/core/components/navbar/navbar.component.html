@@ -79,28 +79,28 @@
   </div>
 </div>
 <div class="dock dock-xl flex lg:hidden">
-  <a routerLink="/" routerLinkActive="dock-active" [routerLinkActiveOptions]="{exact: true}">
+  <a routerLink="/dashboard" routerLinkActive="text-primary" [routerLinkActiveOptions]="{exact: true}">
     <span class="material-symbols-outlined">
       space_dashboard
     </span>
     <span class="dock-label mb-1" i18n="@@dashboard">Dashboard</span>
   </a>
 
-  <a routerLink="/accounts" routerLinkActive="dock-active">
+  <a routerLink="/accounts" routerLinkActive="text-primary">
     <span class="material-symbols-outlined">
       account_balance_wallet
     </span>
     <span class="dock-label mb-1" i18n="@@accounts">Accounts</span>
   </a>
 
-  <a routerLink="/transactions" routerLinkActive="dock-active">
+  <a routerLink="/transactions" routerLinkActive="text-primary">
     <span class="material-symbols-outlined">
       sync_alt
     </span>
     <span class="dock-label mb-1" i18n="@@transactions">Transactions</span>
   </a>
 
-  <a routerLink="/reports" routerLinkActive="dock-active">
+  <a routerLink="/reports" routerLinkActive="text-primary">
     <span class="material-symbols-outlined">
       analytics
     </span>
@@ -108,7 +108,7 @@
   </a>
 
   @if (authService.user()?.isAdmin) {
-  <a routerLink="/reports" routerLinkActive="dock-active">
+  <a routerLink="/admin" routerLinkActive="text-primary">
     <span class="material-symbols-outlined">
       manage_accounts
     </span>

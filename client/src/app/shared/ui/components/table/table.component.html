@@ -20,7 +20,7 @@
   <table class="table">
     <thead>
       <tr>
-        @if (selectable()) {
+        @if (config().selectable ?? true) {
         <th>
           <input
             type="checkbox"
@@ -29,18 +29,19 @@
             class="checkbox checkbox-primary" />
         </th>
         }
-        @for (field of config().fields; track field) {
+        @for (field of config().fields; track $index) {
         <th><span class="text-xs md:text-base">{{ config().labels?.[field] ?? [field] }}</span></th>
         }
-
+        @if (config().actions ?? true) {
         <th></th>
+        }
       </tr>
     </thead>
 
     <tbody>
-      @for (item of data(); track item) {
+      @for (item of data(); track $index) {
       <tr class="cursor-pointer hover:bg-base-200" (click)="onElementClick.emit(item)">
-        @if (selectable()) {
+        @if (config().selectable ?? true) {
         <th>
           <input
             type="checkbox"
@@ -49,7 +50,7 @@
             class="checkbox checkbox-primary" />
         </th>
         }
-        @for (field of config().fields; track field) {
+        @for (field of config().fields; track $index) {
         <td>
           <div class="flex items-center gap-2">
             @if (config().avatars?.includes(field)) {
@@ -66,14 +67,26 @@
             <span
               [class.text-success]="config().colorFns?.[field]?.(item[field], item) === 'success'"
               [class.text-error]="config().colorFns?.[field]?.(item[field], item) === 'error'"
+              [class.text-primary]="config().colorFns?.[field]?.(item[field], item) === 'primary'"
+              [class.text-secondary]="config().colorFns?.[field]?.(item[field], item) === 'secondary'"
+              [class.text-accent]="config().colorFns?.[field]?.(item[field], item) === 'accent'"
               class="text-sm md:text-lg"
             >
-              {{ config().formatFns?.[field]?.(item[field], item) ?? item[field] }}
+              @if (config().formats?.[field] === 'date') {
+              {{ item[field] | date:"MMM dd yyyy, HH:mm" }}
+              } @else if (config().formats?.[field] === 'currency') {
+              {{ item[field] | currency }}
+              } @else if (config().formats?.[field] === 'percent') {
+              {{ item[field] | percent }}
+              } @else {
+              {{ item[field] }}
+              }
             </span>
           </div>
         </td>
         }
 
+        @if (config().actions ?? true) {
         <td class="flex justify-end gap-2 relative">
           <div class="hidden md:flex gap-2">
             <button class="btn btn-soft" (click)="$event.stopPropagation(); onEdit.emit(item)">
@@ -113,6 +126,7 @@
           </div>
         </td>
         }
+      }
     </tbody>
     <!--
     <tfoot>

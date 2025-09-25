@@ -38,16 +38,10 @@ import { ModalComponent } from './core/components/modal/modal.component';
   `
 })
 export class AppComponent implements OnInit {
-  // TODO: Dashboard
-  // TODO: Change Password
-  // TODO: Informes
-  // TODO: Demo
-
   private userService = inject(UserService);
   private authService = inject(AuthService);
 
   loading = signal<boolean>(true);
-
 
   authStatus = this.authService.authStatus;
   hasUsers = this.userService.hasUsers;

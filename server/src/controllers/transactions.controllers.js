@@ -92,7 +92,9 @@ export const createTransaction = async (req, res) => {
       return res.status(400).json({ message: req.__("controller.transaction.dateFormatError") });
     }
 
-    if(!date) {
+    if (date) {
+      req.body.date = new Date(new Date(date).setHours(new Date().getHours(), new Date().getMinutes(), new Date().getSeconds(), new Date().getMilliseconds()));
+    } else {
       req.body.date = new Date();
     }
 

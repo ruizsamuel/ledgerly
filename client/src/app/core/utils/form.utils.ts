@@ -21,6 +21,7 @@ export class FormUtils {
 
         case 'valuesEqual':
           return $localize`:{@@valuesEqual}:Values must be different`;
+        //TODO: Add min case
       }
     }
 

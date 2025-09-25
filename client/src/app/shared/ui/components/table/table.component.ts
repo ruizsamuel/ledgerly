@@ -1,17 +1,17 @@
 import { Component, input, output, signal } from '@angular/core';
 import { TableConfig } from '../../types/table-config.model';
 import { AvatarPipe } from "../../pipes/avatar.pipe";
+import { CurrencyPipe, DatePipe, PercentPipe } from '@angular/common';
 
 @Component({
   selector: 'app-table',
   standalone: true,
   templateUrl: './table.component.html',
-  imports: [AvatarPipe],
+  imports: [AvatarPipe, CurrencyPipe, DatePipe, PercentPipe],
 })
 export class TableComponent<T extends Record<string, any>> {
   data = input.required<T[]>();
   config = input.required<TableConfig<T>>();
-  selectable = input<boolean>(true);
 
   protected selection = signal<T[]>([]);
   protected openId = signal<number | null>(null);

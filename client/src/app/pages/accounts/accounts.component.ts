@@ -1,26 +1,24 @@
 import { Component, computed, inject, signal } from "@angular/core";
+import { Router } from "@angular/router";
+import { rxResource } from "@angular/core/rxjs-interop";
+import { firstValueFrom } from "rxjs";
 import { PageTitleComponent } from "../../shared/ui/components/page-title/page-title.component";
 import { TableComponent } from "../../shared/ui/components/table/table.component";
-import { CurrencyPipe } from "@angular/common";
 import { FormComponent } from "../../shared/ui/components/form/form.component";
 import { Account, AccountBasic } from "../../shared/domain/models/account.model";
-import { firstValueFrom } from "rxjs";
 import { AccountService } from "../../shared/service/account.service";
-import { rxResource } from "@angular/core/rxjs-interop";
 import { LoadingComponent } from "../../shared/ui/components/loading/loading.component";
 import { ToastService } from "../../shared/service/toast.service";
 import { PaginationService } from "../../shared/service/pagination.service";
 import { PaginationComponent } from "../../shared/ui/components/pagination/pagination.component";
 import { ModalService } from "../../shared/service/modal.service";
 import { ConfirmationComponent } from "../../shared/ui/components/confirmation/confirmation.component";
-import { Router } from "@angular/router";
 import { AccountHelper } from "../../shared/ui/helpers/account.helper";
 
 @Component({
   selector: 'app-accounts',
   templateUrl: './accounts.component.html',
   imports: [PageTitleComponent, TableComponent, LoadingComponent, PaginationComponent],
-  providers: [CurrencyPipe],
 })
 export class AccountsComponent {
   service = inject(AccountService);
@@ -29,8 +27,6 @@ export class AccountsComponent {
   modalService = inject(ModalService);
   router = inject(Router);
 
-  currencyPipe = inject(CurrencyPipe);
-
   accountHelper = AccountHelper;
 
   formTitle = computed(() => this.selected() ? $localize`:{@@editAccountTitle}:Edit Account` : $localize`:{@@createAccountTitle}:Create Account`);
@@ -38,7 +34,8 @@ export class AccountsComponent {
   selected = signal<Account | null>(null);
 
   pageTitle = $localize`:{@@accountsPageTitle}:Accounts`;
-  pageDescription = $localize`:{@@accountsPageDescription}:Manage your accounts, view balances, and perform actions like edit or delete. Click on an account to see detailed transactions linked to it.`;
+  pageDescription = $localize`:{@@accountsPageDescription}:Manage your accounts,
+    view balances, and perform actions like edit or delete. Click on an account to see detailed transactions linked to it.`;
 
   allResource = rxResource({
     params: () => ({ page: this.paginationService.currentPage() }),
@@ -73,7 +70,8 @@ export class AccountsComponent {
       component: FormComponent<{ backupAccountId: string }>,
       inputs: {
         title: $localize`:{@@deleteAccountTitle}:Backup and Delete Account`,
-        description: $localize`:{@@deleteAccountDescription}:Please select a backup account to transfer all transactions linked to this account before deletion. If no backup account is selected, all linked transactions will be deleted along with the account.`,
+        description: $localize`:{@@deleteAccountDescription}:Please select a backup account to transfer all transactions
+          linked to this account before deletion. If no backup account is selected, ALL LINKED TRANSACTIONS WILL BE DELETED! This action cannot be undone.`,
         fields: this.accountHelper.deleteForm(entity.id, this.allResource.value()?.content || []),
       },
       outputs: {
@@ -95,7 +93,8 @@ export class AccountsComponent {
     this.modalService.open({
       component: ConfirmationComponent,
       inputs: {
-        message: $localize`:{@@deleteSelectedAccountsConfirmation}:Are you sure you want to delete the selected accounts? All transactions linked to these accounts will also be deleted.`,
+        message: $localize`:{@@deleteSelectedAccountsConfirmation}:Are you sure you want to delete the selected accounts?
+          ALL TRANSACTIONS LINKED TO THESE ACCOUNTS WILL ALSO BE DELETED! This action cannot be undone.`,
       },
       outputs: {
         onResult: async (result: boolean) => {

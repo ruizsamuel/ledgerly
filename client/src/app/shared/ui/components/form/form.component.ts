@@ -16,6 +16,7 @@ export class FormComponent<T> {
 
   fields = input.required<FormConfig>();
   title = input.required<string>();
+
   submitButtonText = input<string>('Submit');
   description = input<string | null>(null);
   cancellable = input<boolean>(true);

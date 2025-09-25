@@ -1,0 +1,14 @@
+@if (chartOptions() !== {}) {
+<apx-chart
+  [series]="chartOptions().series!"
+  [chart]="chartOptions().chart!"
+  [dataLabels]="chartOptions().dataLabels!"
+  [stroke]="chartOptions().stroke!"
+  [xaxis]="chartOptions().xaxis!"
+  [fill]="chartOptions().fill!"
+  [yaxis]="chartOptions().yaxis!"
+  [grid]="chartOptions().grid!"
+  [colors]="chartOptions().colors!"
+  [theme]="chartOptions().theme ?? { mode: 'light' }">
+</apx-chart>
+}

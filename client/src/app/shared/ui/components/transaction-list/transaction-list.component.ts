@@ -7,7 +7,6 @@ import { rxResource } from "@angular/core/rxjs-interop";
 import { TransactionService } from "../../../service/transaction.service";
 import { PaginationService } from "../../../service/pagination.service";
 import { AccountService } from "../../../service/account.service";
-import { CurrencyPipe, DatePipe } from "@angular/common";
 import { ModalService } from "../../../service/modal.service";
 import { FormComponent } from "../form/form.component";
 import { firstValueFrom } from "rxjs";
@@ -21,7 +20,6 @@ import { RouterLink } from "@angular/router";
   selector: 'app-transaction-list',
   templateUrl: './transaction-list.component.html',
   imports: [SearchComponent, LoadingComponent, TableComponent, PaginationComponent, RouterLink],
-  providers: [CurrencyPipe, DatePipe],
 })
 export class TransactionListComponent {
 
@@ -30,9 +28,6 @@ export class TransactionListComponent {
   accountService = inject(AccountService);
   modalService = inject(ModalService);
   toastService = inject(ToastService);
-
-  currencyPipe = inject(CurrencyPipe);
-  datePipe = inject(DatePipe);
 
   transactionHelper = TransactionHelper;
 

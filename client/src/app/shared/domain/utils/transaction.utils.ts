@@ -1,4 +1,4 @@
-import { Transaction, Transfer } from "../models/transaction.model";
+import { Expense, Income, Transaction, Transfer } from "../models/transaction.model";
 
 export class TransactionUtils {
   static transactionsFromTransfer(transfer: Transfer): Transaction[] {
@@ -17,5 +17,13 @@ export class TransactionUtils {
     } as Transaction;
 
     return [transactionFrom, transactionTo];
+  }
+
+  static transactionFromIncome(income: Income): Transaction {
+    return income as Transaction;
+  }
+
+  static transactionFromExpense(expense: Expense): Transaction {
+    return { ...expense, amount: -Math.abs(expense.amount) } as Transaction;
   }
 }

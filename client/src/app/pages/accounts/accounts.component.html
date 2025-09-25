@@ -18,7 +18,7 @@
   <app-table
     [data]="allResource.value()?.content ?? []"
     [class.hidden]="allResource.isLoading()"
-    [config]="accountHelper.table(this.currencyPipe)"
+    [config]="accountHelper.table()"
     (onEdit)="showForm($event)"
     (onDelete)="handleDelete($event)"
     (onDeleteSelection)="handleDeleteSelection($event)"

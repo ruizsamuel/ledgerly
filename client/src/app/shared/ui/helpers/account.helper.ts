@@ -2,11 +2,10 @@ import { Validators } from "@angular/forms";
 import { Account, AccountBasic } from "../../domain/models/account.model";
 import { FormConfig } from "../types/form-config.model";
 import { TableConfig } from "../types/table-config.model";
-import { CurrencyPipe } from "@angular/common";
 
 export class AccountHelper {
 
-  static table(currencyPipe: CurrencyPipe): TableConfig<AccountBasic> {
+  static table(): TableConfig<AccountBasic> {
     return {
       fields: ['name', 'balance'],
       labels: {
@@ -17,8 +16,8 @@ export class AccountHelper {
       colorFns: {
         balance: (value) => (value >= 0 ? 'success' : 'error'),
       },
-      formatFns: {
-        balance: (value) => currencyPipe.transform(value) ?? '',
+      formats: {
+        balance: 'currency',
       },
     };
   }

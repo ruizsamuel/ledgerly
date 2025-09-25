@@ -16,3 +16,6 @@ export interface Transfer {
   description: string;
   date: string;
 }
+
+export type Income = Transaction;
+export type Expense = Transaction;
