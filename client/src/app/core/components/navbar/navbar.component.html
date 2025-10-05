@@ -3,14 +3,15 @@
     <a routerLink="/" class="btn btn-ghost flex lg:hidden">
       <app-logo size="large"></app-logo>
     </a>
-    <div class="dropdown m-0 p-0 hidden lg:flex">
-      <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
+    <div class="dropdown m-0 p-0 hidden lg:flex" >
+      <div class="btn btn-ghost btn-circle" (click)="showMenu.set(true)">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" /> </svg>
       </div>
       <ul
-        tabindex="0"
-        class="menu menu-sm m-0 absolute left-0 h-screen dropdown-content bg-base-100 rounded-box z-1 w-70 shadow">
-        <li class="mb-2">
+        class="menu menu-sm m-0 absolute left-0 h-[calc(100dvh-2em)] bg-base-300/90 rounded-box z-1 w-70 shadow"
+        [class.hidden]="!showMenu()"
+        >
+        <li class="mb-2" (click)="showMenu.set(false)">
           <a routerLink="/dashboard" routerLinkActive="text-primary" [routerLinkActiveOptions]="{exact: true}">
             <span class="material-symbols-outlined">
               space_dashboard
@@ -18,7 +19,7 @@
             <span class="text-lg" i18n="@@dashboard">Dashboard</span>
           </a>
         </li>
-        <li class="mb-2">
+        <li class="mb-2" (click)="showMenu.set(false)">
           <a routerLink="/accounts" routerLinkActive="text-primary">
             <span class="material-symbols-outlined">
               account_balance_wallet
@@ -26,7 +27,7 @@
             <span class="text-lg" i18n="@@accounts">Accounts</span>
           </a>
         </li>
-       <li class="mb-2">
+       <li class="mb-2" (click)="showMenu.set(false)">
           <a routerLink="/transactions" routerLinkActive="text-primary">
             <span class="material-symbols-outlined">
               sync_alt
@@ -34,7 +35,7 @@
             <span class="text-lg" i18n="@@transactions">Transactions</span>
           </a>
         </li>
-       <li class="mb-2">
+        <li class="mb-2" (click)="showMenu.set(false)">
           <a routerLink="/reports" routerLinkActive="text-primary">
             <span class="material-symbols-outlined">
               analytics
@@ -43,7 +44,7 @@
           </a>
         </li>
         @if (authService.user()?.isAdmin) {
-        <li class="mb-2">
+        <li class="mb-2") (click)="showMenu.set(false)">
           <a routerLink="/admin" routerLinkActive="text-primary">
             <span class="material-symbols-outlined">
               manage_accounts
@@ -62,17 +63,17 @@
   </div>
   <div class="navbar-end">
     <div class="dropdown dropdown-end me-4">
-      <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+      <div class="btn btn-ghost btn-circle avatar" (click)="showProfileMenu.set(!showProfileMenu())">
         <div class="w-10 rounded-full">
           <img
             [src]="authService.user()?.name ?? '' | avatar" />
         </div>
       </div>
       <ul
-        tabindex="0"
-        class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
-        <li><a class="text-lg" i18n="@@profile">Profile</a></li>
-        <li><a class="text-lg" i18n="@@settings">Settings</a></li>
+        [class.hidden]="!showProfileMenu()"
+        class="menu menu-sm absolute top-8 right-4 bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
+        <li><a class="text-lg" (click)="showProfileMenu.set(false); handleChangeProfile()" i18n="@@profile">Profile</a></li>
+        <li><a class="text-lg" (click)="showProfileMenu.set(false); handleChangePassword()" i18n="@@changePassword">Change Password</a></li>
         <li><a (click)="authService.logout()" class="text-lg" i18n="@@logout">Logout</a></li>
       </ul>
     </div>

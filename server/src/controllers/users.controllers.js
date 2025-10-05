@@ -34,6 +34,11 @@ export const createUser = async (req, res) => {
   }
 }
 
+export const getUser = async (req, res) => {
+  const user = req.user;
+  res.status(200).json({ message: req.__("controller.auth.authenticated"), content: user });
+}
+
 export const hasUsers = async (_req, res) => {
   const userCount = await User.countDocuments();
   res.status(200).json({ content: userCount > 0 });

@@ -113,7 +113,7 @@ export class AccountDetailComponent {
       }
     });
   }
-  // TODO: Botón de añadir
+
   async handleTransfer() {
     const accounts = (await (firstValueFrom(this.accountService.getUserEntities({ limit: 0 })))).content;
     this.modalService.open({

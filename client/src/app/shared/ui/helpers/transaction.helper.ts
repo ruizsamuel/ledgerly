@@ -119,7 +119,7 @@ export class TransactionHelper {
         key: 'date',
         label: $localize`:{@@transactionDateFieldLabel}:Transaction Date`,
         type: 'date',
-        value: transaction?.date.split('T')[0] ?? new Date().toISOString().split('T')[0],
+        value: transaction?.date?.split('T')[0] ?? new Date().toISOString().split('T')[0],
         validators: [Validators.required],
       },
     ];

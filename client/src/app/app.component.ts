@@ -4,15 +4,15 @@ import { UserService } from './shared/service/user.service';
 import { AuthService } from './shared/service/auth.service';
 import { CreateAdminPageComponent } from './core/components/create-admin/create-admin.component';
 import { LoadingComponent } from './shared/ui/components/loading/loading.component';
-import { LoginComponent } from "./core/components/login/login.component";
-import { NavbarComponent } from "./core/components/navbar/navbar.component";
-import { ToastComponent } from "./core/components/toast/toast.component";
+import { LoginComponent } from './core/components/login/login.component';
+import { ToastComponent } from './core/components/toast/toast.component';
 import { ModalComponent } from './core/components/modal/modal.component';
+import { NavbarComponent } from './core/components/navbar/navbar.component';
 
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, CreateAdminPageComponent, LoadingComponent, LoginComponent, NavbarComponent, ToastComponent, ModalComponent],
+  imports: [CreateAdminPageComponent, LoadingComponent, LoginComponent, ToastComponent, ModalComponent, RouterOutlet, NavbarComponent],
   template: `
     <app-toast />
     <app-modal />

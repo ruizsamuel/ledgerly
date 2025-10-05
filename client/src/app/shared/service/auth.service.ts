@@ -4,12 +4,13 @@ import { User } from "../domain/models/user.model";
 import { Response } from "../../core/types/response.model";
 import { catchError, map, Observable, of } from "rxjs";
 import { HttpClient } from "@angular/common/http";
-import { LoginDTO, RegisterDTO } from "../domain/dto/auth.dto";
+import { ChangePasswordDTO, LoginDTO, RegisterDTO } from "../domain/dto/auth.dto";
 import { ToastService } from "./toast.service";
 
 type AuthStatus = 'authenticated' | 'unauthenticated' | 'checking';
 
 const AUTH_URL = environment.apiBaseUrl + '/auth';
+const USERS_URL = environment.apiBaseUrl + '/users';
 
 @Injectable({
   providedIn: 'root'
@@ -74,7 +75,7 @@ export class AuthService {
     const parsedUser: User = JSON.parse(user);
     this._user.set(parsedUser);
 
-    return this.http.get<Response<User>>(`${AUTH_URL}/me`)
+    return this.http.get<Response<User>>(`${USERS_URL}/me`)
       .pipe(
         map(res => {
           if (res.content) {
@@ -91,6 +92,10 @@ export class AuthService {
           return this.handleAuthError()
         })
       );
+  }
+
+  changePassword(data: ChangePasswordDTO): Observable<Response<null>> {
+    return this.http.patch<Response<null>>(`${AUTH_URL}/change-password`, data);
   }
 
   private handleAuthSuccess(user: User) {

@@ -60,4 +60,33 @@ export class AuthHelper {
       }
     ];
   }
+
+  static changePasswordForm(): FormConfig {
+    return [
+      {
+        key: 'currentPassword',
+        value: '',
+        label: $localize`:{@@currentPassword}:Current Password`,
+        placeholder: $localize`:{@@currentPassword}:Current Password`,
+        type: 'password',
+        validators: [Validators.required]
+      },
+      {
+        key: 'newPassword',
+        value: '',
+        label: $localize`:{@@newPassword}:New Password`,
+        placeholder: $localize`:{@@newPassword}:New Password`,
+        type: 'password',
+        validators: [Validators.required, Validators.minLength(8)]
+      },
+      {
+        key: 'confirmNewPassword',
+        value: '',
+        label: $localize`:{@@confirmNewPassword}:Confirm New Password`,
+        placeholder: $localize`:{@@confirmNewPassword}:Confirm New Password`,
+        type: 'password',
+        validators: [Validators.required, FormUtils.fieldMatchValidator('newPassword')]
+      }
+    ];
+  }
 }

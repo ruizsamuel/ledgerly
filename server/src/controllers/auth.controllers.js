@@ -71,11 +71,6 @@ export const register = async (req, res) => {
   }
 }
 
-export const getUser = async (req, res) => {
-  const user = req.user;
-  res.status(200).json({ message: req.__("controller.auth.authenticated"), content: user });
-}
-
 export const changePassword = async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;
@@ -84,7 +79,7 @@ export const changePassword = async (req, res) => {
       return res.status(400).json({ message: req.__("controller.auth.missingChangePassword") });
     }
 
-    const user = await User.findById(req.user._id);
+    const user = await User.findById(req.user.id).select("+password");
     if (!user) {
       return res.status(404).json({ message: req.__("controller.auth.userNotFound") });
     }
@@ -103,7 +98,7 @@ export const changePassword = async (req, res) => {
 
     await user.save();
 
-    res.status(204).json({ message: req.__("controller.auth.passwordChanged") });
+    res.status(200).json({ message: req.__("controller.auth.passwordChanged") });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: req.__("common.serverError") });

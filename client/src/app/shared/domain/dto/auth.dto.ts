@@ -9,3 +9,8 @@ export interface RegisterDTO {
   password: string;
   confirmPassword: string;
 }
+
+export interface ChangePasswordDTO {
+  currentPassword: string;
+  newPassword: string;
+}
