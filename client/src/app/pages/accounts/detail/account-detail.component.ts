@@ -96,7 +96,8 @@ export class AccountDetailComponent {
       component: FormComponent<Transaction>,
       inputs: {
         title: $localize`:{@@createTransactionTitle}:Create Transaction`,
-        fields: this.transactionHelper.createEditForm({account: this.accountId} as Transaction, accounts)
+        fields: this.transactionHelper.createEditForm({account: this.accountId} as Transaction, accounts),
+        submitButtonText: $localize`:{@@createButton}:Create`
       },
       outputs: {
         formSubmit: (data: Transaction) => {
@@ -120,7 +121,8 @@ export class AccountDetailComponent {
       component: FormComponent<Transfer>,
       inputs: {
         title: $localize`:{@@createTransactionTitle}:Create Transaction`,
-        fields:this.transactionHelper.transferForm(accounts, this.accountId)
+        fields:this.transactionHelper.transferForm(accounts, this.accountId),
+        submitButtonText: $localize`:{@@createButton}:Create`
       },
       outputs: {
         formSubmit: (data: Transfer) => {

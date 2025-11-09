@@ -38,6 +38,12 @@ export class FormComponent<T> {
       });
       this.formGroup.set(this.fb.group(group));
     });
+
+    effect(() => {
+      if (this.isLoading()) {
+        setTimeout(() => this.isLoading.set(false), 2500);
+      }
+    });
   }
 
   onSubmit(): void {

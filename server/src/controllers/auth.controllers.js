@@ -2,7 +2,7 @@ import { compare, genSalt, hash } from "bcrypt";
 
 import { User } from "../models/users.models.js"
 import { Settings } from "../models/settings.models.js"
-import { createToken, PASSWORD_MIN_LENGTH } from "../utils/auth.utils.js";
+import { createToken, PASSWORD_MIN_LENGTH, verifyToken } from "../utils/auth.utils.js";
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
@@ -14,9 +14,19 @@ export const login = async (req, res) => {
     const match = await compare(password, user.password);
     if (!match) return res.status(400).json({ message: req.__("controller.auth.invalidCredentials") });
 
-    const token = createToken({ id: user._id });
+    const token = createToken({ id: user._id }, { expiresIn: "15m" });
 
-    res.status(201).json({ message: req.__("controller.auth.loginSuccess") , content: { ...user.toJSON(), token } });
+    const refresh = createToken({ id: user._id });
+
+    res.cookie("refreshToken", refresh, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+      path: "/api/auth/refresh",
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    });
+
+    res.status(201).json({ message: req.__("controller.auth.loginSuccess") , content: { token } });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: req.__("common.serverError") });
@@ -58,17 +68,54 @@ export const register = async (req, res) => {
       isAdmin: userCount === 0
     });
 
-    const token = createToken({ id: user._id });
+    const token = createToken({ id: user._id }, { expiresIn: "15m" });
+
+    const refresh = createToken({ id: user._id });
+
+    res.cookie("refreshToken", refresh, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+      path: "/api/auth/refresh",
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    });
 
     if (user.isAdmin && !Settings.findOne()) {
       await Settings.create({ allowUserRegistration: false });
     }
 
-    res.status(201).json({ message: req.__("controller.auth.registeredSuccess"), content: {...user.toJSON(), token} });
+    res.status(201).json({ message: req.__("controller.auth.registeredSuccess"), content: { token } });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: req.__("common.serverError") });
   }
+}
+
+export const refresh = async (req, res) => {
+  const token = req.cookies?.refreshToken;
+
+  if (!token) return res.status(401).json({ message: req.__("controller.auth.noTokenProvided") });
+
+  try {
+    const payload = verifyToken(token);
+
+    const newAccessToken = createToken( { id: payload.id }, { expiresIn: "15m" } );
+
+    res.json({ content: { token: newAccessToken } });
+  } catch (err) {
+    return res.status(403).json({ message: req.__("controller.auth.sessionExpired") });
+  }
+}
+
+export const logout = (req, res) => {
+  res.clearCookie("refreshToken", {
+    path: "/api/auth/refresh",
+    sameSite: "strict",
+    secure: true,
+    httpOnly: true,
+  });
+
+  res.json({ message: req.__("controller.auth.logoutSuccess") });
 }
 
 export const changePassword = async (req, res) => {

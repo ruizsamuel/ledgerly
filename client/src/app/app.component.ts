@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { UserService } from './shared/service/user.service';
 import { AuthService } from './shared/service/auth.service';
@@ -41,13 +41,12 @@ export class AppComponent implements OnInit {
   private userService = inject(UserService);
   private authService = inject(AuthService);
 
-  loading = signal<boolean>(true);
-
   authStatus = this.authService.authStatus;
   hasUsers = this.userService.hasUsers;
 
-  async ngOnInit() {
-    await this.userService.checkHasUsers();
-    this.loading.set(false);
+  loading = computed(() => this.hasUsers() === null);
+
+  ngOnInit() {
+    this.userService.checkHasUsers();
   }
 }

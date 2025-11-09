@@ -19,6 +19,10 @@ export const routes: Routes = [
         loadChildren: () => import('./pages/transactions/transactions.routes').then(r => r.TRANSACTIONS_ROUTES)
       },
       {
+        path: 'reports',
+        loadChildren: () => import('./pages/reports/reports.routes').then(r => r.REPORTS_ROUTES)
+      },
+      {
         path: '**',
         redirectTo: 'dashboard'
       }

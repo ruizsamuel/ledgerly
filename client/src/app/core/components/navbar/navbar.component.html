@@ -44,7 +44,7 @@
           </a>
         </li>
         @if (authService.user()?.isAdmin) {
-        <li class="mb-2") (click)="showMenu.set(false)">
+        <li class="mb-2" (click)="showMenu.set(false)">
           <a routerLink="/admin" routerLinkActive="text-primary">
             <span class="material-symbols-outlined">
               manage_accounts

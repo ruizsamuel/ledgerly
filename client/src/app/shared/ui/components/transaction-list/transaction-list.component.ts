@@ -75,6 +75,7 @@ export class TransactionListComponent {
       inputs: {
         title: this.formTitle,
         fields: this.transactionHelper.createEditForm(t, this.accountsResource.value()?.content || []),
+        submitButtonText: $localize`:{@@updateButton}:Update`
       },
       outputs: {
         formSubmit: (data: Transaction) => { data.id = t.id; this.handleSubmit(data) },
@@ -90,6 +91,7 @@ export class TransactionListComponent {
       component: ConfirmationComponent,
       inputs: {
         message: $localize`:{@@deleteTransactionConfirmation}:Are you sure you want to delete the transaction?`,
+        submitButtonText: $localize`:{@@deleteButton}:Delete`
       },
       outputs: {
         onResult: async (result: boolean) => {
@@ -114,6 +116,7 @@ export class TransactionListComponent {
       component: ConfirmationComponent,
       inputs: {
         message: $localize`:{@@deleteSelectedTransactionsConfirmation}:Are you sure you want to delete the selected transactions?`,
+        submitButtonText: $localize`:{@@deleteButton}:Delete`
       },
       outputs: {
         onResult: async (result: boolean) => {

@@ -2,12 +2,9 @@ import { Component, computed, inject, signal } from "@angular/core";
 import { LogoComponent } from "../../../shared/ui/components/logo/logo.component";
 import { FormUtils } from "../../utils/form.utils";
 import { AuthService } from "../../../shared/service/auth.service";
-import { firstValueFrom } from "rxjs";
-import { ToastService } from "../../../shared/service/toast.service";
 import { FormComponent } from "../../../shared/ui/components/form/form.component";
 import { LoginDTO, RegisterDTO } from "../../../shared/domain/dto/auth.dto";
 import { AuthHelper } from "../../../shared/ui/helpers/auth.helper";
-import { Router } from "@angular/router";
 
 @Component({
   selector: 'app-login',
@@ -17,8 +14,6 @@ import { Router } from "@angular/router";
 export class LoginComponent {
 
   private authService = inject(AuthService);
-  private toastService = inject(ToastService);
-  private router = inject(Router);
 
   private authHelper = AuthHelper;
 
@@ -38,17 +33,10 @@ export class LoginComponent {
   }
 
   onLoginSubmit(data: LoginDTO) {
-    firstValueFrom(this.authService.login(data))
-      .then(res => {
-        if (res) this.toastService.show($localize`:{@@loginSuccess}: Login successful`, 'success')
-        this.router.navigate(['/dashboard']);
-      });
+    this.authService.login(data)
   }
+
   onRegisterSubmit(data: RegisterDTO) {
-    firstValueFrom(this.authService.register(data))
-      .then(res => {
-        if (res) this.toastService.show($localize`:{@@registerSuccess}: Registration successful`, 'success')
-        this.router.navigate(['/dashboard']);
-      });
+    this.authService.register(data)
   }
 }

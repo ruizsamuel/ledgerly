@@ -45,6 +45,7 @@ export class TransactionsComponent {
       inputs: {
         title: this.formTitle,
         fields: this.transactionHelper.createEditForm(null, this.accountsResource.value()?.content || []),
+        submitButtonText: $localize`:{@@createButton}:Create`
       },
       outputs: {
         formSubmit: (data: Transaction) => this.handleSubmit(data),

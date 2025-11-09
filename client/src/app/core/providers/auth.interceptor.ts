@@ -3,7 +3,7 @@ import { inject } from '@angular/core';
 import { AuthService } from '../../shared/service/auth.service';
 
 export function authInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn) {
-  const token = inject(AuthService).user()?.token;
+  const token = inject(AuthService).token();
 
   if (token) {
     const newReq = req.clone({

@@ -32,7 +32,8 @@
     },
     "user": {
       "requiredFields": "Name, email and password are required",
-      "createdSuccess": "User created"
+      "createdSuccess": "User created",
+      "updatedSuccess": "User updated"
     },
     "auth": {
       "missingCredentials": "Email, name and password are required",
@@ -46,7 +47,12 @@
       "missingChangePassword": "Current and new password are required",
       "userNotFound": "User not found",
       "incorrectPassword": "Current password is incorrect",
-      "passwordChanged": "Password changed successfully"
+      "passwordChanged": "Password changed successfully",
+      "invalidToken": "Invalid token",
+      "adminOnly": "Admin access required",
+      "noTokenProvided": "No token provided",
+      "logoutSuccess": "Logout successful",
+      "sessionExpired": "Session expired, please log in again"
     }
   },
   "common": {

@@ -54,6 +54,7 @@ export class AccountsComponent {
       inputs: {
         title: this.formTitle(),
         fields: this.accountHelper.createEditForm(this.selected()),
+        submitButtonText: this.selected() ? $localize`:{@@updateButton}:Update` : $localize`:{@@createButton}:Create`
       },
       outputs: {
         formSubmit: (data: Account) => this.handleSubmit(data),
@@ -73,6 +74,7 @@ export class AccountsComponent {
         description: $localize`:{@@deleteAccountDescription}:Please select a backup account to transfer all transactions
           linked to this account before deletion. If no backup account is selected, ALL LINKED TRANSACTIONS WILL BE DELETED! This action cannot be undone.`,
         fields: this.accountHelper.deleteForm(entity.id, this.allResource.value()?.content || []),
+        submitButtonText: $localize`:{@@deleteButton}:Delete`
       },
       outputs: {
         formSubmit: async (data: { backupAccountId: string }) => {
@@ -95,6 +97,7 @@ export class AccountsComponent {
       inputs: {
         message: $localize`:{@@deleteSelectedAccountsConfirmation}:Are you sure you want to delete the selected accounts?
           ALL TRANSACTIONS LINKED TO THESE ACCOUNTS WILL ALSO BE DELETED! This action cannot be undone.`,
+        submitButtonText: $localize`:{@@deleteButton}:Delete`
       },
       outputs: {
         onResult: async (result: boolean) => {

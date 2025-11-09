@@ -1,119 +1,73 @@
 import { computed, inject, Injectable, signal } from "@angular/core";
-import { environment } from "../../../environments/environment";
-import { User } from "../domain/models/user.model";
-import { Response } from "../../core/types/response.model";
-import { catchError, map, Observable, of } from "rxjs";
+import { rxResource } from "@angular/core/rxjs-interop";
 import { HttpClient } from "@angular/common/http";
+import { firstValueFrom, Observable, of } from "rxjs";
+import { environment } from "../../../environments/environment";
+import { Response } from "../../core/types/response.model";
 import { ChangePasswordDTO, LoginDTO, RegisterDTO } from "../domain/dto/auth.dto";
-import { ToastService } from "./toast.service";
+import { UserService } from "./user.service";
 
 type AuthStatus = 'authenticated' | 'unauthenticated' | 'checking';
 
 const AUTH_URL = environment.apiBaseUrl + '/auth';
-const USERS_URL = environment.apiBaseUrl + '/users';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private http = inject(HttpClient);
-  private toastService = inject(ToastService);
+  private userService = inject(UserService);
 
-  private _authStatus = signal<AuthStatus>('checking');
-  private _user = signal<User | null>(localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null);
+  private _token = signal<string | null>(null);
+  private _user = rxResource({
+    params: () => ({ token: this._token() }),
+    stream: ( request ) => {
+      this.userService.checkHasUsers();
+      if (request.params.token) return this.userService.getUserByToken();
+      else return of(null);
+    }
+  })
 
+  token = computed(() => this._token());
   authStatus = computed<AuthStatus>(() => {
-    if (this._authStatus() === 'checking') return 'checking';
-
-    if (this._user()) {
-      return 'authenticated';
-    }
-
-    return 'unauthenticated';
+    if (this._user.isLoading()) return 'checking';
+    else if (this._user.value()?.content?.id) return 'authenticated';
+    else return 'unauthenticated';
   });
+  user = computed(() => this._user.value()?.content || null);
 
-  user = computed(() => this._user());
-
-  login(loginData: LoginDTO): Observable<boolean> {
-    this._authStatus.set('checking');
-    return this.http.post<Response<User>>(`${AUTH_URL}/login`, loginData)
-      .pipe(
-        map(res => {
-          if (res.content) {
-            this.handleAuthSuccess(res.content);
-          }
-          return !!res.content;
-        }),
-        catchError(_err => {
-          return this.handleAuthError();
-        })
-      );
+  login(loginData: LoginDTO) {
+    firstValueFrom(this.http.post<Response<{ token: string }>>(`${AUTH_URL}/login`, loginData, { withCredentials: true }))
+      .then(res => {
+        if (res.content) {
+          this._token.set(res.content.token);
+        }
+      })
   }
 
-  register(newUser: RegisterDTO): Observable<boolean> {
-    this._authStatus.set('checking');
-    return this.http.post<Response<User>>(`${AUTH_URL}/register`, newUser)
-      .pipe(
-        map(res => {
-          if (res.content) {
-            this.handleAuthSuccess(res.content);
-          }
-          return !!res.content;
-        }),
-        catchError(_err => {
-          return this.handleAuthError();
-        })
-      );
+  refresh() {
+    firstValueFrom(this.http.post<Response<{ token: string }>>(`${AUTH_URL}/refresh`, {}, { withCredentials: true }))
+      .then(res => {
+        this._token.set(res.content?.token ?? null);
+      })
+      .catch(() => this._token.set(null));
   }
 
-  checkStatus(): Observable<boolean> {
-    const user = localStorage.getItem('user');
-    if (!user) {
-      this.logout();
-      return of(false);
-    }
-    const parsedUser: User = JSON.parse(user);
-    this._user.set(parsedUser);
+  async logout() {
+    await firstValueFrom(this.http.delete(`${AUTH_URL}/logout`, { withCredentials: true }));
+    this._token.set(null);
+  }
 
-    return this.http.get<Response<User>>(`${USERS_URL}/me`)
-      .pipe(
-        map(res => {
-          if (res.content) {
-            res.content.token = parsedUser.token
-            this.handleAuthSuccess(res.content);
-            return true;
-          } else {
-            this.toastService.show($localize`:{@@sessionExpired}:Session expired, please log in again.`, 'error');
-            this.logout();
-            return false;
-          }
-        }),
-        catchError(_err => {
-          return this.handleAuthError()
-        })
-      );
+  register(newUser: RegisterDTO) {
+    firstValueFrom(this.http.post<Response<{ token: string }>>(`${AUTH_URL}/register`, newUser , { withCredentials: true }))
+      .then(res => {
+        if (res.content) {
+          this._token.set(res.content.token);
+        }
+      })
   }
 
   changePassword(data: ChangePasswordDTO): Observable<Response<null>> {
     return this.http.patch<Response<null>>(`${AUTH_URL}/change-password`, data);
-  }
-
-  private handleAuthSuccess(user: User) {
-    this._user.set(user);
-    this._authStatus.set('authenticated');
-
-    localStorage.setItem('user', JSON.stringify(user));
-  }
-
-  private handleAuthError() {
-    this.logout();
-    return of(false);
-  }
-
-  logout() {
-    this._user.set(null);
-    this._authStatus.set('unauthenticated');
-
-    localStorage.removeItem('user');
   }
 }

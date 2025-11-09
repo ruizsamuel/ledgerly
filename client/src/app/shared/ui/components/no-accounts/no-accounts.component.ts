@@ -14,9 +14,9 @@ import { ToastService } from "../../../service/toast.service";
 export class NoAccountsComponent {
 
   private modalService = inject(ModalService);
-  private accountHelper = AccountHelper;
   private accountService = inject(AccountService);
   private toastService = inject(ToastService);
+  private accountHelper = AccountHelper;
 
   handleCreateAccount() {
     this.modalService.close();
@@ -25,12 +25,14 @@ export class NoAccountsComponent {
       inputs: {
         title: $localize`:{@@createAccountTitle}:Create Account`,
         fields: this.accountHelper.createEditForm(null),
+        submitButtonText: $localize`:{@@createButton}:Create`
       },
       outputs: {
         formSubmit: (data: Account) => {
           firstValueFrom(this.accountService.createEntity(data)).then((res) => {
             this.toastService.show(res.message || $localize`:{@@accountCreated}:Account created successfully`, 'success');
             this.modalService.close();
+            window.location.reload();
           });
         },
         formCancel: () => {

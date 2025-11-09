@@ -83,7 +83,8 @@ export class DashboardComponent {
       component: FormComponent<Income>,
       inputs: {
         title: $localize`:{@@newIncomeTitle}:New Income`,
-        fields:this.transactionHelper.incomeExpenseForm(accounts)
+        fields:this.transactionHelper.incomeExpenseForm(accounts),
+        submitButtonText: $localize`:{@@createButton}:Create`
       },
       outputs: {
         formSubmit: (data: Income) => {
@@ -108,7 +109,8 @@ export class DashboardComponent {
       component: FormComponent<Income>,
       inputs: {
         title: $localize`:{@@newExpenseTitle}:New Expense`,
-        fields:this.transactionHelper.incomeExpenseForm(accounts)
+        fields:this.transactionHelper.incomeExpenseForm(accounts),
+        submitButtonText: $localize`:{@@createButton}:Create`
       },
       outputs: {
         formSubmit: (data: Income) => {
@@ -133,7 +135,8 @@ export class DashboardComponent {
       component: FormComponent<Transfer>,
       inputs: {
         title: $localize`:{@@createTransactionTitle}:Create Transaction`,
-        fields:this.transactionHelper.transferForm(accounts)
+        fields:this.transactionHelper.transferForm(accounts),
+        submitButtonText: $localize`:{@@createButton}:Create`
       },
       outputs: {
         formSubmit: (data: Transfer) => {

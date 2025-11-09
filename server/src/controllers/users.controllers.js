@@ -34,9 +34,31 @@ export const createUser = async (req, res) => {
   }
 }
 
-export const getUser = async (req, res) => {
+export const getUserByToken = async (req, res) => {
   const user = req.user;
   res.status(200).json({ message: req.__("controller.auth.authenticated"), content: user });
+}
+
+export const updateUserByToken = async (req, res) => {
+  const user = req.user;
+  const { name, email } = req.body;
+
+  try {
+    if (email && email !== user.email) {
+      const existing = await User.findOne({ email });
+      if (existing) return res.status(400).json({ message: req.__("controller.auth.emailInUse") });
+      user.email = email;
+      // TODO: Email verification process
+    }
+
+    if (name) user.name = name;
+
+    await user.save();
+    res.status(200).json({ message: req.__("controller.user.updateSuccess"), content: user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: req.__("common.serverError") });
+  }
 }
 
 export const hasUsers = async (_req, res) => {

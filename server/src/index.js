@@ -8,11 +8,14 @@ import { usersRouter } from "./routes/users.routes.js";
 import { enrichResponse } from "./middlewares/response.middlewares.js";
 import { accountsRouter } from "./routes/accounts.routes.js";
 import { transactionsRouter } from "./routes/transactions.routes.js";
+import cookieParser from "cookie-parser";
 
 const app = express();
 app.use(json());
+app.use(cookieParser());
 app.use(cors({
-  origin: process.env['CORS_ORIGIN'] ?? 'http://localhost:4200'
+  origin: process.env['CORS_ORIGIN'] ?? 'http://localhost:4200',
+  credentials: true
 }));
 
 connectDB();

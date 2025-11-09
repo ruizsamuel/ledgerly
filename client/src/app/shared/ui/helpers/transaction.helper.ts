@@ -61,31 +61,36 @@ export class TransactionHelper {
     }
   }
 
+  static yearlyComparativeChart(transactions: TransactionBasic[], years: number[]): LineChartSeries {
+    const series: LineChartSeries = [];
+
+    years.forEach(year => {
+      const yearlyData: number[] = Array(12).fill(0);
+
+      transactions.forEach(transaction => {
+        const date = new Date(transaction.date);
+        const month = date.getMonth();
+        const transactionYear = date.getFullYear();
+        const amount = transaction.amount;
+
+        if (transactionYear === year) {
+          yearlyData[month] += amount;
+        }
+      });
+
+      series.push({name: `${year}`, data: yearlyData });
+    });
+
+    return series;
+  }
+
   static previousYearComparativeChart(transactions: TransactionBasic[]): LineChartSeries {
 
     const thisYear = new Date().getFullYear();
 
-    const currentYear: number[] = Array(12).fill(0);
-    const previousYear: number[] = Array(12).fill(0);
-
-    transactions.forEach(transaction => {
-      const date = new Date(transaction.date);
-      const month = date.getMonth();
-      const year = date.getFullYear();
-      const amount = transaction.amount;
-
-      if (year === thisYear) {
-        currentYear[month] += amount;
-      } else if (year === thisYear - 1) {
-        previousYear[month] += amount;
-      }
-    });
-
-    return [
-      { name: $localize`:{@@currentYearBalanceLabel}:Balance - Current Year`, data: currentYear },
-      { name: $localize`:{@@previousYearBalanceLabel}:Balance - Previous Year`, data: previousYear }
-    ]
+    return TransactionHelper.yearlyComparativeChart(transactions, [thisYear, thisYear - 1]);
   }
+
 
   static createEditForm(transaction: Transaction | null, accounts: AccountBasic[]): FormConfig {
     return [
