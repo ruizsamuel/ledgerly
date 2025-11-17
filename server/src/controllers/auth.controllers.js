@@ -34,7 +34,7 @@ export const login = async (req, res) => {
 }
 
 export const register = async (req, res) => {
-  // TODO: Email Verification with Nodemailer
+  // TODO: Email verification process??
   const { name, email, password } = req.body;
 
   try {

@@ -4,5 +4,5 @@ import { auth, admin } from "../middlewares/auth.middlewares.js";
 
 export const settingsRouter = Router();
 
-settingsRouter.get("/settings", auth, admin, getSettings);
-settingsRouter.put("/settings", auth, admin, updateSettings);
+settingsRouter.get("/", auth, admin, getSettings);
+settingsRouter.put("/", auth, admin, updateSettings);

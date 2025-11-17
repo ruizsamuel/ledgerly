@@ -2,10 +2,9 @@ import { Settings } from "../models/settings.models.js";
 
 export const getSettings = async (_req, res) => {
   const settings = await Settings.findOne();
-  res.status(200).json({ allowUserRegistration: settings?.allowUserRegistration ?? false });
+  res.status(200).json({ content: settings || { allowUserRegistration: false } });
 }
 
-// TODO: Hacer este modelo más sofisticado, con más opciones
 export const updateSettings = async (req, res) => {
   try {
     const { allowUserRegistration } = req.body;

@@ -1,0 +1,15 @@
+<div class="container mx-auto py-10 px-5">
+  @if (settingsResource.isLoading()) {
+  <div class="flex items-center justify-center">
+    <app-loading />
+  </div>
+  } @else if(settingsResource.hasValue()) {
+  <div class="flex items-start justify-start mb-4">
+    <app-form
+      [fields]="settingsHelper.form(settingsResource.value()!.content)"
+      [title]="formTitle()"
+      [cancellable]="false"
+      (formSubmit)="settingsSubmit($event)"/>
+  </div>
+  }
+</div>

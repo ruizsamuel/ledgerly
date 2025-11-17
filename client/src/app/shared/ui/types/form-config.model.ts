@@ -1,7 +1,7 @@
 interface FormField {
   key: string;
   label: string;
-  type: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'date' | 'datetime-local';
+  type: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'date' | 'datetime-local' | 'checkbox';
   value: any;
   placeholder?: string;
   validators?: any[];

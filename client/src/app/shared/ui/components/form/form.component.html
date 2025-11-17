@@ -27,21 +27,28 @@
           {{ item.viewValue }}
         </option>
         }
-      </select>
-      } @else {
-      <input
-        [id]="field.key"
-        [type]="field.type"
-        [formControlName]="field.key"
-        [placeholder]="field.placeholder || field.label"
-        class="input"
-      />
-      }
-      @if (formUtils.isValidField(formGroup(), field.key)) {
-      <div class="text-error">
-        <span>{{ formUtils.getFieldError(formGroup(), field.key) }}</span>
-      </div>
-      }
+    </select>
+    } @else if (field.type === 'checkbox') {
+    <input
+      [id]="field.key"
+      type="checkbox"
+      [formControlName]="field.key"
+      class="checkbox checkbox-primary"
+    />
+    } @else {
+    <input
+      [id]="field.key"
+      [type]="field.type"
+      [formControlName]="field.key"
+      [placeholder]="field.placeholder || field.label"
+      class="input"
+    />
+    }
+    @if (formUtils.isValidField(formGroup(), field.key)) {
+    <div class="text-error">
+      <span>{{ formUtils.getFieldError(formGroup(), field.key) }}</span>
+    </div>
+    }
     }
     <div class="form-actions flex justify-end mt-4">
       @if (cancellable()) {

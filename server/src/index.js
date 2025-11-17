@@ -1,5 +1,6 @@
 import express, { json } from "express";
 import cors  from "cors";
+import cookieParser from "cookie-parser";
 import { connectDB } from "./config/database.config.js";
 import { initTranslate } from "./config/translate.config.js";
 import { authRouter } from "./routes/auth.routes.js";
@@ -8,7 +9,6 @@ import { usersRouter } from "./routes/users.routes.js";
 import { enrichResponse } from "./middlewares/response.middlewares.js";
 import { accountsRouter } from "./routes/accounts.routes.js";
 import { transactionsRouter } from "./routes/transactions.routes.js";
-import cookieParser from "cookie-parser";
 
 const app = express();
 app.use(json());

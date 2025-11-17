@@ -2,6 +2,8 @@ import { genSalt, hash } from "bcrypt";
 
 import { User } from "../models/users.models.js";
 import { PASSWORD_MIN_LENGTH } from "../utils/auth.utils.js";
+import { Account } from "../models/accounts.models.js";
+import { Transaction } from "../models/transactions.models.js";
 
 export const createUser = async (req, res) => {
   const { name, email, password } = req.body;
@@ -39,6 +41,25 @@ export const getUserByToken = async (req, res) => {
   res.status(200).json({ message: req.__("controller.auth.authenticated"), content: user });
 }
 
+export const getAllUsers = async (_req, res) => {
+  // TODO: Pagination and filtering
+  const users = await User.find().select("-password").sort({ createdAt: -1 });
+  res.status(200).json({ content: users });
+}
+
+export const getUserById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await User.findById(id).select("-password");
+    if (!user) return res.status(404).json({ message: req.__("controller.user.notFound") });
+    res.status(200).json({ content: user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: req.__("common.serverError") });
+  }
+}
+
 export const updateUserByToken = async (req, res) => {
   const user = req.user;
   const { name, email } = req.body;
@@ -48,13 +69,56 @@ export const updateUserByToken = async (req, res) => {
       const existing = await User.findOne({ email });
       if (existing) return res.status(400).json({ message: req.__("controller.auth.emailInUse") });
       user.email = email;
-      // TODO: Email verification process
+      // TODO: Email verification process??
     }
 
     if (name) user.name = name;
 
     await user.save();
     res.status(200).json({ message: req.__("controller.user.updateSuccess"), content: user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: req.__("common.serverError") });
+  }
+}
+
+export const updateUser = async (req, res) => {
+  const { id } = req.params;
+  const { name, email, isAdmin } = req.body;
+
+  try {
+    const user = await User.findById(id);
+    if (!user) return res.status(404).json({ message: req.__("controller.user.notFound") });
+    if (email && email !== user.email) {
+      const existing = await User.findOne({ email });
+      if (existing) return res.status(400).json({ message: req.__("controller.auth.emailInUse") });
+      //TODO: Email verification process??
+      user.email = email;
+    }
+    if (name) user.name = name;
+    if (typeof isAdmin === "boolean") user.isAdmin = isAdmin;
+    await user.save();
+    res.status(200).json({ message: req.__("controller.user.updateSuccess"), content: user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: req.__("common.serverError") });
+  }
+}
+
+export const deleteUser = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await User.findById(id);
+    if (!user) return res.status(404).json({ message: req.__("controller.user.notFound") });
+    Account.find({ owner: user._id }).then(accounts => {
+      accounts.forEach(async account => {
+        await Transaction.deleteMany({ account: account._id }).catch(err => console.error(err));
+        await Account.deleteOne({ _id: account._id }).catch(err => console.error(err));
+      });
+    }).catch(err => console.error(err));
+    await User.deleteOne({ _id: id });
+    res.status(200).json({ message: req.__("controller.user.deleteSuccess") });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: req.__("common.serverError") });

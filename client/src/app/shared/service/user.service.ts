@@ -22,6 +22,10 @@ export class UserService {
     return this.http.get<Response<User>>(`${USERS_URL}/me`);
   }
 
+  getAll(): Observable<Response<User[]>> {
+    return this.http.get<Response<User[]>>(USERS_URL);
+  }
+
   updateUserByToken(updateData: UpdateUserDTO): Observable<Response<User>> {
     return this.http.patch<Response<User>>(`${USERS_URL}/me`, updateData);
   }

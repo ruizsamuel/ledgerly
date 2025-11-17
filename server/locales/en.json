@@ -33,7 +33,9 @@
     "user": {
       "requiredFields": "Name, email and password are required",
       "createdSuccess": "User created",
-      "updatedSuccess": "User updated"
+      "updatedSuccess": "User updated",
+      "deletedSuccess": "User deleted",
+      "notFound": "User not found"
     },
     "auth": {
       "missingCredentials": "Email, name and password are required",

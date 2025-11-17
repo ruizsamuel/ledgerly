@@ -9,4 +9,4 @@ export interface TableConfig<T> {
 }
 
 type ColorFn<T> = (value: any, row: T) => 'success' | 'error' | 'primary' | 'accent' | 'secondary';
-type Format = 'text' | 'currency' | 'date' | 'percent';
+type Format = 'text' | 'currency' | 'date' | 'percent' | 'boolean';

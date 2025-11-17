@@ -78,6 +78,13 @@
               {{ item[field] | currency }}
               } @else if (config().formats?.[field] === 'percent') {
               {{ item[field] | percent }}
+              }
+              @else if (config().formats?.[field] === 'boolean') {
+                @if (item[field]) {
+                <span class="badge badge-success" i18n="@@yes">Yes</span>
+                } @else {
+                <span class="badge badge-error" i18n="@@no">No</span>
+                }
               } @else {
               {{ item[field] }}
               }
