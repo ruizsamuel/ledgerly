@@ -3,7 +3,7 @@ services:
     build:
       context: ./server
     environment:
-      - CORS_ORIGIN=${DOMAIN}:4200
+      - CORS_ORIGIN=${CLIENT_URL}
       - MONGO_HOST=mongo
       - MONGO_USERNAME=${MONGO_USERNAME}
       - MONGO_PASSWORD=${MONGO_PASSWORD}
@@ -20,7 +20,7 @@ services:
     build:
       context: ./client
       args:
-        - API_URL=${DOMAIN}:5000/api
+        - API_URL=${SERVER_URL}
     volumes:
       - ./client:/app
       - /app/node_modules

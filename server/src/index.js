@@ -11,12 +11,14 @@ import { accountsRouter } from "./routes/accounts.routes.js";
 import { transactionsRouter } from "./routes/transactions.routes.js";
 
 const app = express();
+
 app.use(json());
-app.use(cookieParser());
 app.use(cors({
   origin: process.env['CORS_ORIGIN'] ?? 'http://localhost:4200',
   credentials: true
 }));
+
+app.use(cookieParser());
 
 connectDB();
 initTranslate(app);

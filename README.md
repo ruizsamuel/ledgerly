@@ -16,6 +16,11 @@ Ledgerly is a personal accounting application designed to help users efficiently
 ## Running the Project
 
 1. First, configure the environment variables in the `.env` file.
+
+   ```bash
+   cp .env.example .env
+   ```
+
 2. Build the Docker images with:
    ```
    docker compose build
