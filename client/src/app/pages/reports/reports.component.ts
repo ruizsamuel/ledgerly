@@ -26,14 +26,14 @@ export class ReportsComponent {
   transactionResource = rxResource({
     params: () => ({ limit: 0 }),
     stream: ( request ) => {
-      return this.transactionService.getUserEntities(request.params);
+      return this.transactionService.getEntitiesByToken(request.params);
     }
   });
 
   accountResource = rxResource({
     params: () => ({ limit: 0 }),
     stream: ( request ) => {
-      return this.accountService.getUserEntities(request.params);
+      return this.accountService.getEntitiesByToken(request.params);
     }
   });
 

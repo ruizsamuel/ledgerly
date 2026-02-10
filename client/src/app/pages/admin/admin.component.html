@@ -1,4 +1,5 @@
 <div class="container mx-auto py-10 px-5">
+  <h2 class="text-2xl font-bold my-8" i18n="@@settings">Settings</h2>
   @if (settingsResource.isLoading()) {
   <div class="flex items-center justify-center">
     <app-loading />
@@ -7,9 +8,35 @@
   <div class="flex items-start justify-start mb-4">
     <app-form
       [fields]="settingsHelper.form(settingsResource.value()!.content)"
-      [title]="formTitle()"
+      [title]="settingsFormTitle()"
       [cancellable]="false"
       (formSubmit)="settingsSubmit($event)"/>
   </div>
   }
+  <h2 class="text-2xl font-bold my-8" i18n="@@users">Users</h2>
+  <div class="mb-5">
+    <button class="btn btn-primary" (click)="showUserForm(null)">
+      <span class="material-symbols-outlined">add</span>
+      <span i18n="@@addUser">Add User</span>
+    </button>
+  </div>
+  @if(userResource.isLoading()) {
+  <div class="flex justify-center items-center h-64">
+    <app-loading />
+  </div>
+  }
+  <app-table
+    [data]="(userResource.value()?.content ?? [])"
+    [class.hidden]="userResource.isLoading()"
+    [config]="userHelper.table()"
+    (onEdit)="showUserForm($event)"
+    (onDelete)="handleUserDelete($event)"
+    (onDeleteSelection)="handleUserDeleteSelection($event)"
+  />
+
+  <div>
+    <app-pagination
+      [pages]="userResource.value()?.totalPages ?? 0"
+    />
+  </div>
 </div>

@@ -23,7 +23,7 @@ export class AuthService {
     params: () => ({ token: this._token() }),
     stream: ( request ) => {
       this.userService.checkHasUsers();
-      if (request.params.token) return this.userService.getUserByToken();
+      if (request.params.token) return this.userService.getEntityByToken();
       else return of(null);
     }
   })
@@ -53,9 +53,9 @@ export class AuthService {
       .catch(() => this._token.set(null));
   }
 
-  async logout() {
-    await firstValueFrom(this.http.delete(`${AUTH_URL}/logout`, { withCredentials: true }));
-    this._token.set(null);
+  logout() {
+    firstValueFrom(this.http.delete(`${AUTH_URL}/logout`, { withCredentials: true }))
+      .finally(() => this._token.set(null));
   }
 
   register(newUser: RegisterDTO) {

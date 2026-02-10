@@ -1,17 +1,17 @@
 import { Router } from "express";
 import { auth } from "../middlewares/auth.middlewares.js";
 import {
-  getUserAccounts,
   getAccountById,
   createAccount,
   updateAccount,
-  deleteAccount
+  deleteAccount,
+  getAccountsByToken
 } from "../controllers/accounts.controllers.js";
 
 
 export const accountsRouter = Router();
 
-accountsRouter.get("/", auth, getUserAccounts);
+accountsRouter.get("/", auth, getAccountsByToken);
 accountsRouter.get("/:id", auth, getAccountById);
 accountsRouter.post("/", auth, createAccount);
 accountsRouter.patch("/:id", auth, updateAccount);

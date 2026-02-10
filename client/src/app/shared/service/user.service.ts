@@ -8,30 +8,53 @@ import { environment } from '../../../environments/environment';
 
 const USERS_URL = environment.apiBaseUrl + '/users';
 
+interface Options {
+  limit?: number;
+  page?: number;
+  searchTerm?: string;
+  sortBy?: 'date' | 'amount';
+  sort?: 'asc' | 'desc';
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
+
   private http = inject(HttpClient);
 
   private _hasUsers = signal<boolean | null>(null);
 
   hasUsers = computed(() => this._hasUsers());
 
-  getUserByToken(): Observable<Response<User>> {
+  getEntityByToken(): Observable<Response<User>> {
     return this.http.get<Response<User>>(`${USERS_URL}/me`);
   }
 
-  getAll(): Observable<Response<User[]>> {
-    return this.http.get<Response<User[]>>(USERS_URL);
-  }
-
-  updateUserByToken(updateData: UpdateUserDTO): Observable<Response<User>> {
+  updateEntityByToken(updateData: UpdateUserDTO): Observable<Response<User>> {
     return this.http.patch<Response<User>>(`${USERS_URL}/me`, updateData);
   }
 
-  newUser(newUser: NewUserDTO): Observable<Response<User>> {
+  getAll(options: Options): Observable<Response<User[]>> {
+    return this.http.get<Response<User[]>>(USERS_URL, { params: {
+      limit: options.limit?.toString() ?? '8',
+      page: options.page?.toString() ?? '1',
+      searchTerm: options.searchTerm ?? '',
+      sortBy: options.sortBy ?? 'date',
+      sort: options.sort ?? 'desc',
+    } });
+  }
+
+  createEntity(newUser: NewUserDTO): Observable<Response<User>> {
     return this.http.post<Response<User>>(USERS_URL, newUser);
+  }
+
+  updateEntity(id: string, updateData: UpdateUserDTO): Observable<Response<User>> {
+    return this.http.patch<Response<User>>(`${USERS_URL}/${id}`, updateData);
+  }
+
+  deleteEntity(id: string): Observable<Response<null>> {
+    return this.http.delete<Response<null>>(`${USERS_URL}/${id}`);
   }
 
   async checkHasUsers() {

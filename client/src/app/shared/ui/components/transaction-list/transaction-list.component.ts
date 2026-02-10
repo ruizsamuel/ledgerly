@@ -59,13 +59,13 @@ export class TransactionListComponent {
       account: this.accountId() ?? 'all',
     }),
     stream: ( request ) => {
-      return this.service.getUserEntities(request.params);
+      return this.service.getEntitiesByToken(request.params);
     }
   });
 
   accountsResource = rxResource({
     params: () => ({}),
-    stream: () => this.accountService.getUserEntities({ limit: 0 })
+    stream: () => this.accountService.getEntitiesByToken({ limit: 0 })
   });
 
   async showForm(entity: TransactionBasic) {

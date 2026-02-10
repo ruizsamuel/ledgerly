@@ -21,7 +21,7 @@ export class AccountService {
   private http = inject(HttpClient);
   private cacheService = inject(CacheService);
 
-  getUserEntities(options: Options): Observable<Response<AccountBasic[]>> {
+  getEntitiesByToken(options: Options): Observable<Response<AccountBasic[]>> {
     const { limit = 8, page = 1 } = options;
 
     const key = `${limit}-${page}`;

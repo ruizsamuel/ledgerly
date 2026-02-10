@@ -5,44 +5,59 @@ import { PASSWORD_MIN_LENGTH } from "../utils/auth.utils.js";
 import { Account } from "../models/accounts.models.js";
 import { Transaction } from "../models/transactions.models.js";
 
-export const createUser = async (req, res) => {
-  const { name, email, password } = req.body;
-
-  try {
-
-    if (!name || !email || !password) {
-      return res.status(400).json({ message: req.__( "controller.user.requiredFields" ) });
-    }
-
-    if (password.length < PASSWORD_MIN_LENGTH) {
-      return res.status(400).json({ message: `${req.__("controller.auth.passwordLengthError")}: ${PASSWORD_MIN_LENGTH}` });
-    }
-
-    const existing = await User.findOne({ email });
-    if (existing) return res.status(400).json({ message: req.__("controller.auth.emailInUse") });
-
-    const salt = await genSalt(10);
-    req.body.password = await hash(password, salt);
-
-    const user = await User.create({
-      ...req.body,
-      isAdmin: false
-    });
-
-    res.status(201).json({ message: req.__("controller.user.createdSuccess"), content: {user}});
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: req.__("common.serverError") });
-  }
-}
-
 export const getUserByToken = async (req, res) => {
   const user = req.user;
   res.status(200).json({ message: req.__("controller.auth.authenticated"), content: user });
 }
 
-export const getAllUsers = async (_req, res) => {
-  // TODO: Pagination and filtering
+export const getAllUsers = async (req, res) => {
+  const {
+    page = 1,
+    limit = 10,
+    sortBy = 'createdAt',
+    sort = 'desc',
+    searchTerm,
+  } = req.query;
+
+  try {
+    if (isNaN(page) || isNaN(limit) || page < 1) {
+      return res
+        .status(400)
+        .json({ message: req.__("common.paginationPositiveInteger") });
+    }
+
+    const filters = {};
+
+    if (searchTerm) {
+      filters.$or = [
+        { name: { $regex: searchTerm, $options: "i" } },
+        { email: { $regex: searchTerm, $options: "i" } }
+      ];
+    }
+
+    let query = User.find(filters).select("-password").sort({ [sortBy]: sort === 'desc' ? -1 : 1 });
+
+    if (limit > 0) {
+      const skip = (page - 1) * limit;
+      query = query.skip(skip).limit(limit);
+    }
+
+    const [users, total] = await Promise.all([
+      query.exec(),
+      User.countDocuments(filters),
+    ]);
+
+    return res.status(200).json({
+      page: limit > 0 ? Number(page) : 1,
+      totalPages: limit > 0 ? Math.ceil(total / limit) : 1,
+      content: users,
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: req.__("common.serverError") });
+  }
+
   const users = await User.find().select("-password").sort({ createdAt: -1 });
   res.status(200).json({ content: users });
 }
@@ -76,6 +91,37 @@ export const updateUserByToken = async (req, res) => {
 
     await user.save();
     res.status(200).json({ message: req.__("controller.user.updateSuccess"), content: user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: req.__("common.serverError") });
+  }
+}
+
+export const createUser = async (req, res) => {
+  const { name, email, password, isAdmin } = req.body;
+
+  try {
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: req.__( "controller.user.requiredFields" ) });
+    }
+
+    if (password.length < PASSWORD_MIN_LENGTH) {
+      return res.status(400).json({ message: `${req.__("controller.auth.passwordLengthError")}: ${PASSWORD_MIN_LENGTH}` });
+    }
+
+    const existing = await User.findOne({ email });
+    if (existing) return res.status(400).json({ message: req.__("controller.auth.emailInUse") });
+
+    const salt = await genSalt(10);
+    req.body.password = await hash(password, salt);
+
+    const user = await User.create({
+      ...req.body,
+      isAdmin: isAdmin || false,
+    });
+
+    res.status(201).json({ message: req.__("controller.user.createdSuccess"), content: {user}});
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: req.__("common.serverError") });

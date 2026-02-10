@@ -55,14 +55,14 @@ export class DashboardComponent {
   transactionResource = rxResource({
     params: () => ({ limit: 0, fromDate: new Date(new Date().getFullYear() - 1, 0, 1, 1, 1) }),
     stream: ( request ) => {
-      return this.transactionService.getUserEntities(request.params);
+      return this.transactionService.getEntitiesByToken(request.params);
     }
   });
 
   accountsResource = rxResource({
     params: () => ({ limit: 0 }),
     stream: ( request ) => {
-      return this.accountService.getUserEntities(request.params)
+      return this.accountService.getEntitiesByToken(request.params)
     }
   });
 

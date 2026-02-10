@@ -60,7 +60,7 @@ export class NavbarComponent {
       },
       outputs: {
         formSubmit: async (data) => {
-          await firstValueFrom(this.userService.updateUserByToken(data))
+          await firstValueFrom(this.userService.updateEntityByToken(data))
             .then(res => {
               this.authService.refresh();
               if (res.message) this.toastService.show(res.message, 'success');

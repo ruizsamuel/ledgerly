@@ -23,5 +23,5 @@ export const authGuard: CanActivateFn = async (_route, _state) => {
 export const adminGuard: CanActivateFn = async (route, state) => {
   const authService = inject(AuthService);
 
-  return (await authGuard(route, state)) && !!authService.user()?.isAdmin;
+  return (authGuard(route, state)) && !!authService.user()?.isAdmin;
 }

@@ -1,7 +1,7 @@
 import { Transaction } from "../models/transactions.models.js";
 import { Account } from "../models/accounts.models.js";
 
-export const getUserTransactions = async (req, res) => {
+export const getTransactionsByToken = async (req, res) => {
   const userId = req.user.id;
   const {
     page = 1,

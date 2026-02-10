@@ -24,8 +24,10 @@ export const auth = async (req, res, next) => {
 };
 
 export const admin = (req, res, next) => {
-  if (!req.user?.isAdmin) {
-    return res.status(403).json({ message: req.__("middleware.auth.adminOnly") });
-  }
-  next();
+  auth(req, res, () => {
+    if (!req.user?.isAdmin) {
+      return res.status(403).json({ message: req.__("middleware.auth.adminOnly") });
+    }
+    next();
+  });
 };

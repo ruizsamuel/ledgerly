@@ -40,7 +40,7 @@ export class AccountsComponent {
   allResource = rxResource({
     params: () => ({ page: this.paginationService.currentPage() }),
     stream: ( request ) => {
-      return this.service.getUserEntities(request.params);
+      return this.service.getEntitiesByToken(request.params);
     }
   });
 

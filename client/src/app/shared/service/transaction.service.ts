@@ -27,7 +27,7 @@ export class TransactionService {
   private http = inject(HttpClient);
   private cacheService = inject(CacheService);
 
-  getUserEntities(options: Options): Observable<Response<TransactionBasic[]>> {
+  getEntitiesByToken(options: Options): Observable<Response<TransactionBasic[]>> {
     const {
       limit = 8,
       page = 1,

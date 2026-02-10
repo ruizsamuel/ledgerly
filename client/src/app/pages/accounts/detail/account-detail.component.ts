@@ -66,7 +66,7 @@ export class AccountDetailComponent {
 
   thisMontResource = rxResource({
     params: () => ({ accountId: this.accountId }),
-    stream: ( request ) => this.transactionService.getUserEntities({
+    stream: ( request ) => this.transactionService.getEntitiesByToken({
       account: request.params.accountId,
       fromDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1, 2, 1),
       toDate: new Date(),
@@ -76,7 +76,7 @@ export class AccountDetailComponent {
 
   lastMontResource = rxResource({
     params: () => ({ accountId: this.accountId }),
-    stream: ( request ) => this.transactionService.getUserEntities({
+    stream: ( request ) => this.transactionService.getEntitiesByToken({
       account: request.params.accountId,
       fromDate: new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1, 2, 1),
       toDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
@@ -91,7 +91,7 @@ export class AccountDetailComponent {
   }
 
   async handleAddTransaction() {
-    const accounts = (await (firstValueFrom(this.accountService.getUserEntities({ limit: 0 })))).content;
+    const accounts = (await (firstValueFrom(this.accountService.getEntitiesByToken({ limit: 0 })))).content;
     this.modalService.open({
       component: FormComponent<Transaction>,
       inputs: {
@@ -116,7 +116,7 @@ export class AccountDetailComponent {
   }
 
   async handleTransfer() {
-    const accounts = (await (firstValueFrom(this.accountService.getUserEntities({ limit: 0 })))).content;
+    const accounts = (await (firstValueFrom(this.accountService.getEntitiesByToken({ limit: 0 })))).content;
     this.modalService.open({
       component: FormComponent<Transfer>,
       inputs: {

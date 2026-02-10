@@ -35,7 +35,7 @@ export class TransactionsComponent {
 
   accountsResource = rxResource({
     params: () => ({}),
-    stream: () => this.accountService.getUserEntities({ limit: 0 })
+    stream: () => this.accountService.getEntitiesByToken({ limit: 0 })
   });
 
   async showForm() {
