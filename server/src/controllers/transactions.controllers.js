@@ -1,5 +1,6 @@
 import { Transaction } from "../models/transactions.models.js";
 import { Account } from "../models/accounts.models.js";
+import mongoose from "mongoose";
 
 export const getTransactionsByToken = async (req, res) => {
   const userId = req.user.id;
@@ -102,12 +103,17 @@ export const createTransaction = async (req, res) => {
       return res.status(400).json({ message: req.__("controller.transaction.descriptionLengthError") });
     }
 
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
     const transaction = await Transaction.create({
       ...req.body,
       owner: userId
     });
 
     await Account.findByIdAndUpdate(account, { $inc: { balance: amount } }).exec();
+
+    await session.commitTransaction();
 
     res.status(201).json({ message: req.__("controller.transaction.createdSuccess"), content: transaction });
   } catch (err) {
@@ -154,6 +160,9 @@ export const updateTransaction = async (req, res) => {
       difference = amount - oldTransaction.amount;
     }
 
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
     const transaction = await Transaction.findOneAndUpdate(
       { _id: transactionId, owner: userId },
       req.body,
@@ -171,6 +180,8 @@ export const updateTransaction = async (req, res) => {
       await Account.findByIdAndUpdate(transaction.account, { $inc: { balance: difference } }).exec();
     }
 
+    await session.commitTransaction();
+
     res.status(200).json({ message: req.__("controller.transaction.updatedSuccess"), content: transaction });
   } catch (err) {
     console.error(err);
@@ -183,10 +194,16 @@ export const deleteTransaction = async (req, res) => {
   const userId = req.user.id;
 
   try {
+
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
     const transaction = await Transaction.findOneAndDelete({ _id: transactionId, owner: userId });
     if (!transaction) return res.status(404).json({ message: req.__("controller.transaction.notFound") });
 
     await Account.findByIdAndUpdate(transaction.account, { $inc: { balance: -transaction.amount } }).exec();
+
+    await session.commitTransaction();
 
     res.status(200).json({ message: req.__("controller.transaction.deletedSuccess") });
   } catch (err) {

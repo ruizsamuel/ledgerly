@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { Account } from "../models/accounts.models.js";
 import { Transaction } from "../models/transactions.models.js";
 
@@ -39,7 +40,7 @@ export const getAccountById = async (req, res) => {
 
   try {
     const account = await Account.findOne({ _id: accountId, owner: userId });
-    if (!account) return res.status(404).json({ message: "Account not found" });
+    if (!account) return res.status(404).json({ message: req.__("controller.account.notFound") });
 
     res.status(200).json({ content: account });
   } catch (err) {
@@ -69,6 +70,9 @@ export const createAccount = async (req, res) => {
       return res.status(400).json({ message: req.__("controller.account.nameLengthError") });
     }
 
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
     const account = await Account.create({
       ...req.body,
       owner: userId
@@ -83,6 +87,8 @@ export const createAccount = async (req, res) => {
         description: req.__("controller.account.initialBalance")
       });
     }
+
+    await session.commitTransaction();
 
     res.status(201).json({ message: req.__("controller.account.createdSuccess"), content: account });
   } catch (err) {
@@ -129,6 +135,10 @@ export const deleteAccount = async (req, res) => {
   const { backupAccount } = req.query;
 
   try {
+
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
     const account = await Account.findOneAndDelete({ _id: accountId, owner: userId });
     if (!account) return res.status(404).json({ message: req.__("controller.account.notFound") });
 
@@ -144,6 +154,9 @@ export const deleteAccount = async (req, res) => {
     } else {
       await Transaction.deleteMany({ account: accountId });
     }
+
+    await session.commitTransaction();
+
     res.status(200).json({ message: req.__("controller.account.deletedSuccess") });
   } catch (err) {
     console.error(err);
