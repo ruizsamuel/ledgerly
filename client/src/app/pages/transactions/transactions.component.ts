@@ -7,7 +7,7 @@ import { TransactionService } from "../../shared/service/transaction.service";
 import { ToastService } from "../../shared/service/toast.service";
 import { ModalService } from "../../shared/service/modal.service";
 import { AccountService } from "../../shared/service/account.service";
-import { TransactionListComponent } from "../../shared/ui/components/transaction-list/transaction-list.component";
+import { TransactionListComponent } from "../../shared/domain/components/transaction-list/transaction-list.component";
 import { TransactionHelper } from "../../shared/ui/helpers/transaction.helper";
 import { rxResource } from "@angular/core/rxjs-interop";
 

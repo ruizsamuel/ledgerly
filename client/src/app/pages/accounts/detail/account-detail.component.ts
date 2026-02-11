@@ -2,7 +2,7 @@ import { Component, computed, inject } from "@angular/core";
 import { rxResource } from "@angular/core/rxjs-interop";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { AccountService } from "../../../shared/service/account.service";
-import { TransactionListComponent } from "../../../shared/ui/components/transaction-list/transaction-list.component";
+import { TransactionListComponent } from "../../../shared/domain/components/transaction-list/transaction-list.component";
 import { LoadingComponent } from "../../../shared/ui/components/loading/loading.component";
 import { CurrencyPipe, PercentPipe } from "@angular/common";
 import { TransactionService } from "../../../shared/service/transaction.service";

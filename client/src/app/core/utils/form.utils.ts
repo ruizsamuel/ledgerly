@@ -21,8 +21,10 @@ export class FormUtils {
 
         case 'valuesEqual':
           return $localize`:{@@valuesEqual}:Values must be different`;
+
         case 'min':
           return $localize`:{@@minValue}:Minimum value is ${errors['min'].min}`;
+
         case 'max':
           return $localize`:{@@maxValue}:Maximum value is ${errors['max'].max}`;
       }

@@ -1,8 +1,8 @@
 import { Component, inject } from "@angular/core";
 import { ModalService } from "../../../service/modal.service";
-import { FormComponent } from "../form/form.component";
+import { FormComponent } from "../../../ui/components/form/form.component";
 import { Account } from "../../../domain/models/account.model";
-import { AccountHelper } from "../../helpers/account.helper";
+import { AccountHelper } from "../../../ui/helpers/account.helper";
 import { AccountService } from "../../../service/account.service";
 import { firstValueFrom } from "rxjs";
 import { ToastService } from "../../../service/toast.service";

@@ -13,7 +13,7 @@ import { Income, Transfer } from "../../shared/domain/models/transaction.model";
 import { TransactionUtils } from "../../shared/domain/utils/transaction.utils";
 import { ToastService } from "../../shared/service/toast.service";
 import { CurrencyPipe } from "@angular/common";
-import { NoAccountsComponent } from "../../shared/ui/components/no-accounts/no-accounts.component";
+import { NoAccountsComponent } from "../../shared/domain/components/no-accounts/no-accounts.component";
 
 @Component({
   selector: 'app-dashboard',

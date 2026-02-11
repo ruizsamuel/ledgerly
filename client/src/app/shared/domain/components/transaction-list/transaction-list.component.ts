@@ -1,19 +1,19 @@
 import { Component, computed, inject, input, output, signal } from "@angular/core";
-import { SearchComponent } from "../search/search.component";
-import { LoadingComponent } from "../loading/loading.component";
-import { TableComponent } from "../table/table.component";
+import { SearchComponent } from "../../../ui/components/search/search.component";
+import { LoadingComponent } from "../../../ui/components/loading/loading.component";
+import { TableComponent } from "../../../ui/components/table/table.component";
 import { Transaction, TransactionBasic } from "../../../domain/models/transaction.model";
 import { rxResource } from "@angular/core/rxjs-interop";
 import { TransactionService } from "../../../service/transaction.service";
 import { PaginationService } from "../../../service/pagination.service";
 import { AccountService } from "../../../service/account.service";
 import { ModalService } from "../../../service/modal.service";
-import { FormComponent } from "../form/form.component";
+import { FormComponent } from "../../../ui/components/form/form.component";
 import { firstValueFrom } from "rxjs";
-import { PaginationComponent } from "../pagination/pagination.component";
-import { ConfirmationComponent } from "../confirmation/confirmation.component";
+import { PaginationComponent } from "../../../ui/components/pagination/pagination.component";
+import { ConfirmationComponent } from "../../../ui/components/confirmation/confirmation.component";
 import { ToastService } from "../../../service/toast.service";
-import { TransactionHelper } from "../../helpers/transaction.helper";
+import { TransactionHelper } from "../../../ui/helpers/transaction.helper";
 import { RouterLink } from "@angular/router";
 
 @Component({
