@@ -8,7 +8,7 @@ import { FormConfig } from "../../types/form-config.model";
   templateUrl: './form.component.html',
   imports: [ReactiveFormsModule],
 })
-export class FormComponent<T> implements OnInit{
+export class FormComponent<T> {
 
   private fb = inject(FormBuilder);
 
@@ -20,7 +20,7 @@ export class FormComponent<T> implements OnInit{
   submitButtonText = input<string>('Submit');
   description = input<string | null>(null);
   cancellable = input<boolean>(true);
-  loadingTime = input<number>(2500);
+  loadingTime = input<number>(2000);
 
   formSubmit = output<T>();
   formCancel = output<void>();
@@ -34,17 +34,17 @@ export class FormComponent<T> implements OnInit{
         setTimeout(() => this.isLoading.set(false), this.loadingTime());
       }
     });
-  }
 
-  ngOnInit(): void {
-    const group: { [key: string]: any } = {};
-    this.fields().forEach(field => {
-      group[field.key] = [
-        { value: field.value, disabled: field.disabled ?? false },
-        field.validators ?? []
-      ];
+    effect(() => {
+      const group: { [key: string]: any } = {};
+      this.fields().forEach(field => {
+        group[field.key] = [
+          { value: field.value, disabled: field.disabled ?? false },
+          field.validators ?? []
+        ];
+      });
+      this.formGroup.set(this.fb.group(group));
     });
-    this.formGroup.set(this.fb.group(group));
   }
 
   onSubmit(): void {
