@@ -1,21 +1,21 @@
 import { Component, inject, signal } from "@angular/core";
 import { rxResource } from "@angular/core/rxjs-interop";
 import { firstValueFrom } from "rxjs";
-import { FormComponent } from "../../shared/ui/components/form/form.component";
-import { SettingsHelper } from "../../shared/ui/helpers/settings.helper";
-import { SettingsService } from "../../shared/service/settings.service";
-import { LoadingComponent } from "../../shared/ui/components/loading/loading.component";
+import { FormComponent } from "../../shared/common/ui/components/form/form.component";
+import { SettingsHelper } from "../../shared/domain/ui/helpers/settings.helper";
+import { SettingsService } from "../../shared/domain/services/settings.service";
+import { LoadingComponent } from "../../shared/common/ui/components/loading/loading.component";
 import { Settings } from "../../shared/domain/models/settings.model";
-import { ToastService } from "../../shared/service/toast.service";
-import { UserService } from "../../shared/service/user.service";
-import { UserHelper } from "../../shared/ui/helpers/user.helper";
-import { PaginationService } from "../../shared/service/pagination.service";
-import { TableComponent } from "../../shared/ui/components/table/table.component";
-import { PaginationComponent } from "../../shared/ui/components/pagination/pagination.component";
-import { User } from "../../shared/domain/models/user.model";
-import { ModalService } from "../../shared/service/modal.service";
-import { ConfirmationComponent } from "../../shared/ui/components/confirmation/confirmation.component";
-import { NewUserDTO, UpdateUserDTO } from "../../shared/domain/dto/user.dto";
+import { ToastService } from "../../shared/common/services/toast.service";
+import { UserService } from "../../core/services/user.service";
+import { UserHelper } from "../../shared/domain/ui/helpers/user.helper";
+import { PaginationService } from "../../shared/common/services/pagination.service";
+import { TableComponent } from "../../shared/common/ui/components/table/table.component";
+import { PaginationComponent } from "../../shared/common/ui/components/pagination/pagination.component";
+import { User } from "../../core/models/user.model";
+import { ModalService } from "../../shared/common/services/modal.service";
+import { ConfirmationComponent } from "../../shared/common/ui/components/confirmation/confirmation.component";
+import { NewUserDTO, UpdateUserDTO } from "../../core/models/user.model";
 
 @Component({
   selector: 'app-admin',

@@ -1,14 +1,14 @@
 import { Component, inject, signal } from "@angular/core";
-import { PageTitleComponent } from "../../shared/ui/components/page-title/page-title.component";
-import { FormComponent } from "../../shared/ui/components/form/form.component";
+import { PageTitleComponent } from "../../shared/common/ui/components/page-title/page-title.component";
+import { FormComponent } from "../../shared/common/ui/components/form/form.component";
 import { Transaction } from "../../shared/domain/models/transaction.model";
 import { firstValueFrom } from "rxjs";
-import { TransactionService } from "../../shared/service/transaction.service";
-import { ToastService } from "../../shared/service/toast.service";
-import { ModalService } from "../../shared/service/modal.service";
-import { AccountService } from "../../shared/service/account.service";
-import { TransactionListComponent } from "../../shared/domain/components/transaction-list/transaction-list.component";
-import { TransactionHelper } from "../../shared/ui/helpers/transaction.helper";
+import { TransactionService } from "../../shared/domain/services/transaction.service";
+import { ToastService } from "../../shared/common/services/toast.service";
+import { ModalService } from "../../shared/common/services/modal.service";
+import { AccountService } from "../../shared/domain/services/account.service";
+import { TransactionListComponent } from "../../shared/domain/ui/components/transaction-list/transaction-list.component";
+import { TransactionHelper } from "../../shared/domain/ui/helpers/transaction.helper";
 import { rxResource } from "@angular/core/rxjs-interop";
 
 @Component({

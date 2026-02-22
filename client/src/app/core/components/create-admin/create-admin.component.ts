@@ -1,10 +1,10 @@
 import { Component, inject } from '@angular/core';
-import { FormUtils } from '../../../core/utils/form.utils';
-import { AuthService } from '../../../shared/service/auth.service';
-import { LogoComponent } from "../../../shared/ui/components/logo/logo.component";
-import { FormComponent } from "../../../shared/ui/components/form/form.component";
-import { RegisterDTO } from '../../../shared/domain/dto/auth.dto';
-import { AuthHelper } from '../../../shared/ui/helpers/auth.helper';
+import { FormUtils } from '../../../shared/common/utils/form.utils';
+import { AuthService } from '../../services/auth.service';
+import { LogoComponent } from "../../../shared/common/ui/components/logo/logo.component";
+import { FormComponent } from "../../../shared/common/ui/components/form/form.component";
+import { RegisterDTO } from '../../models/auth.model';
+import { AuthHelper } from '../../../shared/domain/ui/helpers/auth.helper';
 
 @Component({
   selector: 'app-create-admin-page',

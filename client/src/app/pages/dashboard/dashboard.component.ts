@@ -1,19 +1,19 @@
 import { Component, computed, inject, effect } from "@angular/core";
 import { rxResource } from "@angular/core/rxjs-interop";
 import { firstValueFrom } from "rxjs";
-import { LineChartComponent } from "../../shared/ui/components/line-chart/line-chart.component";
-import { TableComponent } from "../../shared/ui/components/table/table.component";
-import { TransactionService } from "../../shared/service/transaction.service";
-import { TransactionHelper } from "../../shared/ui/helpers/transaction.helper";
-import { LoadingComponent } from "../../shared/ui/components/loading/loading.component";
-import { AccountService } from "../../shared/service/account.service";
-import { ModalService } from "../../shared/service/modal.service";
-import { FormComponent } from "../../shared/ui/components/form/form.component";
+import { LineChartComponent } from "../../shared/common/ui/components/line-chart/line-chart.component";
+import { TableComponent } from "../../shared/common/ui/components/table/table.component";
+import { TransactionService } from "../../shared/domain/services/transaction.service";
+import { TransactionHelper } from "../../shared/domain/ui/helpers/transaction.helper";
+import { LoadingComponent } from "../../shared/common/ui/components/loading/loading.component";
+import { AccountService } from "../../shared/domain/services/account.service";
+import { ModalService } from "../../shared/common/services/modal.service";
+import { FormComponent } from "../../shared/common/ui/components/form/form.component";
 import { Income, Transfer } from "../../shared/domain/models/transaction.model";
 import { TransactionUtils } from "../../shared/domain/utils/transaction.utils";
-import { ToastService } from "../../shared/service/toast.service";
+import { ToastService } from "../../shared/common/services/toast.service";
 import { CurrencyPipe } from "@angular/common";
-import { NoAccountsComponent } from "../../shared/domain/components/no-accounts/no-accounts.component";
+import { NoAccountsComponent } from "../../shared/domain/ui/components/no-accounts/no-accounts.component";
 
 @Component({
   selector: 'app-dashboard',

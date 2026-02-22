@@ -1,15 +1,15 @@
 import { Component, HostListener, inject, signal } from "@angular/core";
 import { firstValueFrom } from "rxjs";
-import { LogoComponent } from "../../../shared/ui/components/logo/logo.component";
+import { LogoComponent } from "../../../shared/common/ui/components/logo/logo.component";
 import { RouterLink, RouterLinkActive } from "@angular/router";
-import { AuthService } from "../../../shared/service/auth.service";
-import { AvatarPipe } from "../../../shared/ui/pipes/avatar.pipe";
-import { ModalService } from "../../../shared/service/modal.service";
-import { FormComponent } from "../../../shared/ui/components/form/form.component";
-import { AuthHelper } from "../../../shared/ui/helpers/auth.helper";
-import { ChangePasswordDTO } from "../../../shared/domain/dto/auth.dto";
-import { ToastService } from "../../../shared/service/toast.service";
-import { UserService } from "../../../shared/service/user.service";
+import { AuthService } from "../../services/auth.service";
+import { AvatarPipe } from "../../../shared/common/ui/pipes/avatar.pipe";
+import { ModalService } from "../../../shared/common/services/modal.service";
+import { FormComponent } from "../../../shared/common/ui/components/form/form.component";
+import { AuthHelper } from "../../../shared/domain/ui/helpers/auth.helper";
+import { ChangePasswordDTO } from "../../models/auth.model";
+import { ToastService } from "../../../shared/common/services/toast.service";
+import { UserService } from "../../services/user.service";
 
 @Component({
   selector: "app-navbar",

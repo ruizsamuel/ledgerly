@@ -1,9 +1,9 @@
 import { Component, computed, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { UserService } from './shared/service/user.service';
-import { AuthService } from './shared/service/auth.service';
+import { UserService } from './core/services/user.service';
+import { AuthService } from './core/services/auth.service';
 import { CreateAdminPageComponent } from './core/components/create-admin/create-admin.component';
-import { LoadingComponent } from './shared/ui/components/loading/loading.component';
+import { LoadingComponent } from './shared/common/ui/components/loading/loading.component';
 import { LoginComponent } from './core/components/login/login.component';
 import { ToastComponent } from './core/components/toast/toast.component';
 import { ModalComponent } from './core/components/modal/modal.component';

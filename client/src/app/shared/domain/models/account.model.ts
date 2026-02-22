@@ -7,3 +7,14 @@ export interface AccountBasic {
   name: string;
   balance: number;
 }
+
+export interface NewAccountDTO {
+  name: string;
+  balance: number;
+  description?: string;
+}
+
+export interface UpdateAccountDTO {
+  name?: string;
+  description?: string;
+}

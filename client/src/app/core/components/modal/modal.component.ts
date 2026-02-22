@@ -1,5 +1,5 @@
 import { Component, effect, inject, ViewChild, ViewContainerRef } from '@angular/core';
-import { ModalService } from '../../../shared/service/modal.service';
+import { ModalService } from '../../../shared/common/services/modal.service';
 import { CommonModule } from '@angular/common';
 
 @Component({

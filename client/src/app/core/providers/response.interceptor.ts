@@ -4,8 +4,8 @@ import {
 } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { catchError, of } from 'rxjs';
-import { ToastService } from '../../shared/service/toast.service';
-import { AuthService } from '../../shared/service/auth.service';
+import { ToastService } from '../../shared/common/services/toast.service';
+import { AuthService } from '../services/auth.service';
 
 export const responseInterceptor: HttpInterceptorFn = (req, next) => {
   const toastService = inject(ToastService);

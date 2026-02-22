@@ -1,11 +1,11 @@
 import { Component, computed, effect, inject, signal } from "@angular/core";
 import { rxResource } from "@angular/core/rxjs-interop";
-import { PageTitleComponent } from "../../shared/ui/components/page-title/page-title.component";
-import { TransactionService } from "../../shared/service/transaction.service";
-import { LineChartComponent } from "../../shared/ui/components/line-chart/line-chart.component";
-import { LoadingComponent } from "../../shared/ui/components/loading/loading.component";
-import { TransactionHelper } from "../../shared/ui/helpers/transaction.helper";
-import { AccountService } from "../../shared/service/account.service";
+import { PageTitleComponent } from "../../shared/common/ui/components/page-title/page-title.component";
+import { TransactionService } from "../../shared/domain/services/transaction.service";
+import { LineChartComponent } from "../../shared/common/ui/components/line-chart/line-chart.component";
+import { LoadingComponent } from "../../shared/common/ui/components/loading/loading.component";
+import { TransactionHelper } from "../../shared/domain/ui/helpers/transaction.helper";
+import { AccountService } from "../../shared/domain/services/account.service";
 
 @Component({
   selector: "app-reports",

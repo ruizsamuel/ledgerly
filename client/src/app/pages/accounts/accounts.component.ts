@@ -2,18 +2,18 @@ import { Component, computed, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import { rxResource } from "@angular/core/rxjs-interop";
 import { firstValueFrom } from "rxjs";
-import { PageTitleComponent } from "../../shared/ui/components/page-title/page-title.component";
-import { TableComponent } from "../../shared/ui/components/table/table.component";
-import { FormComponent } from "../../shared/ui/components/form/form.component";
+import { PageTitleComponent } from "../../shared/common/ui/components/page-title/page-title.component";
+import { TableComponent } from "../../shared/common/ui/components/table/table.component";
+import { FormComponent } from "../../shared/common/ui/components/form/form.component";
 import { Account, AccountBasic } from "../../shared/domain/models/account.model";
-import { AccountService } from "../../shared/service/account.service";
-import { LoadingComponent } from "../../shared/ui/components/loading/loading.component";
-import { ToastService } from "../../shared/service/toast.service";
-import { PaginationService } from "../../shared/service/pagination.service";
-import { PaginationComponent } from "../../shared/ui/components/pagination/pagination.component";
-import { ModalService } from "../../shared/service/modal.service";
-import { ConfirmationComponent } from "../../shared/ui/components/confirmation/confirmation.component";
-import { AccountHelper } from "../../shared/ui/helpers/account.helper";
+import { AccountService } from "../../shared/domain/services/account.service";
+import { LoadingComponent } from "../../shared/common/ui/components/loading/loading.component";
+import { ToastService } from "../../shared/common/services/toast.service";
+import { PaginationService } from "../../shared/common/services/pagination.service";
+import { PaginationComponent } from "../../shared/common/ui/components/pagination/pagination.component";
+import { ModalService } from "../../shared/common/services/modal.service";
+import { ConfirmationComponent } from "../../shared/common/ui/components/confirmation/confirmation.component";
+import { AccountHelper } from "../../shared/domain/ui/helpers/account.helper";
 
 @Component({
   selector: 'app-accounts',
