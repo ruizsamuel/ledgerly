@@ -30,7 +30,7 @@ export const getAllUsers = async (req: Request, res: ApiRes) => {
 };
 
 export const getUserById = async (req: Request, res: ApiRes) => {
-  const { id } = req.params;
+  const id = String(req.params.id);
   try {
     const user = await usersService.getById(id);
     if (!user) return res.status(404).json({ message: tFromReq(req, "controller.user.notFound") });
@@ -71,7 +71,7 @@ export const createUser = async (req: Request, res: ApiRes) => {
 };
 
 export const updateUser = async (req: Request, res: ApiRes) => {
-  const { id } = req.params;
+  const id = String(req.params.id);
   try {
     const user = await usersService.updateById(id, req.body);
     if (!user) return res.status(404).json({ message: tFromReq(req, "controller.user.notFound") });
@@ -86,7 +86,7 @@ export const updateUser = async (req: Request, res: ApiRes) => {
 };
 
 export const deleteUser = async (req: Request, res: ApiRes) => {
-  const { id } = req.params;
+  const id = String(req.params.id);
   try {
     await usersService.deleteById(id);
     res.status(200).json({ message: tFromReq(req, "controller.user.deleteSuccess") });

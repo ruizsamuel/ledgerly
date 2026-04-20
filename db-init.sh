@@ -15,6 +15,12 @@ set -e
 KEYFILE_PATH="/data/mongo-keyfile"
 USE_KEYFILE=${USE_KEYFILE:-false}
 
+# Reuse authenticated mongosh calls when root credentials are available.
+MONGOSH_ARGS=(--quiet)
+if [ -n "${MONGO_INITDB_ROOT_USERNAME:-}" ] && [ -n "${MONGO_INITDB_ROOT_PASSWORD:-}" ]; then
+  MONGOSH_ARGS+=(--username "$MONGO_INITDB_ROOT_USERNAME" --password "$MONGO_INITDB_ROOT_PASSWORD" --authenticationDatabase "admin")
+fi
+
 # Generate keyfile if required (production mode)
 if [ "$USE_KEYFILE" = "true" ]; then
   if [ ! -f "$KEYFILE_PATH" ]; then
@@ -42,14 +48,14 @@ MONGO_PID=$!
 
 # Wait for MongoDB to be ready
 echo "Waiting for MongoDB to start..."
-until mongosh --quiet --eval "db.adminCommand('ping')" > /dev/null 2>&1; do
+until mongosh "${MONGOSH_ARGS[@]}" --eval "db.adminCommand('ping')" > /dev/null 2>&1; do
   sleep 1
 done
 
 echo "MongoDB is ready. Initializing replica set..."
 
 # Initialize replica set
-mongosh --quiet --eval "
+mongosh "${MONGOSH_ARGS[@]}" --eval "
   const maxAttempts = 30;
   let attempts = 0;
   

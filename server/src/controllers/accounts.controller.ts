@@ -23,7 +23,7 @@ export const getAccountsByToken = async (req: Request, res: ApiRes) => {
 };
 
 export const getAccountById = async (req: Request, res: ApiRes) => {
-  const accountId = req.params.id;
+  const accountId = String(req.params.id);
   try {
     const user = res.locals.user;
     const account = await accountsService.getById(user.id, accountId);
@@ -51,7 +51,7 @@ export const createAccount = async (req: Request, res: ApiRes) => {
 };
 
 export const updateAccount = async (req: Request, res: ApiRes) => {
-  const accountId = req.params.id;
+  const accountId = String(req.params.id);
   const { description, name } = req.body;
 
   try {
@@ -67,7 +67,7 @@ export const updateAccount = async (req: Request, res: ApiRes) => {
 };
 
 export const deleteAccount = async (req: Request, res: ApiRes) => {
-  const accountId = req.params.id;
+  const accountId = String(req.params.id);
   const backupAccount = req.query.backupAccount ? String(req.query.backupAccount) : undefined;
 
   try {

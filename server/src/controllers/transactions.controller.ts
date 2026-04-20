@@ -39,7 +39,7 @@ export const getTransactionsByToken = async (req: Request, res: ApiRes) => {
 };
 
 export const getTransactionById = async (req: Request, res: ApiRes) => {
-  const transactionId = req.params.id;
+  const transactionId = String(req.params.id);
 
   try {
     const user = res.locals.user;
@@ -76,7 +76,7 @@ export const createTransaction = async (req: Request, res: ApiRes) => {
 };
 
 export const updateTransaction = async (req: Request, res: ApiRes) => {
-  const transactionId = req.params.id;
+  const transactionId = String(req.params.id);
   const { description, amount, date, account } = req.body;
 
   try {
@@ -101,7 +101,7 @@ export const updateTransaction = async (req: Request, res: ApiRes) => {
   }
 };
 export const deleteTransaction = async (req: Request, res: ApiRes) => {
-  const transactionId = req.params.id;
+  const transactionId = String(req.params.id);
   try {
     const user = res.locals.user;
     const deleted = await transactionsService.delete(user.id, transactionId);

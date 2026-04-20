@@ -9,6 +9,8 @@ const {
 } = process.env;
 
 const dbName = MONGO_DB || "ledgerly";
+const MONGO_CONNECT_RETRIES = Number(process.env.MONGO_CONNECT_RETRIES ?? 30);
+const MONGO_CONNECT_RETRY_DELAY_MS = Number(process.env.MONGO_CONNECT_RETRY_DELAY_MS ?? 2000);
 
 let client: MongoClient | null = null;
 let db: Db | null = null;
@@ -23,7 +25,29 @@ export const connectDb = async (): Promise<Db> => {
     maxPoolSize: 10,
     minPoolSize: 2
   });
-  await client.connect();
+
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= MONGO_CONNECT_RETRIES; attempt++) {
+    try {
+      await client.connect();
+      lastError = undefined;
+      break;
+    } catch (error) {
+      lastError = error;
+      if (attempt === MONGO_CONNECT_RETRIES) {
+        throw error;
+      }
+      console.warn(
+        `Mongo not ready (attempt ${attempt}/${MONGO_CONNECT_RETRIES}). Retrying in ${MONGO_CONNECT_RETRY_DELAY_MS}ms...`
+      );
+      await new Promise(resolve => setTimeout(resolve, MONGO_CONNECT_RETRY_DELAY_MS));
+    }
+  }
+
+  if (lastError) {
+    throw lastError instanceof Error ? lastError : new Error("Could not connect to MongoDB");
+  }
+
   db = client.db(dbName);
   return db;
 };

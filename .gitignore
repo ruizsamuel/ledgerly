@@ -1,3 +1,7 @@
-data/
-data.prod/
+# Local environment file
 .env
+
+# MongoDB local data directories
+data/
+data-dev/
+data-prod/

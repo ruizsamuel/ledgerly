@@ -6,9 +6,6 @@ RUN npm ci && npm cache clean --force
 
 COPY . .
 
-ARG API_URL
-RUN sed -i "s|API_URL_PLACEHOLDER|${API_URL}|g" src/environments/environment.ts
-
 RUN npm install -g http-server
 
 RUN npm run build

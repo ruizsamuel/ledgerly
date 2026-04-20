@@ -1,7 +1,10 @@
 services:
   server:
-    build:
-      context: ./server
+    image: ledgerly-server:latest
+    restart: on-failure
+    depends_on:
+      mongo:
+        condition: service_healthy
     environment:
       - CORS_ORIGIN=${DOMAIN}
       - MONGO_HOST=mongo
@@ -13,30 +16,36 @@ services:
       - 5000
 
   client:
-    build:
-      context: ./client
-      args:
-        - API_URL=${DOMAIN}/api
+    image: ledgerly-client:latest
     expose:
       - 4000
 
   mongo:
-    image: mongo:5.0.2
+    image: mongo:8.2
     container_name: mongo_container
     restart: always
     expose:
       - 27017
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --quiet --username $$MONGO_INITDB_ROOT_USERNAME --password $$MONGO_INITDB_ROOT_PASSWORD --authenticationDatabase admin --eval \"try { rs.status().myState === 1 ? quit(0) : quit(1) } catch(e) { quit(1) }\""]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 15s
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
       USE_KEYFILE: "true"
     volumes:
-      - ./data.prod:/data/db
+      - ./data-prod:/data/db
       - ./db-init.sh:/usr/local/bin/db-init.sh:ro
     entrypoint: ["/usr/local/bin/db-init.sh"]
 
   nginx:
     image: nginx:latest
+    depends_on:
+      - client
+      - server
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
     ports:

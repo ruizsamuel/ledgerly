@@ -1,7 +1,9 @@
 services:
   server:
+    image: ledgerly-server:latest
     build:
       context: ./server
+    restart: on-failure
     environment:
       - CORS_ORIGIN=${CLIENT_URL}
       - MONGO_HOST=mongo
@@ -9,21 +11,20 @@ services:
       - JWT_SECRET=${JWT_SECRET}
     volumes:
       - ./server:/app
-      - /app/node_modules
+      - server_node_modules:/app/node_modules
     ports:
       - "5000:5000"
     command: npm run dev
 
   client:
+    image: ledgerly-client:latest
     build:
       context: ./client
-      args:
-        - API_URL=${SERVER_URL}
+    environment:
+      - SERVER_PROXY_TARGET=${SERVER_PROXY_TARGET:-http://server:5000}
     volumes:
       - ./client:/app
-      - /app/node_modules
-      - /app/dist
-      - /app/src/environments
+      - client_node_modules:/app/node_modules
     ports:
       - "4200:4200"
     command: npm run start
@@ -35,6 +36,10 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - ./data:/data/db
+      - ./data-dev:/data/db
       - ./db-init.sh:/usr/local/bin/db-init.sh:ro
     entrypoint: ["/usr/local/bin/db-init.sh"]
+
+volumes:
+  client_node_modules:
+  server_node_modules:

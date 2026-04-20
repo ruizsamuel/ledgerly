@@ -21,31 +21,88 @@ Ledgerly is a personal accounting application designed to help users efficiently
    cp .env.example .env
    ```
 
-2. Build the Docker images with:
-   ```
-   docker compose build
-   ```
-3. To run the project in **development mode** (with automatic reload on changes), use:
+2. Build Docker images once:
    ```bash
-   docker compose up
+   make build
+   ```
+
+3. Start in **development mode**:
+   ```bash
+   make dev
+   ```
+
+   Follow development logs:
+   ```bash
+   make logs-dev
    ```
 
    Access the application at `http://localhost:4200`.
 
-   *Note: The development mode uses a volume mount for the source code, allowing you to see changes without rebuilding the Docker image.*
+   *Note: The development mode uses a source-code bind mount plus dedicated container volumes for `node_modules`, so you get hot reload without leaking host dependencies into the container.*
 
    For LSP support, you should install node modules locally:
    ```bash
-    cd client && npm install
-    cd ../server && npm install
-    ```
+   cd client && npm install
+   cd ../server && npm install
+   ```
 
-4. To run the project in **production mode**, use the production compose file:
+4. Start in **production mode**:
    ```bash
-   docker compose -f docker-compose.prod.yml up
+   make prod
+   ```
+
+   Follow production logs:
+   ```bash
+   make logs-prod
    ```
 
    Access the application at `http://localhost`.
+
+5. Stop both environments:
+   ```bash
+   make down
+   ```
+
+6. Bump synchronized app version (client + server):
+   ```bash
+   make version patch
+   make version minor
+   make version major
+   ```
+
+## Architecture & Deployment
+
+### Single Build, Two Modes
+
+Ledgerly keeps the browser API contract fixed to `/api` and reuses the same built images for both environments:
+
+- **Development Mode:** Angular dev server runs with a proxy so `/api` on `http://localhost:4200` forwards to the backend container
+- **Production Mode:** Nginx is the single public entrypoint and proxies `/api` to the backend while serving the SPA with index.html fallback
+- **Build Once:** The client and server images are tagged consistently so the same images are reused in dev and prod
+
+### Nginx Routing Configuration
+
+The Nginx proxy (`nginx.conf`) implements proper SPA (Single Page Application) routing:
+
+```
+/api/*              → Backend API (Express server on port 5000)
+/*.{js,css,png,...} → Static assets from client
+/*                  → Client app with fallback to index.html (enables SPA routing)
+```
+
+This ensures that routes like `/accounts`, `/transactions`, `/settings` are handled by Angular's router rather than creating 404 errors.
+
+### Environment Variables
+
+- **Development (`.env`):**
+  - `CLIENT_URL=http://localhost:4200` - Angular dev server
+   - `SERVER_PROXY_TARGET=http://server:5000` - Backend target used by the Angular proxy inside Docker
+  - `DOMAIN=http://localhost` - Not used in dev
+
+- **Production (`.env`):**
+  - `DOMAIN=http://localhost` - Single domain for both client and API
+  - `MONGO_USERNAME` and `MONGO_PASSWORD` - Database credentials
+  - `JWT_SECRET` - Authentication secret
 
 ## Contributing
 
@@ -54,4 +111,3 @@ Feel free to open issues or submit pull requests for new features or bug fixes.
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
