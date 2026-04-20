@@ -1,7 +1,7 @@
 import { Validators } from "@angular/forms";
 import { FormConfig } from "../../../common/ui/models/form-config.model";
 import { FormUtils } from "../../../common/utils/form.utils";
-import { User } from "../../../../core/models/user.model";
+import { User } from "../../../common/models/user.model";
 
 
 export class AuthHelper {

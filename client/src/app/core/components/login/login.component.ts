@@ -1,9 +1,9 @@
 import { Component, computed, inject, signal } from "@angular/core";
 import { LogoComponent } from "../../../shared/common/ui/components/logo/logo.component";
 import { FormUtils } from "../../../shared/common/utils/form.utils";
-import { AuthService } from "../../services/auth.service";
+import { AuthService } from "../../../shared/common/services/auth.service";
 import { FormComponent } from "../../../shared/common/ui/components/form/form.component";
-import { LoginDTO, RegisterDTO } from "../../models/auth.model";
+import { LoginDTO, RegisterDTO } from "../../../shared/common/models/auth.model";
 import { AuthHelper } from "../../../shared/domain/ui/helpers/auth.helper";
 
 @Component({

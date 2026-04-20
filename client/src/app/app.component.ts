@@ -1,7 +1,7 @@
 import { Component, computed, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { UserService } from './core/services/user.service';
-import { AuthService } from './core/services/auth.service';
+import { UserService } from './shared/common/services/user.service';
+import { AuthService } from './shared/common/services/auth.service';
 import { CreateAdminPageComponent } from './core/components/create-admin/create-admin.component';
 import { LoadingComponent } from './shared/common/ui/components/loading/loading.component';
 import { LoginComponent } from './core/components/login/login.component';

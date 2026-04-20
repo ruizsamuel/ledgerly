@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Response } from "../../../core/models/response.model";
+import { Response } from "../../common/models/response.model";
 import { Account, AccountBasic } from "../models/account.model";
 import { Observable, of } from "rxjs";
 import { Transaction, TransactionBasic } from "../models/transaction.model";

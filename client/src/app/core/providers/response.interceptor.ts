@@ -5,7 +5,7 @@ import {
 import { inject } from '@angular/core';
 import { catchError, of } from 'rxjs';
 import { ToastService } from '../../shared/common/services/toast.service';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../../shared/common/services/auth.service';
 
 export const responseInterceptor: HttpInterceptorFn = (req, next) => {
   const toastService = inject(ToastService);

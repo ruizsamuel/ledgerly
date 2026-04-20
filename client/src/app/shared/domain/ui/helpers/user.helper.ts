@@ -1,5 +1,5 @@
 import { Validators } from "@angular/forms";
-import { User } from "../../../../core/models/user.model";
+import { User } from "../../../common/models/user.model";
 import { FormConfig } from "../../../common/ui/models/form-config.model";
 import { TableConfig } from "../../../common/ui/models/table-config.model";
 

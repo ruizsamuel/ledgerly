@@ -2,14 +2,14 @@ import { Component, HostListener, inject, signal } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import { LogoComponent } from "../../../shared/common/ui/components/logo/logo.component";
 import { RouterLink, RouterLinkActive } from "@angular/router";
-import { AuthService } from "../../services/auth.service";
+import { AuthService } from "../../../shared/common/services/auth.service";
 import { AvatarPipe } from "../../../shared/common/ui/pipes/avatar.pipe";
 import { ModalService } from "../../../shared/common/services/modal.service";
 import { FormComponent } from "../../../shared/common/ui/components/form/form.component";
 import { AuthHelper } from "../../../shared/domain/ui/helpers/auth.helper";
-import { ChangePasswordDTO } from "../../models/auth.model";
+import { ChangePasswordDTO } from "../../../shared/common/models/auth.model";
 import { ToastService } from "../../../shared/common/services/toast.service";
-import { UserService } from "../../services/user.service";
+import { UserService } from "../../../shared/common/services/user.service";
 
 @Component({
   selector: "app-navbar",

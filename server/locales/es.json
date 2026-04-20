@@ -1,15 +1,52 @@
 {
   "middleware": {
     "auth": {
-      "noTokenProvided": "No se proporcionó token"
+      "noTokenProvided": "No se proporcionó token",
+      "userNotFound": "Usuario no encontrado",
+      "invalidToken": "Token inválido",
+      "adminOnly": "Acceso administrativo requerido"
     }
   },
   "controller": {
-    "auth": {
-      "invalidCredentials": "Credenciales inválidas"
-    },
     "account": {
+      "createdSuccess": "Cuenta creada",
+      "updatedSuccess": "Cuenta actualizada",
+      "deletedSuccess": "Cuenta eliminada",
+      "notFound": "Cuenta no encontrada",
       "initialBalance": "Balance inicial"
+    },
+    "transaction": {
+      "createdSuccess": "Transacción registrada",
+      "updatedSuccess": "Transacción actualizada",
+      "deletedSuccess": "Transacción eliminada",
+      "accountNotFound": "La cuenta no existe",
+      "notFound": "Transacción no encontrada"
+    },
+    "user": {
+      "createdSuccess": "Usuario creado",
+      "updateSuccess": "Usuario actualizado",
+      "deleteSuccess": "Usuario eliminado",
+      "notFound": "Usuario no encontrado"
+    },
+    "auth": {
+      "invalidCredentials": "Email o contraseña inválidos",
+      "registrationDisabled": "El registro de usuarios está deshabilitado",
+      "emailInUse": "El email ya está en uso",
+      "passwordMinLength": "La contraseña debe tener al menos",
+      "registeredSuccess": "Usuario registrado exitosamente",
+      "loginSuccess": "Inicio de sesión exitoso",
+      "authenticated": "Usuario autenticado",
+      "incorrectPassword": "La contraseña actual es incorrecta",
+      "passwordChanged": "Contraseña cambiada exitosamente",
+      "noTokenProvided": "No se proporcionó token",
+      "sessionExpired": "Sesión expirada, por favor inicie sesión nuevamente",
+      "passwordMismatch": "Las contraseñas no coinciden"
     }
+  },
+  "common": {
+    "validationFailed": "Validación fallida",
+    "paginationPositiveInteger": "Los parámetros de paginación deben ser enteros positivos",
+    "serverError": "Error interno del servidor o datos inválidos",
+    "updatedSuccess": "Actualizado exitosamente"
   }
 }

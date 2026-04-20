@@ -29,8 +29,11 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+      USE_KEYFILE: "true"
     volumes:
       - ./data.prod:/data/db
+      - ./db-init.sh:/usr/local/bin/db-init.sh:ro
+    entrypoint: ["/usr/local/bin/db-init.sh"]
 
   nginx:
     image: nginx:latest

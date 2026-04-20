@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { Observable, tap } from 'rxjs';
-import { Response } from '../../../core/models/response.model';
+import { Response } from '../../common/models/response.model';
 import { Transaction, TransactionBasic, NewTransactionDTO, UpdateTransactionDTO } from '../models/transaction.model';
 import { CacheService } from './cache.service';
 

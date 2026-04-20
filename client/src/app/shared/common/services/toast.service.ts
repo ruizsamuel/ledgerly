@@ -1,6 +1,6 @@
 // toast.service.ts
 import { computed, Injectable, signal } from '@angular/core';
-import { Toast } from '../../../core/models/toast.model';
+import { Toast } from '../models/toast.model';
 
 @Injectable({
   providedIn: 'root'

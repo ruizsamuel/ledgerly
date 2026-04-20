@@ -70,7 +70,7 @@ export class AccountDetailComponent {
       account: request.params.accountId,
       fromDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1, 2, 1),
       toDate: new Date(),
-      limit: -1,
+      limit: 0,
     })
   });
 
@@ -80,7 +80,7 @@ export class AccountDetailComponent {
       account: request.params.accountId,
       fromDate: new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1, 2, 1),
       toDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-      limit: -1,
+      limit: 0,
     })
   });
 

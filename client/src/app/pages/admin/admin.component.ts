@@ -7,15 +7,15 @@ import { SettingsService } from "../../shared/domain/services/settings.service";
 import { LoadingComponent } from "../../shared/common/ui/components/loading/loading.component";
 import { Settings } from "../../shared/domain/models/settings.model";
 import { ToastService } from "../../shared/common/services/toast.service";
-import { UserService } from "../../core/services/user.service";
+import { UserService } from "../../shared/common/services/user.service";
 import { UserHelper } from "../../shared/domain/ui/helpers/user.helper";
 import { PaginationService } from "../../shared/common/services/pagination.service";
 import { TableComponent } from "../../shared/common/ui/components/table/table.component";
 import { PaginationComponent } from "../../shared/common/ui/components/pagination/pagination.component";
-import { User } from "../../core/models/user.model";
+import { User } from "../../shared/common/models/user.model";
 import { ModalService } from "../../shared/common/services/modal.service";
 import { ConfirmationComponent } from "../../shared/common/ui/components/confirmation/confirmation.component";
-import { NewUserDTO, UpdateUserDTO } from "../../core/models/user.model";
+import { NewUserDTO, UpdateUserDTO } from "../../shared/common/models/user.model";
 
 @Component({
   selector: 'app-admin',
