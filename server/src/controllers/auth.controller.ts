@@ -1,7 +1,7 @@
 import type { Request, Response as ExpressResponse } from "express";
 import { createToken, verifyToken, PASSWORD_MIN_LENGTH } from "../common/utils/auth.utils.js";
 import { tFromReq } from "../common/utils/translator.utils.js";
-import type { Response as ApiResponse } from "../common/models/response.model.js";
+import type { Response as ApiResponse } from "../common/models/basic.model.js";
 import { authService } from "../services/auth.service.js";
 
 type ApiRes = ExpressResponse<Partial<ApiResponse<unknown>>>;

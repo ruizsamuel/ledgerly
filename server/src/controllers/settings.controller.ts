@@ -1,6 +1,6 @@
 import type { Request, Response as ExpressResponse } from "express";
 import { tFromReq } from "../common/utils/translator.utils.js";
-import type { Response as ApiResponse } from "../common/models/response.model.js";
+import type { Response as ApiResponse } from "../common/models/basic.model.js";
 import { settingsService } from "../services/settings.service.js";
 
 type ApiRes = ExpressResponse<Partial<ApiResponse<unknown>>>;

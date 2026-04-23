@@ -1,4 +1,4 @@
-import { ClientSession } from "mongodb";
+import { DbSession } from "../common/models/basic.model.js";
 import { executeInTransaction } from "../common/utils/database.utils.js";
 import { transactionRepository } from "../repositories/transaction.repository.js";
 import { accountRepository } from "../repositories/account.repository.js";
@@ -26,7 +26,7 @@ export const transactionsService = {
     const accountExists = await accountRepository.findById(userId, input.account);
     if (!accountExists) throw new Error("accountNotFound");
 
-    return executeInTransaction(async (session: ClientSession) => {
+    return executeInTransaction(async (session: DbSession) => {
       const transaction = await transactionRepository.create(userId, input, session);
       if (transaction) {
         await accountRepository.addBalance(transaction.account, transaction.amount, session);
@@ -44,7 +44,7 @@ export const transactionsService = {
       if (!accountExists) throw new Error("accountNotFound");
     }
 
-    return executeInTransaction(async (session: ClientSession) => {
+    return executeInTransaction(async (session: DbSession) => {
       if (input.account && input.account !== existing.account) {
         await accountRepository.addBalance(existing.account, -existing.amount, session);
       }
@@ -64,7 +64,7 @@ export const transactionsService = {
     const deleted = await transactionRepository.findById(userId, transactionId);
     if (!deleted) return null;
 
-    return executeInTransaction(async (session: ClientSession) => {
+    return executeInTransaction(async (session: DbSession) => {
       await transactionRepository.delete(userId, transactionId, session);
       await accountRepository.addBalance(deleted.account, -deleted.amount, session);
       return { id: deleted.id, amount: deleted.amount, account: deleted.account };

@@ -1,5 +1,5 @@
 import type { Request, Response as ExpressResponse, NextFunction } from "express";
-import type { Response as ApiResponse } from "../models/response.model.js";
+import type { Response as ApiResponse } from "../models/basic.model.js";
 
 type PartialApiResponse = Partial<ApiResponse<unknown>> & Record<string, unknown>;
 

@@ -1,16 +1,28 @@
-import { Db, MongoClient, ClientSession } from "mongodb";
+import { Db, MongoClient } from "mongodb";
+import { DbSession } from "../models/basic.model.js";
 
-const {
-  MONGO_HOST,
-  MONGO_USERNAME,
-  MONGO_PASSWORD,
-  MONGO_PORT,
-  MONGO_DB
-} = process.env;
+const getDbName = () => process.env.MONGO_DB || "ledgerly";
+const getRetryCount = () => Number(process.env.MONGO_CONNECT_RETRIES ?? 30);
+const getRetryDelay = () => Number(process.env.MONGO_CONNECT_RETRY_DELAY_MS ?? 2000);
+const getServerSelectionTimeout = () =>
+  Number(process.env.MONGO_SERVER_SELECTION_TIMEOUT_MS ?? 30000);
 
-const dbName = MONGO_DB || "ledgerly";
-const MONGO_CONNECT_RETRIES = Number(process.env.MONGO_CONNECT_RETRIES ?? 30);
-const MONGO_CONNECT_RETRY_DELAY_MS = Number(process.env.MONGO_CONNECT_RETRY_DELAY_MS ?? 2000);
+const getMongoUri = () => {
+  if (process.env.MONGO_URI) return process.env.MONGO_URI;
+
+  const host = process.env.MONGO_HOST;
+  const port = process.env.MONGO_PORT;
+  const username = process.env.MONGO_USERNAME;
+  const password = process.env.MONGO_PASSWORD;
+
+  if (!host || !port) {
+    throw new Error("Mongo connection variables are missing. Set MONGO_URI or MONGO_HOST/MONGO_PORT.");
+  }
+
+  return username && password
+    ? `mongodb://${username}:${password}@${host}:${port}/?retryWrites=true`
+    : `mongodb://${host}:${port}/?retryWrites=true`;
+};
 
 let client: MongoClient | null = null;
 let db: Db | null = null;
@@ -18,29 +30,31 @@ let db: Db | null = null;
 export const connectDb = async (): Promise<Db> => {
   if (db) return db;
 
-  const uri = MONGO_USERNAME && MONGO_PASSWORD
-    ? `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}/?retryWrites=true`
-    : `mongodb://${MONGO_HOST}:${MONGO_PORT}/?retryWrites=true`;
+  const uri = getMongoUri();
   client = new MongoClient(uri, {
     maxPoolSize: 10,
-    minPoolSize: 2
+    minPoolSize: 2,
+    serverSelectionTimeoutMS: getServerSelectionTimeout()
   });
 
+  const maxRetries = getRetryCount();
+  const retryDelayMs = getRetryDelay();
+
   let lastError: unknown;
-  for (let attempt = 1; attempt <= MONGO_CONNECT_RETRIES; attempt++) {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       await client.connect();
       lastError = undefined;
       break;
     } catch (error) {
       lastError = error;
-      if (attempt === MONGO_CONNECT_RETRIES) {
+      if (attempt === maxRetries) {
         throw error;
       }
       console.warn(
-        `Mongo not ready (attempt ${attempt}/${MONGO_CONNECT_RETRIES}). Retrying in ${MONGO_CONNECT_RETRY_DELAY_MS}ms...`
+        `Mongo not ready (attempt ${attempt}/${maxRetries}). Retrying in ${retryDelayMs}ms...`
       );
-      await new Promise(resolve => setTimeout(resolve, MONGO_CONNECT_RETRY_DELAY_MS));
+      await new Promise(resolve => setTimeout(resolve, retryDelayMs));
     }
   }
 
@@ -48,8 +62,16 @@ export const connectDb = async (): Promise<Db> => {
     throw lastError instanceof Error ? lastError : new Error("Could not connect to MongoDB");
   }
 
-  db = client.db(dbName);
+  db = client.db(getDbName());
   return db;
+};
+
+export const closeDb = async () => {
+  if (client) {
+    await client.close();
+  }
+  client = null;
+  db = null;
 };
 
 export const getDb = (): Db => {
@@ -60,7 +82,7 @@ export const getDb = (): Db => {
 };
 
 export const executeInTransaction = async <T>(
-  operation: (session: ClientSession) => Promise<T>
+  operation: (session: DbSession) => Promise<T>
 ): Promise<T> => {
   if (!client) {
     throw new Error("Database client not connected. Call connectDb first.");

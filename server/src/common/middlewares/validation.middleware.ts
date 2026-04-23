@@ -1,7 +1,7 @@
 import type { Request, Response as ExpressResponse, NextFunction } from "express";
 import { ZodSchema } from "zod";
 import { tFromReq } from "../utils/translator.utils.js";
-import type { Response as ApiResponse } from "../models/response.model.js";
+import type { Response as ApiResponse } from "../models/basic.model.js";
 
 type ApiRes = ExpressResponse<Partial<ApiResponse<unknown>>>;
 

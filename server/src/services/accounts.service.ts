@@ -1,4 +1,4 @@
-import { ClientSession } from "mongodb";
+import { DbSession } from "../common/models/basic.model.js";
 import { executeInTransaction } from "../common/utils/database.utils.js";
 import { accountRepository } from "../repositories/account.repository.js";
 import { transactionRepository } from "../repositories/transaction.repository.js";
@@ -14,7 +14,7 @@ export const accountsService = {
   },
 
   async create(userId: string, input: NewAccountInput, initialBalanceDescription: string) {
-    return executeInTransaction(async (session: ClientSession) => {
+    return executeInTransaction(async (session: DbSession) => {
       const account = await accountRepository.create(userId, input, session);
       if (!account) return null;
 
@@ -39,7 +39,7 @@ export const accountsService = {
     const deleted = await accountRepository.delete(userId, accountId);
     if (!deleted) return null;
 
-    return executeInTransaction(async (session: ClientSession) => {
+    return executeInTransaction(async (session: DbSession) => {
       if (backupAccountId) {
         await accountRepository.updateTransactionsAccount(accountId, backupAccountId, session);
         await accountRepository.addBalance(backupAccountId, deleted.balance, session);

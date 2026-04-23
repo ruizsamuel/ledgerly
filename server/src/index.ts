@@ -10,27 +10,42 @@ import { accountsRouter } from "./routes/accounts.routes.js";
 import { transactionsRouter } from "./routes/transactions.routes.js";
 import { settingsRouter } from "./routes/settings.routes.js";
 
-const app = express();
+export const createApp = () => {
+  const app = express();
 
-app.use(json());
-app.use(cors({
-  origin: process.env["CORS_ORIGIN"] ?? "http://localhost:4200",
-  credentials: true
-}));
-app.use(cookieParser());
+  app.use(json());
+  app.use(cors({
+    origin: process.env["CORS_ORIGIN"] ?? "http://localhost:4200",
+    credentials: true
+  }));
+  app.use(cookieParser());
 
-await connectDb();
-initI18n();
+  app.use(enrichResponse);
 
-app.use(enrichResponse);
+  app.use("/api/auth", authRouter);
+  app.use("/api/settings", settingsRouter);
+  app.use("/api/users", usersRouter);
+  app.use("/api/accounts", accountsRouter);
+  app.use("/api/transactions", transactionsRouter);
 
-app.use("/api/auth", authRouter);
-app.use("/api/settings", settingsRouter);
-app.use("/api/users", usersRouter);
-app.use("/api/accounts", accountsRouter);
-app.use("/api/transactions", transactionsRouter);
+  return app;
+};
 
-const PORT = Number(process.env.PORT || 5000);
-app.listen(PORT, () => {
-  console.log("Server running on port:", PORT);
-});
+export const app = createApp();
+
+export const startServer = async () => {
+  await connectDb();
+  initI18n();
+
+  const PORT = Number(process.env.PORT || 5000);
+  return app.listen(PORT, () => {
+    console.log("Server running on port:", PORT);
+  });
+};
+
+if (process.env.NODE_ENV !== "test") {
+  startServer().catch((error) => {
+    console.error("Failed to start server:", error);
+    process.exit(1);
+  });
+}

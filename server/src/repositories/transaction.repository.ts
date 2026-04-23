@@ -96,15 +96,19 @@ export const transactionRepository = {
   },
 
   async update(ownerId: string, transactionId: string, input: UpdateTransactionInput, session?: ClientSession): Promise<Transaction | null> {
-    const updateDoc: Record<string, unknown> = { ...input };
-    if (input.account) updateDoc.account = new ObjectId(input.account);
-    if (input.date) updateDoc.date = new Date(input.date);
+    const updateDoc: Record<string, unknown> = {};
+    if (input.amount !== undefined) updateDoc.amount = input.amount;
+    if (input.description !== undefined) updateDoc.description = input.description;
+    if (input.account !== undefined) updateDoc.account = new ObjectId(input.account);
+    if (input.date !== undefined) updateDoc.date = new Date(input.date);
 
-    await collection().updateOne(
-      { _id: new ObjectId(transactionId), owner: new ObjectId(ownerId) },
-      { $set: updateDoc },
-      { session }
-    );
+    if (Object.keys(updateDoc).length > 0) {
+      await collection().updateOne(
+        { _id: new ObjectId(transactionId), owner: new ObjectId(ownerId) },
+        { $set: updateDoc },
+        { session }
+      );
+    }
 
     const doc = await collection().findOne({
       _id: new ObjectId(transactionId),

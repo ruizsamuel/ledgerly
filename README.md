@@ -70,6 +70,34 @@ Ledgerly is a personal accounting application designed to help users efficiently
    make version major
    ```
 
+## Testing
+
+Run the full test suite:
+
+```bash
+make test
+```
+
+Useful focused targets:
+
+```bash
+make test-back
+make test-front
+make test-integration
+make test-watch
+```
+
+You can also run test commands directly:
+
+```bash
+cd server && npm run test
+cd server && npm run test:unit
+cd server && npm run test:integration
+cd server && npm run test:functional
+
+cd client && npm run test
+```
+
 ## Architecture & Deployment
 
 ### Single Build, Two Modes
@@ -103,6 +131,15 @@ This ensures that routes like `/accounts`, `/transactions`, `/settings` are hand
   - `DOMAIN=http://localhost` - Single domain for both client and API
   - `MONGO_USERNAME` and `MONGO_PASSWORD` - Database credentials
   - `JWT_SECRET` - Authentication secret
+
+### Data Directories
+
+Local MongoDB bind-mount directories are standardized with hyphen names:
+
+- `data-dev/` for development
+- `data-prod/` for production
+
+These directories are ignored by git, together with the legacy `data/` path, to avoid committing database files.
 
 ## Contributing
 
