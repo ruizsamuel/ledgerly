@@ -2,7 +2,7 @@ import { DbSession } from "../common/models/basic.model.js";
 import { executeInTransaction } from "../common/utils/database.utils.js";
 import { accountRepository } from "../repositories/account.repository.js";
 import { transactionRepository } from "../repositories/transaction.repository.js";
-import type { NewAccountInput, UpdateAccountInput } from "../domain/models/account.model.js";
+import type { NewAccountDTO, UpdateAccountDTO } from "../domain/models/account.model.js";
 
 export const accountsService = {
   async listByUser(userId: string, options: { page: number; limit: number }) {
@@ -13,7 +13,7 @@ export const accountsService = {
     return accountRepository.findById(userId, accountId);
   },
 
-  async create(userId: string, input: NewAccountInput, initialBalanceDescription: string) {
+  async create(userId: string, input: NewAccountDTO, initialBalanceDescription: string) {
     return executeInTransaction(async (session: DbSession) => {
       const account = await accountRepository.create(userId, input, session);
       if (!account) return null;
@@ -31,7 +31,7 @@ export const accountsService = {
     });
   },
 
-  async update(userId: string, accountId: string, input: UpdateAccountInput) {
+  async update(userId: string, accountId: string, input: UpdateAccountDTO) {
     return accountRepository.update(userId, accountId, input);
   },
 

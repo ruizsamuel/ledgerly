@@ -8,13 +8,13 @@ export interface Account extends AccountBasic {
   description?: string;
 }
 
-export interface NewAccountInput {
+export interface NewAccountDTO {
   name: string;
   balance: number;
   description?: string;
 }
 
-export interface UpdateAccountInput {
+export interface UpdateAccountDTO {
   name?: string;
   description?: string;
 }

@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("../../../src/repositories/user.repository.js", () => ({
   userRepository: {
-    findByEmailRaw: vi.fn(),
+    findByEmail: vi.fn(),
     create: vi.fn(),
     updateById: vi.fn(),
     countAll: vi.fn(),
@@ -48,7 +48,7 @@ describe("usersService (unit)", () => {
   });
 
   it("throws emailInUse when email already exists", async () => {
-    vi.mocked(userRepository.findByEmailRaw).mockResolvedValue({ _id: { toString: () => "x" } } as never);
+    vi.mocked(userRepository.findByEmail).mockResolvedValue({ id: { toString: () => "x" } } as never);
 
     await expect(usersService.create({
       name: "A",
@@ -59,7 +59,7 @@ describe("usersService (unit)", () => {
   });
 
   it("creates user with hashed password", async () => {
-    vi.mocked(userRepository.findByEmailRaw).mockResolvedValue(null);
+    vi.mocked(userRepository.findByEmail).mockResolvedValue(null);
     vi.mocked(userRepository.create).mockResolvedValue({
       id: "u1",
       name: "User",

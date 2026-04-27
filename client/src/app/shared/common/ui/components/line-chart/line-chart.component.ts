@@ -57,6 +57,13 @@ export class LineChartComponent implements OnInit {
       xaxis: {
         categories: this.categories()
       },
+      yaxis: {
+        labels: {
+          formatter: function (val) {
+            return val.toFixed(0);
+          }
+        }
+      },
       fill: {
         type: 'gradient',
         gradient: {

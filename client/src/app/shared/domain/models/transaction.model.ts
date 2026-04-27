@@ -22,6 +22,17 @@ export interface UpdateTransactionDTO {
   date?: string;
 }
 
+export interface ListTransactionDTO {
+  limit?: number;
+  page?: number;
+  description?: string;
+  fromDate?: string | null;
+  toDate?: string | null;
+  sortBy?: 'date' | 'amount';
+  sort?: 'asc' | 'desc';
+  account?: string;
+}
+
 export interface Transfer {
   fromAccount: string;
   toAccount: string;

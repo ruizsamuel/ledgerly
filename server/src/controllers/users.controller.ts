@@ -25,6 +25,7 @@ export const getAllUsers = async (req: Request, res: ApiRes) => {
       content: users
     });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: tFromReq(req, "common.serverError") });
   }
 };
@@ -36,6 +37,7 @@ export const getUserById = async (req: Request, res: ApiRes) => {
     if (!user) return res.status(404).json({ message: tFromReq(req, "controller.user.notFound") });
     res.status(200).json({ content: user });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: tFromReq(req, "common.serverError") });
   }
 };
@@ -46,6 +48,7 @@ export const updateUserByToken = async (req: Request, res: ApiRes) => {
     const updated = await usersService.updateByToken(user, req.body);
     res.status(200).json({ message: tFromReq(req, "controller.user.updateSuccess"), content: updated });
   } catch (err) {
+    console.error(err);
     const msg = (err as Error).message;
     if (msg === "emailInUse") {
       return res.status(400).json({ message: tFromReq(req, "controller.auth.emailInUse") });
@@ -59,6 +62,7 @@ export const createUser = async (req: Request, res: ApiRes) => {
     const user = await usersService.create(req.body);
     res.status(201).json({ message: tFromReq(req, "controller.user.createdSuccess"), content: user });
   } catch (err) {
+    console.error(err);
     const msg = (err as Error).message;
     if (msg === "passwordMinLength") {
       return res.status(400).json({ message: tFromReq(req, "controller.auth.passwordLengthError") });
@@ -77,6 +81,7 @@ export const updateUser = async (req: Request, res: ApiRes) => {
     if (!user) return res.status(404).json({ message: tFromReq(req, "controller.user.notFound") });
     res.status(200).json({ message: tFromReq(req, "controller.user.updateSuccess"), content: user });
   } catch (err) {
+    console.error(err);
     const msg = (err as Error).message;
     if (msg === "emailInUse") {
       return res.status(400).json({ message: tFromReq(req, "controller.auth.emailInUse") });
@@ -91,6 +96,7 @@ export const deleteUser = async (req: Request, res: ApiRes) => {
     await usersService.deleteById(id);
     res.status(200).json({ message: tFromReq(req, "controller.user.deleteSuccess") });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: tFromReq(req, "common.serverError") });
   }
 };

@@ -53,7 +53,10 @@ export class DashboardComponent {
   });
 
   transactionResource = rxResource({
-    params: () => ({ limit: 0, fromDate: new Date(new Date().getFullYear() - 1, 0, 1, 1, 1) }),
+    params: () => ({
+      limit: 0,
+      fromDate: new Date(Date.UTC(new Date().getFullYear() - 1, 0, 1, 0, 0, 0, 0)).toISOString()
+    }),
     stream: ( request ) => {
       return this.transactionService.getEntitiesByToken(request.params);
     }

@@ -68,8 +68,8 @@ export class AccountDetailComponent {
     params: () => ({ accountId: this.accountId }),
     stream: ( request ) => this.transactionService.getEntitiesByToken({
       account: request.params.accountId,
-      fromDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1, 2, 1),
-      toDate: new Date(),
+      fromDate: new Date(Date.UTC(new Date().getFullYear(), new Date().getMonth(), 1, 0, 0, 0, 0)).toISOString(),
+      toDate: new Date().toISOString(),
       limit: 0,
     })
   });
@@ -78,8 +78,8 @@ export class AccountDetailComponent {
     params: () => ({ accountId: this.accountId }),
     stream: ( request ) => this.transactionService.getEntitiesByToken({
       account: request.params.accountId,
-      fromDate: new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1, 2, 1),
-      toDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+      fromDate: new Date(Date.UTC(new Date().getFullYear(), new Date().getMonth() - 1, 1, 0, 0, 0, 0)).toISOString(),
+      toDate: new Date(Date.UTC(new Date().getFullYear(), new Date().getMonth(), 1, 0, 0, 0, 0)).toISOString(),
       limit: 0,
     })
   });

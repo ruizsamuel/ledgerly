@@ -1,25 +1,54 @@
 import { ObjectId, ClientSession } from "mongodb";
 import { getDb } from "../common/utils/database.utils.js";
-import type { User, NewUserInput, UpdateUserInput } from "../domain/models/user.model.js";
+import type { User, NewUserInput, UpdateUserInput, UserWithPassword } from "../domain/models/user.model.js";
 
 const collection = () => getDb().collection("users");
 
+const USER_PROJECT_STAGE = {
+  $project: {
+    id: "$_id",
+    _id: 0,
+    name: 1,
+    email: 1,
+    isAdmin: 1
+  }
+};
+
+const AUTH_PROJECT_STAGE = {
+  $project: {
+    id: "$_id",
+    _id: 0,
+    name: 1,
+    email: 1,
+    isAdmin: 1,
+    password: 1
+  }
+};
+
 export const userRepository = {
-  async findByEmailRaw(email: string, session?: ClientSession) {
-    return collection().findOne({ email }, { session });
+  async _findOneWithProjection<T>(filter: object, projection: any, session?: ClientSession): Promise<T | null> {
+    const docs = await collection().aggregate<any>([
+      { $match: filter },
+      projection
+    ], { session }).toArray();
+
+    return docs.length > 0 ? (docs[0] as T) : null;
+  },
+
+  async findByEmail(email: string, session?: ClientSession) {
+    return this._findOneWithProjection<User>({ email }, USER_PROJECT_STAGE, session);
   },
 
   async findByEmailWithPassword(email: string, session?: ClientSession) {
-    return collection().findOne({ email }, { projection: { password: 1, name: 1, email: 1, isAdmin: 1 }, session });
+    return this._findOneWithProjection<UserWithPassword>({ email }, AUTH_PROJECT_STAGE, session);
   },
 
   async findById(id: string, session?: ClientSession): Promise<User | null> {
-    const doc = await collection().findOne({ _id: new ObjectId(id) }, { projection: { password: 0 }, session });
-    return doc ? { id: doc._id.toString(), name: doc.name, email: doc.email, isAdmin: doc.isAdmin } : null;
+    return this._findOneWithProjection<User>({ _id: new ObjectId(id) }, USER_PROJECT_STAGE, session);
   },
 
   async findByIdWithPassword(id: string, session?: ClientSession) {
-    return collection().findOne({ _id: new ObjectId(id) }, { projection: { password: 1, name: 1, email: 1, isAdmin: 1 }, session });
+    return this._findOneWithProjection<UserWithPassword>({ _id: new ObjectId(id) }, AUTH_PROJECT_STAGE, session);
   },
 
   async countAll(session?: ClientSession) {
@@ -44,18 +73,10 @@ export const userRepository = {
     }
 
     const sortValue = sort === "desc" ? -1 : 1;
-    const pipeline: Record<string, unknown>[] = [
+    const pipeline: any[] = [
       { $match: filters },
       { $sort: { [sortBy]: sortValue } },
-      {
-        $project: {
-          id: "$_id",
-          _id: 0,
-          name: 1,
-          email: 1,
-          isAdmin: 1
-        }
-      }
+      USER_PROJECT_STAGE
     ];
 
     if (limit > 0) {
@@ -81,18 +102,13 @@ export const userRepository = {
       isAdmin: input.isAdmin
     }, { session });
 
-    const doc = await collection().findOne({ _id: result.insertedId }, { projection: { password: 0 }, session });
-    return doc ? { id: doc._id.toString(), name: doc.name, email: doc.email, isAdmin: doc.isAdmin } : null;
+    return this._findOneWithProjection<User>({ _id: result.insertedId }, USER_PROJECT_STAGE, session);
   },
 
   async updateById(id: string, input: UpdateUserInput, session?: ClientSession): Promise<User | null> {
-    await collection().updateOne(
-      { _id: new ObjectId(id) },
-      { $set: input },
-      { session }
-    );
-    const doc = await collection().findOne({ _id: new ObjectId(id) }, { projection: { password: 0 }, session });
-    return doc ? { id: doc._id.toString(), name: doc.name, email: doc.email, isAdmin: doc.isAdmin } : null;
+    const filter = { _id: new ObjectId(id) };
+    await collection().updateOne(filter, { $set: input }, { session });
+    return this._findOneWithProjection<User>(filter, USER_PROJECT_STAGE, session);
   },
 
   async updatePassword(id: string, password: string, session?: ClientSession) {
@@ -104,9 +120,12 @@ export const userRepository = {
   },
 
   async deleteById(id: string, session?: ClientSession): Promise<User | null> {
-    const doc = await collection().findOne({ _id: new ObjectId(id) }, { projection: { password: 0 }, session });
+    const filter = { _id: new ObjectId(id) };
+    const doc = await this._findOneWithProjection<User>(filter, USER_PROJECT_STAGE, session);
+
     if (!doc) return null;
-    await collection().deleteOne({ _id: new ObjectId(id) }, { session });
-    return { id: doc._id.toString(), name: doc.name, email: doc.email, isAdmin: doc.isAdmin };
+
+    await collection().deleteOne(filter, { session });
+    return doc;
   }
 };

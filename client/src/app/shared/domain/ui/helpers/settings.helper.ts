@@ -9,7 +9,13 @@ export class SettingsHelper {
         key: 'allowUserRegistration',
         label: $localize`:@@allowUserRegistrationFieldLabel:Allow User Registration`,
         type: 'checkbox',
-        value: settings.allowUserRegistration
+        value: settings.allowUserRegistration,
+      },
+      {
+        key: 'allowDemoUser',
+        label: $localize`:@@allowDemoUserFieldLabel:Allow Demo User`,
+        type: 'checkbox',
+        value: settings.allowDemoUser
       }
     ];
   }

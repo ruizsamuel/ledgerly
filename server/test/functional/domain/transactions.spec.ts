@@ -150,6 +150,90 @@ describe("transactions API (functional)", () => {
       expect(await getAccountBalance(token, target.id)).toBe(70);
     });
 
+    it("adds balance in destination account when moving a positive transaction", async () => {
+      const token = await registerAndGetToken("Admin", "admin.tx-move-positive@test.com");
+      const source = await createAccount(token, { name: "Source", balance: 0 });
+      const target = await createAccount(token, { name: "Target", balance: 100 });
+
+      const created = await request(app)
+        .post("/api/transactions")
+        .set("Authorization", `Bearer ${token}`)
+        .send({
+          amount: 40,
+          description: "positive move",
+          account: source.id,
+          date: new Date().toISOString()
+        });
+
+      expect(created.status).toBe(201);
+      const txId = created.body.content?.id as string;
+
+      const moved = await request(app)
+        .patch(`/api/transactions/${txId}`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({ account: target.id });
+
+      expect(moved.status).toBe(200);
+      expect(await getAccountBalance(token, source.id)).toBe(0);
+      expect(await getAccountBalance(token, target.id)).toBe(140);
+    });
+
+    it("subtracts balance in destination account when moving a negative transaction", async () => {
+      const token = await registerAndGetToken("Admin", "admin.tx-move-negative@test.com");
+      const source = await createAccount(token, { name: "Source", balance: 0 });
+      const target = await createAccount(token, { name: "Target", balance: 100 });
+
+      const created = await request(app)
+        .post("/api/transactions")
+        .set("Authorization", `Bearer ${token}`)
+        .send({
+          amount: -40,
+          description: "negative move",
+          account: source.id,
+          date: new Date().toISOString()
+        });
+
+      expect(created.status).toBe(201);
+      const txId = created.body.content?.id as string;
+
+      const moved = await request(app)
+        .patch(`/api/transactions/${txId}`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({ account: target.id });
+
+      expect(moved.status).toBe(200);
+      expect(await getAccountBalance(token, source.id)).toBe(0);
+      expect(await getAccountBalance(token, target.id)).toBe(60);
+    });
+
+    it("updates balances correctly when moving transaction and changing amount at once", async () => {
+      const token = await registerAndGetToken("Admin", "admin.tx-move-and-amount@test.com");
+      const source = await createAccount(token, { name: "Source", balance: 0 });
+      const target = await createAccount(token, { name: "Target", balance: 100 });
+
+      const created = await request(app)
+        .post("/api/transactions")
+        .set("Authorization", `Bearer ${token}`)
+        .send({
+          amount: 70,
+          description: "move and change amount",
+          account: source.id,
+          date: new Date().toISOString()
+        });
+
+      expect(created.status).toBe(201);
+      const txId = created.body.content?.id as string;
+
+      const moved = await request(app)
+        .patch(`/api/transactions/${txId}`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({ account: target.id, amount: 30 });
+
+      expect(moved.status).toBe(200);
+      expect(await getAccountBalance(token, source.id)).toBe(0);
+      expect(await getAccountBalance(token, target.id)).toBe(130);
+    });
+
     it("applies amount difference when updating transaction amount", async () => {
       const token = await registerAndGetToken("Admin", "admin.tx-diff@test.com");
       const account = await createAccount(token, { name: "Diff", balance: 10 });

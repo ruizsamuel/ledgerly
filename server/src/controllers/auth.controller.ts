@@ -26,6 +26,7 @@ export const login = async (req: Request, res: ApiRes) => {
 
     res.status(201).json({ message: tFromReq(req, "controller.auth.loginSuccess"), content: { token } });
   } catch (err) {
+    console.error(err);
     const msg = (err as Error).message;
     if (msg === "invalidCredentials") {
       return res.status(400).json({ message: tFromReq(req, "controller.auth.invalidCredentials") });
@@ -58,6 +59,7 @@ export const register = async (req: Request, res: ApiRes) => {
 
     res.status(201).json({ message: tFromReq(req, "controller.auth.registeredSuccess"), content: { token } });
   } catch (err) {
+    console.error(err);
     const msg = (err as Error).message;
     if (msg === "registrationDisabled") {
       return res.status(403).json({ message: tFromReq(req, "controller.auth.registrationDisabled") });
@@ -104,6 +106,7 @@ export const changePassword = async (req: Request, res: ApiRes) => {
     await authService.changePassword(user, { currentPassword, newPassword });
     res.status(200).json({ message: tFromReq(req, "controller.auth.passwordChanged") });
   } catch (err) {
+    console.error(err);
     const msg = (err as Error).message;
     if (msg === "incorrectPassword") {
       return res.status(401).json({ message: tFromReq(req, "controller.auth.incorrectPassword") });

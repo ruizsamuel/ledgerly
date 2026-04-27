@@ -12,6 +12,35 @@ Ledgerly is a personal accounting application designed to help users efficiently
 - **Multiple Accounts Support:** Manage several bank accounts or cash holdings; each transaction is linked to an account.
 - **Account Balances:** Instantly see the balance of each account and your total net worth.
 - **User Authentication:** Secure login and registration system for multiple users.
+- **Demo Mode:** Try the app without registration using hardcoded demo credentials with fresh sample data on each login.
+
+## Demo User
+
+Ledgerly includes a **demo mode** that allows users to explore the application without registration. Perfect for testing, demos, or getting familiar with the interface.
+
+### Demo Credentials
+
+```
+Email: demo@ledgerly.local
+Password: demo
+```
+
+### Demo Mode Behavior
+
+- **Real Account:** Demo is a regular user account (not special or virtual)
+- **Fresh Data on Every Login:** Every time you login as demo, all previous data is cleared and replaced with sample data
+- **Ephemeral Changes:** Any changes you make during a session are lost on logout/expiry
+- **No Database Persistence:** Demo data resets on each new session
+- **Configurable:** Admin can enable/disable demo mode from settings
+
+### Demo Data
+
+When logging in with demo credentials, you always get:
+- **2 accounts:** "Main Checking" and "Savings" with realistic balances
+- **18 transactions:** Mix of realistic expenses and income spanning last 40 days
+- **Sample data includes:** Groceries, utilities, restaurants, salary, freelance income, etc.
+
+The demo user is disabled by default. Admins can enable it from the admin panel settings to allow users to try the application.
 
 ## Running the Project
 

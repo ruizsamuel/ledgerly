@@ -18,6 +18,7 @@ export const getAccountsByToken = async (req: Request, res: ApiRes) => {
       content: accounts
     });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: tFromReq(req, "common.serverError") });
   }
 };
@@ -30,6 +31,7 @@ export const getAccountById = async (req: Request, res: ApiRes) => {
     if (!account) return res.status(404).json({ message: tFromReq(req, "controller.account.notFound") });
     res.status(200).json({ content: account });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: tFromReq(req, "common.serverError") });
   }
 };
@@ -46,6 +48,7 @@ export const createAccount = async (req: Request, res: ApiRes) => {
     );
     res.status(201).json({ message: tFromReq(req, "controller.account.createdSuccess"), content: account });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: tFromReq(req, "common.serverError") });
   }
 };
@@ -62,6 +65,7 @@ export const updateAccount = async (req: Request, res: ApiRes) => {
 
     res.status(200).json({ message: tFromReq(req, "controller.account.updatedSuccess"), content: account });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: tFromReq(req, "common.serverError") });
   }
 };
@@ -77,6 +81,7 @@ export const deleteAccount = async (req: Request, res: ApiRes) => {
 
     res.status(200).json({ message: tFromReq(req, "controller.account.deletedSuccess") });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: tFromReq(req, "common.serverError") });
   }
 };

@@ -7,6 +7,7 @@ import { Response } from "../models/response.model";
 import { ChangePasswordDTO, LoginDTO, RegisterDTO } from "../models/auth.model";
 import { User } from "../models/user.model";
 import { UserService } from "./user.service";
+import { CacheService } from "../../domain/services/cache.service";
 
 type AuthStatus = 'authenticated' | 'unauthenticated' | 'checking';
 
@@ -18,6 +19,8 @@ const AUTH_URL = environment.apiBaseUrl + '/auth';
 export class AuthService {
   private http = inject(HttpClient);
   private userService = inject(UserService);
+  private cacheService = inject(CacheService);
+
   private _token = signal<string | null>(null);
   private _user = rxResource({
     params: () => ({ token: this._token() }),
@@ -54,6 +57,9 @@ export class AuthService {
   }
 
   logout() {
+    this.cacheService.clearAccountsCache();
+    this.cacheService.clearTransactionsCache();
+
     firstValueFrom(this.http.delete(`${AUTH_URL}/logout`, { withCredentials: true }))
       .finally(() => this._token.set(null));
   }

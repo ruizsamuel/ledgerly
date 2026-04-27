@@ -11,8 +11,8 @@ export const getTransactionsByToken = async (req: Request, res: ApiRes) => {
   const sortBy = String(req.query.sortBy ?? "date") as "date" | "amount";
   const sort = String(req.query.sort ?? "desc") === "desc" ? "desc" : "asc";
   const description = req.query.description ? String(req.query.description) : undefined;
-  const fromDate = req.query.fromDate ? new Date(String(req.query.fromDate)) : undefined;
-  const toDate = req.query.toDate ? new Date(String(req.query.toDate)) : undefined;
+  const fromDate = req.query.fromDate ? String(req.query.fromDate) : undefined;
+  const toDate = req.query.toDate ? String(req.query.toDate) : undefined;
   const account = req.query.account ? String(req.query.account) : undefined;
 
   try {
@@ -34,6 +34,7 @@ export const getTransactionsByToken = async (req: Request, res: ApiRes) => {
       content: transactions
     });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: tFromReq(req, "common.serverError") });
   }
 };
@@ -48,6 +49,7 @@ export const getTransactionById = async (req: Request, res: ApiRes) => {
 
     res.status(200).json({ content: transaction });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: tFromReq(req, "common.serverError") });
   }
 };
@@ -67,6 +69,7 @@ export const createTransaction = async (req: Request, res: ApiRes) => {
 
     res.status(201).json({ message: tFromReq(req, "controller.transaction.createdSuccess"), content: transaction });
   } catch (err) {
+    console.error(err);
     const msg = (err as Error).message;
     if (msg === "accountNotFound") {
       return res.status(400).json({ message: tFromReq(req, "controller.transaction.accountNotFound") });
@@ -93,6 +96,7 @@ export const updateTransaction = async (req: Request, res: ApiRes) => {
 
     res.status(200).json({ message: tFromReq(req, "controller.transaction.updatedSuccess"), content: transaction });
   } catch (err) {
+    console.error(err);
     const msg = (err as Error).message;
     if (msg === "accountNotFound") {
       return res.status(400).json({ message: tFromReq(req, "controller.transaction.accountNotFound") });
@@ -109,6 +113,7 @@ export const deleteTransaction = async (req: Request, res: ApiRes) => {
 
     res.status(200).json({ message: tFromReq(req, "controller.transaction.deletedSuccess") });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: tFromReq(req, "common.serverError") });
   }
 };

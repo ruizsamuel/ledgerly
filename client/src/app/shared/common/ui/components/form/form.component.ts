@@ -6,15 +6,14 @@ import { FormConfig } from "../../models/form-config.model";
 @Component({
   selector: 'app-form',
   templateUrl: './form.component.html',
+  standalone: true,
   imports: [ReactiveFormsModule],
 })
-export class FormComponent<T> {
-
+export class FormComponent<T> implements OnInit {
   private fb = inject(FormBuilder);
-
   formUtils = FormUtils;
 
-  fields = input.required<FormConfig>();
+  readonly fields = input.required<FormConfig>();
   title = input.required<string>();
 
   submitButtonText = input<string>('Submit');
@@ -25,7 +24,7 @@ export class FormComponent<T> {
   formSubmit = output<T>();
   formCancel = output<void>();
 
-  formGroup = signal<FormGroup>(this.fb.group({}));
+  formGroup!: FormGroup;
   isLoading = signal(false);
 
   constructor() {
@@ -34,28 +33,28 @@ export class FormComponent<T> {
         setTimeout(() => this.isLoading.set(false), this.loadingTime());
       }
     });
+  }
 
-    effect(() => {
-      const group: { [key: string]: any } = {};
-      this.fields().forEach(field => {
-        group[field.key] = [
-          { value: field.value, disabled: field.disabled ?? false },
-          field.validators ?? []
-        ];
-      });
-      this.formGroup.set(this.fb.group(group));
+  ngOnInit(): void {
+    const group: { [key: string]: any } = {};
+    this.fields().forEach(field => {
+      group[field.key] = [
+        field.value ?? (field.type === 'checkbox' ? false : ''),
+        field.validators ?? []
+      ];
     });
+    this.formGroup = this.fb.group(group);
   }
 
   onSubmit(): void {
-    if (this.formGroup().valid) {
-      this.formSubmit.emit(this.formGroup().value as T);
-      this.formGroup().reset();
+    if (this.formGroup.valid) {
+      this.formSubmit.emit(this.formGroup.value as T);
+      this.formGroup.reset();
     }
   }
 
   onCancel(): void {
-    this.formGroup().reset();
+    this.formGroup.reset();
     this.formCancel.emit();
   }
 }

@@ -29,7 +29,7 @@ export const usersService = {
       throw new Error("passwordMinLength");
     }
 
-    const existing = await userRepository.findByEmailRaw(input.email);
+    const existing = await userRepository.findByEmail(input.email);
     if (existing) throw new Error("emailInUse");
 
     const salt = await genSalt(10);
@@ -45,8 +45,8 @@ export const usersService = {
 
   async updateById(id: string, input: UpdateUserInput) {
     if (input.email) {
-      const existing = await userRepository.findByEmailRaw(input.email);
-      if (existing && existing._id.toString() !== id) {
+      const existing = await userRepository.findByEmail(input.email);
+      if (existing && existing.id.toString() !== id) {
         throw new Error("emailInUse");
       }
     }
@@ -56,7 +56,7 @@ export const usersService = {
 
   async updateByToken(user: User, input: UpdateUserInput) {
     if (input.email && input.email !== user.email) {
-      const existing = await userRepository.findByEmailRaw(input.email);
+      const existing = await userRepository.findByEmail(input.email);
       if (existing) throw new Error("emailInUse");
     }
 

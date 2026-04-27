@@ -40,13 +40,13 @@ export class TransactionListComponent {
   searchTerm = signal('');
 
   fromDate = signal<string | null>(null);
-  toDate = signal<string | null>(new Date((new Date()).getFullYear(), 11, 31, 1, 1).toISOString().split('T')[0]);
+  toDate = signal<string | null>(`${new Date().getFullYear()}-12-31`);
 
   sortBy = signal<'date' | 'amount'>('date');
   sortDirection = signal<'asc' | 'desc'>('desc');
 
-  private from = computed(() => this.fromDate() ? new Date(this.fromDate()!) : null);
-  private to = computed(() => this.toDate() ? new Date(this.toDate()!) : null);
+  private from = computed(() => this.fromDate() ? `${this.fromDate()}T00:00:00.000Z` : null);
+  private to = computed(() => this.toDate() ? `${this.toDate()}T23:59:59.999Z` : null);
 
   allResource = rxResource({
     params: () => ({

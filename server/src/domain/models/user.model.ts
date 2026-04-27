@@ -7,6 +7,10 @@ export interface UserBasic {
 
 export interface User extends UserBasic {}
 
+export interface UserWithPassword extends User {
+  password: string
+}
+
 export interface NewUserInput {
   email: string;
   name: string;

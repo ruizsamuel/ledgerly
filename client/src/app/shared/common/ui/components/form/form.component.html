@@ -1,69 +1,102 @@
-<form [formGroup]="formGroup()" (ngSubmit)="onSubmit()" autocomplete="off">
+<form [formGroup]="formGroup" (ngSubmit)="onSubmit()" autocomplete="off">
   <fieldset class="fieldset m-auto bg-base-200 border-base-300 rounded-box w-xs border p-5">
     <span class="text-lg font-bold mb-4 block">
       {{ title() }}
     </span>
+
     @if (description()) {
-    <span class="text-sm text-base-content/70 mb-4 block">
-      {{ description() }}
-    </span>
+      <p class="text-sm text-base-content/70 mb-4">
+        {{ description() }}
+      </p>
     }
+
     @for (field of fields(); track field.key) {
-    <label [for]="field.key" class="label">
-      {{ field.label }}
-      @if(field.optional) {
-      <span class="badge badge-neutral badge-xs" i18n="@@optionalLabel">Optional</span>
-      }
-    </label>
-      @if (field.select) {
-      <!-- TODO: CUSTOM SELECT COMPONENT WITH IMAGES -->
-      <select
-        [id]="field.key"
-        [formControlName]="field.key"
-        class="select"
-      >
-        @for(item of field.select.options; track $index){
-        <option [value]="item.value" >
-          {{ item.viewValue }}
-        </option>
+      <div class="form-control w-full">
+
+        @if (field.type === 'checkbox') {
+          <label class="label cursor-pointer flex justify-start gap-3 py-2">
+            <input
+              [id]="field.key"
+              type="checkbox"
+              [formControlName]="field.key"
+              class="checkbox checkbox-primary"
+            />
+            <span class="label-text font-medium">{{ field.label }}</span>
+            @if(field.optional) {
+              <span class="badge badge-neutral badge-xs">Optional</span>
+            }
+          </label>
+
+        } @else {
+          <label [for]="field.key" class="label">
+            <span class="label-text">{{ field.label }}</span>
+            @if(field.optional) {
+              <span class="badge badge-neutral badge-xs">Optional</span>
+            }
+          </label>
+
+          @if (field.select) {
+            <select
+              [id]="field.key"
+              [formControlName]="field.key"
+              class="select select-bordered w-full"
+            >
+              <option value="" disabled selected>{{ field.placeholder || 'Select...' }}</option>
+              @for(item of field.select.options; track item.value){
+                <option [value]="item.value">
+                  {{ item.viewValue }}
+                </option>
+              }
+            </select>
+          }
+          @else if (field.type === 'number') {
+            <input
+              [id]="field.key"
+              type="number"
+              [formControlName]="field.key"
+              [placeholder]="field.placeholder || field.label"
+              class="input input-bordered w-full"
+            />
+          }
+          @else {
+            <input
+              [id]="field.key"
+              [type]="field.type"
+              [formControlName]="field.key"
+              [placeholder]="field.placeholder || field.label"
+              class="input input-bordered w-full"
+            />
+          }
         }
-    </select>
-    } @else if (field.type === 'checkbox') {
-    <input
-      [id]="field.key"
-      type="checkbox"
-      [formControlName]="field.key"
-      class="checkbox checkbox-primary"
-    />
-    } @else {
-    <input
-      [id]="field.key"
-      [type]="field.type"
-      [formControlName]="field.key"
-      [placeholder]="field.placeholder || field.label"
-      class="input"
-    />
+
+        @if (formUtils.isValidField(formGroup, field.key)) {
+          <div class="label pb-0">
+            <span class="label-text-alt text-error">
+              {{ formUtils.getFieldError(formGroup, field.key) }}
+            </span>
+          </div>
+        }
+      </div>
     }
-    @if (formUtils.isValidField(formGroup(), field.key)) {
-    <div class="text-error">
-      <span>{{ formUtils.getFieldError(formGroup(), field.key) }}</span>
-    </div>
-    }
-    }
-    <div class="form-actions flex justify-end mt-4">
+
+    <div class="form-actions flex justify-end mt-6 gap-2">
       @if (cancellable()) {
-      <button class="btn btn-error btn-soft me-1 flex-1/2" i18n="@@cancel" type="reset" (click)="onCancel()">
-        Cancel
-      </button>
+        <button
+          class="btn btn-error btn-soft flex-1"
+          type="button"
+          (click)="onCancel()"
+        >
+          Cancel
+        </button>
       }
       <button
         type="submit"
         (click)="isLoading.set(true)"
-        [disabled]="formGroup().invalid || isLoading()"
-        class="btn btn-primary flex-1/2"
+        [disabled]="formGroup.invalid || isLoading()"
+        class="btn btn-primary flex-1"
       >
         @if (isLoading()) {
-        <span class="loading loading-spinner loading-md me-2"></span>
+          <span class="loading loading-spinner loading-md"></span>
         }
         {{ submitButtonText() }}
       </button>

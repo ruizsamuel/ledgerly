@@ -2,10 +2,17 @@
   <app-search class="w-60" (onSearch)="searchTerm.set($event)" />
   <label class="input w-60">
     <span i18n="@@fromDateLabel">From: </span>
-    <input #fromInput type="date" [value]="fromDate()" (input)="fromDate.set(fromInput.value)"/>
+    <input
+      #fromInput
+      [class.hide-native-icon]="fromDate()"
+      type="date"
+      [value]="fromDate()"
+      (input)="fromDate.set(fromInput.value)"
+    />
     <span
       [class.hidden]="!fromDate()"
       [class.material-symbols-outlined]="fromDate()"
+      [class.hide-native-icon]="fromDate()"
       class="cursor-pointer"
       (click)="fromDate.set(null)"
     >
@@ -14,7 +21,13 @@
   </label>
   <label class="input w-60">
     <span i18n="@@toDateLabel">To: </span>
-    <input #toInput type="date" [value]="toDate()" (input)="toDate.set(toInput.value)" />
+    <input
+      #toInput
+      [class.hide-native-icon]="toDate()"
+      type="date"
+      [value]="toDate()"
+      (input)="toDate.set(toInput.value)"
+    />
     <span
       [class.hidden]="!toDate()"
       [class.material-symbols-outlined]="toDate()"
@@ -80,3 +93,10 @@
     [pages]="allResource.value()?.totalPages ?? 0"
   />
 </div>
+
+<style>
+.hide-native-icon::-webkit-calendar-picker-indicator {
+  display: none !important;
+  -webkit-appearance: none;
+}
+</style>

@@ -1,7 +1,9 @@
 import { compare, genSalt, hash } from "bcrypt";
 import { PASSWORD_MIN_LENGTH } from "../common/utils/auth.utils.js";
+import { DEMO_EMAIL } from "../domain/constants/demo-data.js";
 import { userRepository } from "../repositories/user.repository.js";
 import { settingsRepository } from "../repositories/settings.repository.js";
+import { demoUserService } from "./demo-user.service.js";
 import type { ChangePasswordInput, LoginInput, RegisterInput, User } from "../domain/models/user.model.js";
 
 export const authService = {
@@ -14,7 +16,16 @@ export const authService = {
     const match = await compare(input.password, userDoc.password);
     if (!match) throw new Error("invalidCredentials");
 
-    return userRepository.findById(userDoc._id.toString());
+    // If this is demo user login, reset data with fresh mock data
+    if (input.email === DEMO_EMAIL) {
+      const isDemoEnabled = await demoUserService.isDemoUserEnabled();
+      if (!isDemoEnabled) {
+        throw new Error("invalidCredentials");
+      }
+      await demoUserService.resetDemoUserData();
+    }
+
+    return userRepository.findById(userDoc.id.toString());
   },
 
   async register(input: RegisterInput) {
@@ -31,7 +42,7 @@ export const authService = {
       throw new Error("passwordMinLength");
     }
 
-    const existing = await userRepository.findByEmailRaw(input.email);
+    const existing = await userRepository.findByEmail(input.email);
     if (existing) throw new Error("emailInUse");
 
     const salt = await genSalt(10);
@@ -45,7 +56,7 @@ export const authService = {
     });
 
     if (user?.isAdmin) {
-      await settingsRepository.upsert({ allowUserRegistration: false });
+      await settingsRepository.upsert({ allowUserRegistration: false, allowDemoUser: true });
     }
 
     return user;

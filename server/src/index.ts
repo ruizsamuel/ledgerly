@@ -1,4 +1,4 @@
-import express, { json } from "express";
+import express, { json, NextFunction, Response } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { connectDb } from "./common/utils/database.utils.js";
@@ -9,6 +9,9 @@ import { usersRouter } from "./routes/users.routes.js";
 import { accountsRouter } from "./routes/accounts.routes.js";
 import { transactionsRouter } from "./routes/transactions.routes.js";
 import { settingsRouter } from "./routes/settings.routes.js";
+import { demoUserService } from "./services/demo-user.service.js";
+import { userRepository } from "./repositories/user.repository.js";
+
 
 export const createApp = () => {
   const app = express();
@@ -37,6 +40,15 @@ export const startServer = async () => {
   await connectDb();
   initI18n();
 
+  // Create demo user if it doesn't exist and if admin user was created
+  if (await userRepository.countAll() > 0) {
+    try {
+      await demoUserService.createDemoUser();
+    } catch (err) {
+      console.warn("Could not create demo user:", (err as Error).message);
+    }
+  }
+
   const PORT = Number(process.env.PORT || 5000);
   return app.listen(PORT, () => {
     console.log("Server running on port:", PORT);
@@ -49,3 +61,4 @@ if (process.env.NODE_ENV !== "test") {
     process.exit(1);
   });
 }
+

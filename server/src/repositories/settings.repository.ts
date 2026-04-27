@@ -13,7 +13,7 @@ export const settingsRepository = {
   async upsert(input: Settings, session?: ClientSession): Promise<Settings> {
     await collection().updateOne(
       {},
-      { $set: { allowUserRegistration: input.allowUserRegistration } },
+      { $set: { ...input } },
       { upsert: true, session }
     );
     return input;

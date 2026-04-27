@@ -5,7 +5,7 @@ vi.mock("../../../src/repositories/user.repository.js", () => ({
     findByEmailWithPassword: vi.fn(),
     findById: vi.fn(),
     countAll: vi.fn(),
-    findByEmailRaw: vi.fn(),
+    findByEmail: vi.fn(),
     create: vi.fn(),
     findByIdWithPassword: vi.fn(),
     updatePassword: vi.fn()
@@ -25,10 +25,18 @@ vi.mock("bcrypt", () => ({
   hash: vi.fn().mockResolvedValue("hashed-password")
 }));
 
+vi.mock("../../../src/services/demo-user.service.js", () => ({
+  demoUserService: {
+    isDemoUserEnabled: vi.fn(),
+    resetDemoUserData: vi.fn()
+  }
+}));
+
 import { compare, hash } from "bcrypt";
 import { authService } from "../../../src/services/auth.service.js";
 import { userRepository } from "../../../src/repositories/user.repository.js";
 import { settingsRepository } from "../../../src/repositories/settings.repository.js";
+import { demoUserService } from "../../../src/services/demo-user.service.js";
 
 describe("authService (unit)", () => {
   beforeEach(() => {
@@ -45,7 +53,7 @@ describe("authService (unit)", () => {
 
   it("returns user on successful login", async () => {
     vi.mocked(userRepository.findByEmailWithPassword).mockResolvedValue({
-      _id: { toString: () => "u1" },
+      id: { toString: () => "u1" },
       password: "hashed"
     } as never);
     vi.mocked(compare).mockResolvedValue(true as never);
@@ -64,7 +72,7 @@ describe("authService (unit)", () => {
 
   it("registers first user as admin and updates settings", async () => {
     vi.mocked(userRepository.countAll).mockResolvedValue(0);
-    vi.mocked(userRepository.findByEmailRaw).mockResolvedValue(null);
+    vi.mocked(userRepository.findByEmail).mockResolvedValue(null);
     vi.mocked(userRepository.create).mockResolvedValue({
       id: "admin-1",
       email: "admin@test.com",
@@ -80,7 +88,7 @@ describe("authService (unit)", () => {
     });
 
     expect(user?.isAdmin).toBe(true);
-    expect(settingsRepository.upsert).toHaveBeenCalledWith({ allowUserRegistration: false });
+    expect(settingsRepository.upsert).toHaveBeenCalledWith({ allowUserRegistration: false, allowDemoUser: true });
   });
 
   it("blocks registration when disabled in settings", async () => {
@@ -97,7 +105,7 @@ describe("authService (unit)", () => {
 
   it("throws incorrectPassword when current password does not match", async () => {
     vi.mocked(userRepository.findByIdWithPassword).mockResolvedValue({
-      _id: { toString: () => "u1" },
+      id: { toString: () => "u1" },
       password: "hashed"
     } as never);
     vi.mocked(compare).mockResolvedValue(false as never);
@@ -110,7 +118,7 @@ describe("authService (unit)", () => {
 
   it("updates password when the current password matches", async () => {
     vi.mocked(userRepository.findByIdWithPassword).mockResolvedValue({
-      _id: { toString: () => "u1" },
+      id: { toString: () => "u1" },
       password: "hashed"
     } as never);
     vi.mocked(compare).mockResolvedValue(true as never);
@@ -122,5 +130,42 @@ describe("authService (unit)", () => {
     );
 
     expect(userRepository.updatePassword).toHaveBeenCalledWith("u1", "hashed-password");
+  });
+
+  it("resets demo user data on demo login when enabled", async () => {
+    vi.mocked(userRepository.findByEmailWithPassword).mockResolvedValue({
+      id: { toString: () => "demo-1" },
+      password: "hashed"
+    } as never);
+    vi.mocked(compare).mockResolvedValue(true as never);
+    vi.mocked(demoUserService.isDemoUserEnabled).mockResolvedValue(true);
+    vi.mocked(demoUserService.resetDemoUserData).mockResolvedValue(undefined);
+    vi.mocked(userRepository.findById).mockResolvedValue({
+      id: "demo-1",
+      email: "demo@ledgerly.local",
+      name: "Demo User",
+      isAdmin: false
+    });
+
+    const user = await authService.login({ email: "demo@ledgerly.local", password: "demo" });
+
+    expect(demoUserService.isDemoUserEnabled).toHaveBeenCalled();
+    expect(demoUserService.resetDemoUserData).toHaveBeenCalled();
+    expect(user?.email).toBe("demo@ledgerly.local");
+  });
+
+  it("blocks demo login when demo is disabled", async () => {
+    vi.mocked(userRepository.findByEmailWithPassword).mockResolvedValue({
+      id: { toString: () => "demo-1" },
+      password: "hashed"
+    } as never);
+    vi.mocked(compare).mockResolvedValue(true as never);
+    vi.mocked(demoUserService.isDemoUserEnabled).mockResolvedValue(false);
+
+    await expect(authService.login({ email: "demo@ledgerly.local", password: "demo" }))
+      .rejects
+      .toThrow("invalidCredentials");
+
+    expect(demoUserService.resetDemoUserData).not.toHaveBeenCalled();
   });
 });
