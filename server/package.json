@@ -8,11 +8,11 @@
     "start": "node dist/index.js",
     "dev": "tsc --noEmit && tsx watch src/index.ts",
     "lint": "eslint \"src/**/*.{js,ts}\" \"test/**/*.ts\" --fix",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:unit": "vitest run test/unit",
-    "test:integration": "vitest run test/integration",
-    "test:functional": "vitest run test/functional"
+    "test": "vitest run --silent",
+    "test:watch": "vitest --silent",
+    "test:unit": "vitest run test/unit --silent",
+    "test:integration": "vitest run test/integration --silent",
+    "test:functional": "vitest run test/functional --silent"
   },
   "author": "Samuel Ruiz",
   "license": "MIT",

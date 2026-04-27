@@ -23,7 +23,7 @@ export const accountRepository = {
     return doc || null;
   },
 
-  async listByToken(userId: string, options: { page: number; limit: number }, session?: ClientSession) {
+  async listByToken(userId: string, options: { page: number; limit: number }, session?: ClientSession): Promise<{accounts: Account[], total: number}>  {
     const owner = new ObjectId(userId);
     const pipeline: any[] = [{ $match: { owner } }];
 
