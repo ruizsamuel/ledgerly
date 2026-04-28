@@ -33,15 +33,6 @@ Password: demo
 - **No Database Persistence:** Demo data resets on each new session
 - **Configurable:** Admin can enable/disable demo mode from settings
 
-### Demo Data
-
-When logging in with demo credentials, you always get:
-- **2 accounts:** "Main Checking" and "Savings" with realistic balances
-- **18 transactions:** Mix of realistic expenses and income spanning last 40 days
-- **Sample data includes:** Groceries, utilities, restaurants, salary, freelance income, etc.
-
-The demo user is disabled by default. Admins can enable it from the admin panel settings to allow users to try the application.
-
 ## Running the Project
 
 1. First, configure the environment variables in the `.env` file.
@@ -110,21 +101,10 @@ make test
 Useful focused targets:
 
 ```bash
-make test-back
-make test-front
-make test-integration
+make test-unit
+make test-int
+make test-func
 make test-watch
-```
-
-You can also run test commands directly:
-
-```bash
-cd server && npm run test
-cd server && npm run test:unit
-cd server && npm run test:integration
-cd server && npm run test:functional
-
-cd client && npm run test
 ```
 
 ## Architecture & Deployment
