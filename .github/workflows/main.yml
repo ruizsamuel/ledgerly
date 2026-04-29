@@ -1,0 +1,43 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Test Server
+        run: |
+          cd server
+          npm install
+          npm test
+
+  deploy:
+    name: Deploy to Server
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create Production .env
+        run: |
+          echo "${{ secrets.PROD_ENV_FILE }}" > .env
+
+      - name: Docker Compose Deploy
+        run: |
+          docker compose build
+          docker compose -f docker-compose.prod.yml up -d
+          docker image prune -f

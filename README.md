@@ -4,6 +4,10 @@
 
 Ledgerly is a personal accounting application designed to help users efficiently manage their finances. It enables you to track expenses and income, organize them by month, calculate savings or losses, and manage multiple bank accounts or cash holdings. The application supports user authentication (login and registration) to ensure your data is secure and private.
 
+Available demo: [Ledgerly](https://ledgerly.ruizsamuel.es)
+
+View [Demo User](#demo-user) section
+
 ## Features
 
 - **Register Expenses:** Log your daily expenses with details and categorize them by account.
@@ -78,7 +82,7 @@ Password: demo
    make logs-prod
    ```
 
-   Access the application at `http://localhost`.
+   Access the application at `http://localhost:8181` (modify `docker-compose.prod.yml` to change production port).
 
 5. Stop both environments:
    ```bash
@@ -134,12 +138,13 @@ This ensures that routes like `/accounts`, `/transactions`, `/settings` are hand
 ### Environment Variables
 
 - **Development (`.env`):**
-  - `CLIENT_URL=http://localhost:4200` - Angular dev server
-   - `SERVER_PROXY_TARGET=http://server:5000` - Backend target used by the Angular proxy inside Docker
-  - `DOMAIN=http://localhost` - Not used in dev
+  - `CLIENT_URL=http://localhost:4200` - Angular dev server (only for dev)
+   - `SERVER_PROXY_TARGET=http://server:5000` - Backend target used by the Angular proxy inside Docker (only for dev)
 
 - **Production (`.env`):**
   - `DOMAIN=http://localhost` - Single domain for both client and API
+
+- **General (`.env`):**
   - `MONGO_USERNAME` and `MONGO_PASSWORD` - Database credentials
   - `JWT_SECRET` - Authentication secret
 
