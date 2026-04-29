@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --host 0.0.0.0 --proxy-config proxy.conf.js",
-    "build": "ng build --configuration production",
+    "build": "ng build --configuration production --localize",
     "lint": "eslint \"src/**/*.ts\" --fix"
   },
   "author": "Samuel Ruiz",
