@@ -41,7 +41,7 @@ services:
       - ./db-init.sh:/usr/local/bin/db-init.sh:ro
     entrypoint: ["/usr/local/bin/db-init.sh"]
 
-  nginx:
+  ledgerly:
     image: nginx:latest
     depends_on:
       - client
@@ -49,4 +49,4 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
     ports:
-      - "80:80"
+      - "8181:80"
