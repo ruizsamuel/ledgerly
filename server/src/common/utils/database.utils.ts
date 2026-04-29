@@ -20,7 +20,7 @@ const getMongoUri = () => {
   }
 
   return username && password
-    ? `mongodb://${username}:${password}@${host}:${port}/?retryWrites=true`
+    ? `mongodb://${username}:${password}@${host}:${port}/?authSource=admin&retryWrites=true`
     : `mongodb://${host}:${port}/?retryWrites=true`;
 };
 
