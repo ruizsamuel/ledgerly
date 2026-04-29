@@ -1,5 +1,7 @@
 # Ledgerly
 
+![Ledgerly Dashboard Screenshot](./client/screenshots/dashboard.png)
+
 Ledgerly is a personal accounting application designed to help users efficiently manage their finances. It enables you to track expenses and income, organize them by month, calculate savings or losses, and manage multiple bank accounts or cash holdings. The application supports user authentication (login and registration) to ensure your data is secure and private.
 
 ## Features
