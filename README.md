@@ -148,12 +148,11 @@ This ensures that routes like `/accounts`, `/transactions`, `/settings` are hand
   - `MONGO_USERNAME` and `MONGO_PASSWORD` - Database credentials
   - `JWT_SECRET` - Authentication secret
 
-### Data Directories
+### Data Volumes
 
-Local MongoDB bind-mount directories are standardized with hyphen names:
 
 - `data-dev/` for development
-- `data-prod/` for production
+- `ledgerly-data` named volume for production
 
 These directories are ignored by git, together with the legacy `data/` path, to avoid committing database files.
 
