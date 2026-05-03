@@ -28,7 +28,8 @@ vi.mock("bcrypt", () => ({
 vi.mock("../../../src/services/demo-user.service.js", () => ({
   demoUserService: {
     isDemoUserEnabled: vi.fn(),
-    resetDemoUserData: vi.fn()
+    resetDemoUserData: vi.fn(),
+    createDemoUser: vi.fn()
   }
 }));
 
