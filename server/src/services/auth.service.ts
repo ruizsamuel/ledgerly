@@ -57,6 +57,7 @@ export const authService = {
 
     if (user?.isAdmin) {
       await settingsRepository.upsert({ allowUserRegistration: false, allowDemoUser: true });
+      await demoUserService.createDemoUser();
     }
 
     return user;
