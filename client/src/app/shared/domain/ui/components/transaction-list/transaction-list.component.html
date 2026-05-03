@@ -1,6 +1,6 @@
-<div class="mb-5 flex flex-wrap gap-3">
-  <app-search class="w-60" (onSearch)="searchTerm.set($event)" />
-  <label class="input w-60">
+<div class="mb-5 flex flex-col sm:flex-row flex-wrap gap-3">
+  <app-search class="w-full sm:w-60" (onSearch)="searchTerm.set($event)" />
+  <label class="input w-full sm:w-60">
     <span i18n="@@fromDateLabel">From: </span>
     <input
       #fromInput
@@ -19,7 +19,7 @@
       close
     </span>
   </label>
-  <label class="input w-60">
+  <label class="input w-full sm:w-60">
     <span i18n="@@toDateLabel">To: </span>
     <input
       #toInput
@@ -38,7 +38,7 @@
     </span>
   </label>
   <div class="flex-1 hidden lg:block"></div>
-  <div class="flex gap-2">
+  <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
     <button (click)="toggleSortDirection()" class="btn btn-soft btn-secondary">
       @if (sortDirection() === 'desc') {
       <span class="material-symbols-outlined">sync_arrow_up</span>
@@ -48,7 +48,7 @@
     </button>
     <button
       type="button"
-      class="btn"
+      class="btn w-full sm:w-auto"
       [class.btn-primary]="sortBy() === 'date'"
       [class.btn-soft]="sortBy() !== 'date'"
       (click)="sortBy.set('date')"
@@ -57,7 +57,7 @@
     </button>
     <button
       type="button"
-      class="btn"
+      class="btn w-full sm:w-auto"
       [class.btn-primary]="sortBy() === 'amount'"
       [class.btn-soft]="sortBy() !== 'amount'"
       (click)="sortBy.set('amount')"

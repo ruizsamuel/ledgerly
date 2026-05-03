@@ -29,6 +29,19 @@ export class FormComponent<T> implements OnInit {
 
   constructor() {
     effect(() => {
+      const fields = this.fields();
+
+      if (this.formGroup) {
+        this.formGroup = this.fb.group(
+          Object.fromEntries(
+            fields.map(field => [
+              field.key,
+              [field.value ?? (field.type === 'checkbox' ? false : ''), field.validators ?? []]
+            ])
+          )
+        );
+      }
+
       if (this.isLoading()) {
         setTimeout(() => this.isLoading.set(false), this.loadingTime());
       }

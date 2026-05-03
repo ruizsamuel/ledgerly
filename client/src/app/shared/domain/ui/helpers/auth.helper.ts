@@ -2,14 +2,15 @@ import { Validators } from "@angular/forms";
 import { FormConfig } from "../../../common/ui/models/form-config.model";
 import { FormUtils } from "../../../common/utils/form.utils";
 import { User } from "../../../common/models/user.model";
+import { LoginDTO } from "../../../common/models/auth.model";
 
 
 export class AuthHelper {
-  static loginForm(): FormConfig {
+  static loginForm(values?: Partial<LoginDTO>): FormConfig {
     return [
       {
         key: 'email',
-        value: '',
+        value: values?.email ?? '',
         label: $localize`:{@@email}:Email`,
         placeholder: $localize`:{@@email}:Email`,
         type: 'email',
@@ -17,7 +18,7 @@ export class AuthHelper {
       },
       {
         key: 'password',
-        value: '',
+        value: values?.password ?? '',
         label: $localize`:{@@password}:Password`,
         placeholder: $localize`:{@@password}:Password`,
         type: 'password',

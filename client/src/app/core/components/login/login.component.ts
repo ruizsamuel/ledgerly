@@ -18,11 +18,26 @@ export class LoginComponent {
   private authHelper = AuthHelper;
 
   selectedTab = signal<'login' | 'register'>('login');
+  useDemoCredentials = signal(false);
 
   formUtils = FormUtils;
 
   submitLabel = computed(() => this.selectedTab() === 'login' ? $localize`:{@@login}:Login` : $localize`:{@@register}:Register`);
-  formFields = computed(() => this.selectedTab() === 'login' ? this.authHelper.loginForm() : this.authHelper.registerForm());
+  formFields = computed(() => {
+    if (this.selectedTab() === 'login') {
+      return this.authHelper.loginForm(this.useDemoCredentials() ? {
+        email: 'demo@ledgerly.local',
+        password: 'demo'
+      } : undefined);
+    }
+
+    return this.authHelper.registerForm();
+  });
+
+  fillDemoCredentials() {
+    this.selectedTab.set('login');
+    this.useDemoCredentials.set(true);
+  }
 
   handleSubmit(data: LoginDTO | RegisterDTO) {
     if (this.selectedTab() === 'login') {
