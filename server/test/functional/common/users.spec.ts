@@ -71,7 +71,7 @@ describe("users API (functional, common)", () => {
         .set("Authorization", `Bearer ${adminToken}`);
 
       expect(listResponse.status).toBe(200);
-      expect(listResponse.body.content).toHaveLength(2);
+      expect(listResponse.body.content).toHaveLength(3);
 
       const getResponse = await request(app)
         .get(`/api/users/${userId}`)
