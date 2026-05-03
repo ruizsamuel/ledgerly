@@ -1,10 +1,12 @@
-<div class="w-screen h-screen flex flex-col justify-center items-center">
-  <app-logo class="mb-10" size="extralarge"/>
-  <app-form
-    i18n-title="@@createAdminTitle"
-    [fields]="formFields"
-    title="Create Admin User"
-    (formSubmit)="onSubmit($event)"
-    [cancellable]="false"
-  ></app-form>
+<div class="w-full min-h-screen flex flex-col justify-center items-center px-5 py-10">
+  <app-logo class="mb-6 sm:mb-10" size="extralarge"/>
+  <div class="w-full sm:w-xs">
+    <app-form
+      i18n-title="@@createAdminTitle"
+      [fields]="formFields"
+      title="Create Admin User"
+      (formSubmit)="onSubmit($event)"
+      [cancellable]="false"
+    ></app-form>
+  </div>
 </div>

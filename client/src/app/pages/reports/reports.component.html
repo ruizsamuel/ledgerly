@@ -3,23 +3,23 @@
   [description]="pageDescription"
 />
 <div class="container mx-auto py-10 px-5">
-  <div class="flex flex-wrap">
+  <div class="flex flex-col lg:flex-row gap-4">
     @if (!transactionResource.isLoading() && chartReload() ) {
     <app-line-chart
       [series]="transactionHelper.yearlyComparativeChart(transactionResource.value()!.content, series())"
       [categories]="transactionHelper.MONTHS"
-      class="flex-1 min-w-[45vw] mb-4"
+      class="w-full lg:flex-1 mb-4 lg:mb-0"
     />
     }
     @else {
-    <div class="flex-1 min-w-[45vw] mb-4 flex items-center justify-center">
+    <div class="w-full lg:flex-1 mb-4 flex items-center justify-center">
       <app-loading />
     </div>
     }
-    <div class="flex flex-col lg:py-10 w-full lg:w-auto">
+    <div class="flex flex-col w-full lg:w-auto lg:py-10">
       <div class="flex flex-col p-4 bg-base-100 rounded-2xl border-base-300 border mb-4">
         <h2 class="text-lg font-bold mb-4" i18n="@@selectYears">Series (Max: {{ MAX_SERIES_LENGTH }})</h2>
-        <div class="flex lg:w-xs flex-wrap gap-2 mb-4">
+        <div class="flex flex-wrap gap-2 mb-4 w-full">
           @for (serie of series(); track serie) {
             <span class="badge badge-xl badge-primary badge-soft cursor-pointer hover:badge-error" type="button" (click)="toggleSerie(serie)">
             {{ serie }}
@@ -27,9 +27,9 @@
           </span>
           }
         </div>
-        <div class="flex gap-2">
+        <div class="flex flex-col sm:flex-row gap-2 w-full">
           <select
-            class="input select"
+            class="input select flex-1 sm:flex-none"
             placeholder="Add Year"
             i18n-placeholder="@@addYearPlaceholder"
             #serieSelect>
@@ -44,10 +44,10 @@
       </div>
     </div>
   </div>
-  <div class="flex flex-col border border-base-300 rounded-2xl w-max p-4 bg-base-100 mt-4">
+  <div class="flex flex-col border border-base-300 rounded-2xl w-full sm:w-max p-4 bg-base-100 mt-4">
     <h2 class="text-lg font-bold mb-4" i18n="@@selectDownloadYear">Download Data (CSV)</h2>
-    <div class="flex gap-2 flex-wrap">
-      <select class="input select w-xs" #downloadSelect>
+    <div class="flex flex-col sm:flex-row gap-2 flex-wrap">
+      <select class="input select w-full sm:w-xs" #downloadSelect>
         @for (year of availableSeries().concat(series()) ; track year) {
         <option value="{{ year }}">{{ year }}</option>
         }
