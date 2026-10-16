@@ -108,6 +108,9 @@ export const changePassword = async (req: Request, res: ApiRes) => {
   } catch (err) {
     console.error(err);
     const msg = (err as Error).message;
+    if (msg === "demoUserLocked") {
+      return res.status(403).json({ message: tFromReq(req, "controller.user.demoUserLocked") });
+    }
     if (msg === "incorrectPassword") {
       return res.status(401).json({ message: tFromReq(req, "controller.auth.incorrectPassword") });
     }

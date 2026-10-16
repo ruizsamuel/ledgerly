@@ -26,7 +26,8 @@
       "createdSuccess": "User created",
       "updateSuccess": "User updated",
       "deleteSuccess": "User deleted",
-      "notFound": "User not found"
+      "notFound": "User not found",
+      "demoUserLocked": "The demo user cannot be modified"
     },
     "auth": {
       "invalidCredentials": "Invalid email or password",
@@ -50,4 +51,3 @@
     "updatedSuccess": "Updated successfully"
   }
 }
-
