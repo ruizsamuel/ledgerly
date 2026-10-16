@@ -1,5 +1,6 @@
 import { genSalt, hash } from "bcrypt";
 import { PASSWORD_MIN_LENGTH } from "../common/utils/auth.utils.js";
+import { DEMO_EMAIL } from "../domain/constants/demo-data.js";
 import { userRepository } from "../repositories/user.repository.js";
 import { transactionRepository } from "../repositories/transaction.repository.js";
 import { accountRepository } from "../repositories/account.repository.js";
@@ -55,6 +56,10 @@ export const usersService = {
   },
 
   async updateByToken(user: User, input: UpdateUserInput) {
+    if (user.email === DEMO_EMAIL) {
+      throw new Error("demoUserLocked");
+    }
+
     if (input.email && input.email !== user.email) {
       const existing = await userRepository.findByEmail(input.email);
       if (existing) throw new Error("emailInUse");

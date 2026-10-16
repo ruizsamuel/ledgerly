@@ -26,7 +26,8 @@
       "createdSuccess": "Usuario creado",
       "updateSuccess": "Usuario actualizado",
       "deleteSuccess": "Usuario eliminado",
-      "notFound": "Usuario no encontrado"
+      "notFound": "Usuario no encontrado",
+      "demoUserLocked": "El usuario demo no se puede modificar"
     },
     "auth": {
       "invalidCredentials": "Email o contraseña inválidos",

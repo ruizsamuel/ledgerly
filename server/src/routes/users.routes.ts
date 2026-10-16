@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { validateBody, validatePaginationQuery } from "../common/middlewares/validation.middleware.js";
 import { authMiddleware, adminMiddleware } from "../common/middlewares/auth.middleware.js";
-import { createUserSchema, updateUserSchema } from "../domain/validations/user.validators.js";
+import { createUserSchema, updateUserSchema, updateProfileSchema } from "../domain/validations/user.validators.js";
 import {
   createUser,
   hasUsers,
@@ -16,7 +16,7 @@ import {
 export const usersRouter = Router();
 
 usersRouter.get("/me", authMiddleware, getUserByToken);
-usersRouter.patch("/me", authMiddleware, validateBody(updateUserSchema), updateUserByToken);
+usersRouter.patch("/me", authMiddleware, validateBody(updateProfileSchema), updateUserByToken);
 
 usersRouter.get("/has-users", hasUsers);
 

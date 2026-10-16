@@ -64,6 +64,10 @@ export const authService = {
   },
 
   async changePassword(user: User, input: ChangePasswordInput) {
+    if (user.email === DEMO_EMAIL) {
+      throw new Error("demoUserLocked");
+    }
+
     const userDoc = await userRepository.findByIdWithPassword(user.id);
     if (!userDoc || !userDoc.password) {
       throw new Error("userNotFound");

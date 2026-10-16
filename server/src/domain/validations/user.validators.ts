@@ -12,3 +12,8 @@ export const updateUserSchema = z.object({
   name: z.string().min(1).optional(),
   isAdmin: z.boolean().optional()
 });
+
+export const updateProfileSchema = z.object({
+  email: z.string().email().optional(),
+  name: z.string().min(1).optional()
+});
